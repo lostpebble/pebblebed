@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "declaration": true,
+    "sourceRoot": "src",
+    "outDir": "dist"
+  },
+  "exclude": [
+    "dist",
+    "test",
+    "node_modules"
+  ]
+}

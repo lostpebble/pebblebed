@@ -25,5 +25,10 @@
   "bugs": {
     "url": "https://github.com/lostpebble/pebblebed/issues"
   },
-  "homepage": "https://github.com/lostpebble/pebblebed#readme"
+  "homepage": "https://github.com/lostpebble/pebblebed#readme",
+  "devDependencies": {
+    "@types/node": "^7.0.12",
+    "ts-node": "^3.0.2",
+    "typescript": "^2.2.2"
+  }
 }
