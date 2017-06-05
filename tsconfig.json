@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2017",
     "module": "commonjs",
     "noEmitOnError": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
+    "allowJs": false,
     "experimentalDecorators": true,
     "sourceMap": false,
     "inlineSourceMap": true,

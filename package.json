@@ -2,8 +2,9 @@
   "name": "pebblebed",
   "version": "0.0.1",
   "description": "Simplified interactions with Google Datastore for NodeJS",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +27,9 @@
     "url": "https://github.com/lostpebble/pebblebed/issues"
   },
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
+  "peerDependencies": {
+    "@google-cloud/datastore": "^1.0.2"
+  },
   "devDependencies": {
     "@types/node": "^7.0.12",
     "ts-node": "^3.0.2",

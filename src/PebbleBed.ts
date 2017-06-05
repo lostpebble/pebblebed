@@ -1,5 +1,4 @@
 import * as datastore from "@google-cloud/datastore";
-import {ds} from "../../setup-datastore";
 import {warnMessageSchemaIdType} from "./ErrorMessages";
 
 export interface SchemaDefinition {
@@ -42,6 +41,94 @@ export interface IDatastoreQuery {
     start(nextPageCursor: any): IDatastoreQuery;
     select(property: string | string[]): IDatastoreQuery;
     run(): Promise<DatastoreQueryResponse>;
+}
+
+export interface IPebbleBedSingleton {
+    ds: any;
+    useDatastore: (datastore: any) => any;
+}
+
+export const PebblebedSingleton: IPebbleBedSingleton = {
+    ds: null,
+    useDatastore: (datastore: any) => {
+        this.ds = datastore;
+    }
+};
+
+export const Pebblebed = PebblebedSingleton;
+
+export class PebblebedModel {
+    private schema: SchemaDefinition;
+    private kind: string;
+    private idProperty: string;
+    private hasIdProperty = false;
+
+    constructor(entityKind: string, entitySchema: SchemaDefinition) {
+        this.schema = entitySchema;
+        this.kind = entityKind;
+        this.idProperty = getIdPropertyFromSchema(entitySchema);
+
+        if (this.idProperty != null) {
+            this.hasIdProperty = true;
+        }
+    }
+
+    public save(data: object | object[]) {
+        return new DatastoreSave(this, data);
+    }
+
+    public load(ids?: string | number | Array<(string | number)>) {
+        return new DatastoreLoad(this, ids);
+    }
+
+    public query(): IDatastoreQuery {
+        const idProp = this.idProperty;
+        const type = this.schema[this.idProperty].type;
+        const hasIdProp = this.hasIdProperty;
+
+        const dsQuery = Pebblebed.ds.createQuery(this.kind);
+
+        const runQuery = dsQuery.run.bind(dsQuery);
+
+        return Object.assign(dsQuery, {
+            async run(): Promise<DatastoreQueryResponse> {
+                const data = await runQuery();
+
+                if (hasIdProp && data[0].length > 0) {
+                    augmentEntitiesWithIdProperties(data[0], idProp, type);
+                }
+
+                return {
+                    entities: data[0],
+                    info: data[1],
+                };
+            }
+        });
+    }
+
+    public key(id: string|number): DatastoreEntityKey {
+        return Pebblebed.ds.key([this.kind, id]);
+    }
+
+    public delete(data?: object | object[]) {
+        return new DatastoreDelete(this, data);
+    }
+
+    public get entityKind() {
+        return this.kind;
+    }
+
+    public get entitySchema() {
+        return this.schema;
+    }
+
+    public get entityIdProperty() {
+        return this.idProperty;
+    }
+
+    public get entityHasIdProperty() {
+        return this.hasIdProperty;
+    }
 }
 
 export class DatastoreOperation {
@@ -121,7 +208,7 @@ export class DatastoreLoad extends DatastoreOperation {
         const baseKey = this.getBaseKey();
 
         const loadKeys = this.loadIds.map((id) => {
-            return ds.key(baseKey.concat([this.kind, id]));
+            return Pebblebed.ds.key(baseKey.concat([this.kind, id]));
         });
 
         let resp;
@@ -129,7 +216,7 @@ export class DatastoreLoad extends DatastoreOperation {
         if (this.transaction) {
             resp = await this.transaction.get(loadKeys);
         } else {
-            resp = await ds.get(loadKeys);
+            resp = await Pebblebed.ds.get(loadKeys);
         }
 
         if (this.hasIdProperty && resp[0].length > 0) {
@@ -225,7 +312,7 @@ export class DatastoreSave extends DatastoreOperation {
                 }
             }
 
-            const key = id ? ds.key(setAncestors.concat([this.kind, id])) : ds.key(setAncestors.concat([this.kind]));
+            const key = id ? Pebblebed.ds.key(setAncestors.concat([this.kind, id])) : Pebblebed.ds.key(setAncestors.concat([this.kind]));
 
             return {
                 key,
@@ -237,7 +324,7 @@ export class DatastoreSave extends DatastoreOperation {
             return this.transaction.save(entities);
         }
 
-        return ds.save(entities);
+        return Pebblebed.ds.save(entities);
     }
 }
 
@@ -321,11 +408,11 @@ export class DatastoreDelete extends DatastoreOperation {
                     }
                 }
 
-                deleteKeys.push(ds.key(setAncestors.concat([this.kind, id])));
+                deleteKeys.push(Pebblebed.ds.key(setAncestors.concat([this.kind, id])));
             }
         } else {
             deleteKeys = this.deleteIds.map((id) => {
-                return ds.key(baseKey.concat([this.kind, id]));
+                return Pebblebed.ds.key(baseKey.concat([this.kind, id]));
             });
         }
 
@@ -336,81 +423,7 @@ export class DatastoreDelete extends DatastoreOperation {
             return this.transaction.delete(deleteKeys);
         }
 
-        return ds.delete(deleteKeys);
-    }
-}
-
-export class PebblebedModel {
-    private schema: SchemaDefinition;
-    private kind: string;
-    private idProperty: string;
-    private hasIdProperty = false;
-
-    constructor(entityKind: string, entitySchema: SchemaDefinition) {
-        this.schema = entitySchema;
-        this.kind = entityKind;
-        this.idProperty = getIdPropertyFromSchema(entitySchema);
-
-        if (this.idProperty != null) {
-            this.hasIdProperty = true;
-        }
-    }
-
-    public save(data: object | object[]) {
-        return new DatastoreSave(this, data);
-    }
-
-    public load(ids?: string | number | Array<(string | number)>) {
-        return new DatastoreLoad(this, ids);
-    }
-
-    public query(): IDatastoreQuery {
-        const idProp = this.idProperty;
-        const type = this.schema[this.idProperty].type;
-        const hasIdProp = this.hasIdProperty;
-
-        const dsQuery = ds.createQuery(this.kind);
-
-        const runQuery = dsQuery.run.bind(dsQuery);
-
-        return Object.assign(dsQuery, {
-            async run(): Promise<DatastoreQueryResponse> {
-                const data = await runQuery();
-
-                if (hasIdProp && data[0].length > 0) {
-                    augmentEntitiesWithIdProperties(data[0], idProp, type);
-                }
-
-                return {
-                    entities: data[0],
-                    info: data[1],
-                };
-            }
-        });
-    }
-
-    public key(id: string|number): DatastoreEntityKey {
-        return ds.key([this.kind, id]);
-    }
-
-    public delete(data?: object | object[]) {
-        return new DatastoreDelete(this, data);
-    }
-
-    public get entityKind() {
-        return this.kind;
-    }
-
-    public get entitySchema() {
-        return this.schema;
-    }
-
-    public get entityIdProperty() {
-        return this.idProperty;
-    }
-
-    public get entityHasIdProperty() {
-        return this.hasIdProperty;
+        return Pebblebed.ds.delete(deleteKeys);
     }
 }
 
