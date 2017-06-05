@@ -1,10 +1,14 @@
 {
   "name": "pebblebed",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simplified interactions with Google Datastore for NodeJS",
   "main": "dist/index.js",
+  "engines": {
+    "node" : ">=7.6.0"
+  },
   "scripts": {
     "build": "tsc",
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
