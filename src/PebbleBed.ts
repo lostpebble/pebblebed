@@ -1,4 +1,5 @@
-import * as datastore from "@google-cloud/datastore";
+// import * as _ from "lodash";
+// import * as datastore from "@google-cloud/datastore";
 import {warnMessageSchemaIdType} from "./ErrorMessages";
 
 export interface SchemaDefinition {
@@ -43,19 +44,45 @@ export interface IDatastoreQuery {
     run(): Promise<DatastoreQueryResponse>;
 }
 
-export interface IPebbleBedSingleton {
-    ds: any;
-    useDatastore: (datastore: any) => any;
+class Core {
+    private static _instance: Core;
+
+    public ds: any;
+    public dsModule: any;
+
+    private constructor() {
+        this.dsModule = require("@google-cloud/datastore");
+        console.dir(this.dsModule);
+        console.log(require.resolve("@google-cloud/datastore"));
+    }
+
+    public static get Instance() {
+        return this._instance || (this._instance = new this());
+    }
+
+    public setDatastore(datastore) {
+        this.ds = datastore;
+    }
 }
 
-export const PebblebedSingleton: IPebbleBedSingleton = {
+export const Pebblebed = {
+    useDatastore: (datastore: any) => {
+        Core.Instance.setDatastore(datastore);
+    },
+};
+
+/*export const PebblebedOld = {
     ds: null,
     useDatastore: (datastore: any) => {
         this.ds = datastore;
-    }
-};
+    },
+};*/
 
-export const Pebblebed = PebblebedSingleton;
+function checkDatastore(operation: string) {
+    if (Core.Instance.ds == null) {
+        throw new Error(`PEBBLEBED: ${operation} : Can't run operation without connecting to a datastore instance first - connect using Pebblebed.useDatastore( datastore )`);
+    }
+}
 
 export class PebblebedModel {
     private schema: SchemaDefinition;
@@ -74,19 +101,25 @@ export class PebblebedModel {
     }
 
     public save(data: object | object[]) {
+        checkDatastore("SAVE");
+
         return new DatastoreSave(this, data);
     }
 
     public load(ids?: string | number | Array<(string | number)>) {
+        checkDatastore("LOAD");
+
         return new DatastoreLoad(this, ids);
     }
 
     public query(): IDatastoreQuery {
+        checkDatastore("QUERY");
+
         const idProp = this.idProperty;
         const type = this.schema[this.idProperty].type;
         const hasIdProp = this.hasIdProperty;
 
-        const dsQuery = Pebblebed.ds.createQuery(this.kind);
+        const dsQuery = Core.Instance.ds.createQuery(this.kind);
 
         const runQuery = dsQuery.run.bind(dsQuery);
 
@@ -107,10 +140,14 @@ export class PebblebedModel {
     }
 
     public key(id: string|number): DatastoreEntityKey {
-        return Pebblebed.ds.key([this.kind, id]);
+        checkDatastore("CREATE KEY");
+
+        return Core.Instance.ds.key([this.kind, id]);
     }
 
     public delete(data?: object | object[]) {
+        checkDatastore("DELETE");
+
         return new DatastoreDelete(this, data);
     }
 
@@ -208,7 +245,7 @@ export class DatastoreLoad extends DatastoreOperation {
         const baseKey = this.getBaseKey();
 
         const loadKeys = this.loadIds.map((id) => {
-            return Pebblebed.ds.key(baseKey.concat([this.kind, id]));
+            return Core.Instance.ds.key(baseKey.concat([this.kind, id]));
         });
 
         let resp;
@@ -216,7 +253,7 @@ export class DatastoreLoad extends DatastoreOperation {
         if (this.transaction) {
             resp = await this.transaction.get(loadKeys);
         } else {
-            resp = await Pebblebed.ds.get(loadKeys);
+            resp = await Core.Instance.ds.get(loadKeys);
         }
 
         if (this.hasIdProperty && resp[0].length > 0) {
@@ -258,7 +295,7 @@ export class DatastoreSave extends DatastoreOperation {
         const entities = this.dataObjects.map((data) => {
             let setAncestors = baseKey;
             let id = null;
-            const keyPart = data[datastore.KEY];
+            const keyPart = data[Core.Instance.dsModule.KEY];
 
             if (this.hasIdProperty && data[this.idProperty] != null) {
                 switch (this.schema[this.idProperty].type) {
@@ -275,7 +312,7 @@ export class DatastoreSave extends DatastoreOperation {
                             throw new Error(`PEBBLEBED: SAVE ENTITY: ID Property [${this.idProperty}] is type [int] but value passed is not integer -> ${data[this.idProperty]}`);
                         }
 
-                        id = datastore.int(data[this.idProperty]);
+                        id = Core.Instance.dsModule.int(data[this.idProperty]);
                         break;
                     }
                     default:
@@ -285,7 +322,7 @@ export class DatastoreSave extends DatastoreOperation {
                 if (keyPart && keyPart.path && keyPart.path.length > 0 && keyPart.path.length % 2 === 0) {
                     console.dir(keyPart);
                     if (keyPart.hasOwnProperty("id")) {
-                        id = datastore.int(keyPart.id);
+                        id = Core.Instance.dsModule.int(keyPart.id);
                     } else {
                         id = keyPart.name;
                     }
@@ -312,7 +349,7 @@ export class DatastoreSave extends DatastoreOperation {
                 }
             }
 
-            const key = id ? Pebblebed.ds.key(setAncestors.concat([this.kind, id])) : Pebblebed.ds.key(setAncestors.concat([this.kind]));
+            const key = id ? Core.Instance.ds.key(setAncestors.concat([this.kind, id])) : Core.Instance.ds.key(setAncestors.concat([this.kind]));
 
             return {
                 key,
@@ -324,7 +361,7 @@ export class DatastoreSave extends DatastoreOperation {
             return this.transaction.save(entities);
         }
 
-        return Pebblebed.ds.save(entities);
+        return Core.Instance.ds.save(entities);
     }
 }
 
@@ -371,12 +408,12 @@ export class DatastoreDelete extends DatastoreOperation {
             for (const data of this.dataObjects) {
                 let setAncestors = baseKey;
                 let id = null;
-                const keyPart = data[datastore.KEY];
+                const keyPart = data[Core.Instance.dsModule.KEY];
 
                 if (this.hasIdProperty && data[this.idProperty] != null) {
                     if (this.schema[this.idProperty].type === "int") {
                         if (Number.isInteger(data[this.idProperty]) || /^\d+$/.test(data[this.idProperty])) {
-                            id = datastore.int(data[this.idProperty]);
+                            id = Core.Instance.dsModule.int(data[this.idProperty]);
                         } else {
                             throw new Error(`PEBBLEBED: DELETE ENTITY: ID property [${this.idProperty}] = "${data[this.idProperty]}" -> It should be an Integer type as defined in the schema.`);
                         }
@@ -389,7 +426,7 @@ export class DatastoreDelete extends DatastoreOperation {
                     }
                 } else if (keyPart != null) {
                     if (keyPart.hasOwnProperty("id")) {
-                        id = datastore.int(keyPart.id);
+                        id = Core.Instance.dsModule.int(keyPart.id);
                     } else {
                         id = keyPart.name;
                     }
@@ -408,11 +445,11 @@ export class DatastoreDelete extends DatastoreOperation {
                     }
                 }
 
-                deleteKeys.push(Pebblebed.ds.key(setAncestors.concat([this.kind, id])));
+                deleteKeys.push(Core.Instance.ds.key(setAncestors.concat([this.kind, id])));
             }
         } else {
             deleteKeys = this.deleteIds.map((id) => {
-                return Pebblebed.ds.key(baseKey.concat([this.kind, id]));
+                return Core.Instance.ds.key(baseKey.concat([this.kind, id]));
             });
         }
 
@@ -423,25 +460,25 @@ export class DatastoreDelete extends DatastoreOperation {
             return this.transaction.delete(deleteKeys);
         }
 
-        return Pebblebed.ds.delete(deleteKeys);
+        return Core.Instance.ds.delete(deleteKeys);
     }
 }
 
 function augmentEntitiesWithIdProperties(respArray: any[], idProperty: string, type: string) {
     for (const entity of respArray) {
-        if (entity[datastore.KEY].hasOwnProperty("id")) {
+        if (entity[Object.getOwnPropertySymbols(entity)[0]].hasOwnProperty("id")) {
             if (type === "int") {
-                entity[idProperty] = entity[datastore.KEY].id;
+                entity[idProperty] = entity[Core.Instance.dsModule.KEY].id;
             } else {
-                console.warn(warnMessageSchemaIdType("int", "string", idProperty, entity[datastore.KEY].id));
+                console.warn(warnMessageSchemaIdType("int", "string", idProperty, entity[Core.Instance.dsModule.KEY].id));
             }
         }
 
-        if (entity[datastore.KEY].hasOwnProperty("name")) {
+        if (entity[Core.Instance.dsModule.KEY].hasOwnProperty("name")) {
             if (type === "string") {
-                entity[idProperty] = entity[datastore.KEY].name;
+                entity[idProperty] = entity[Core.Instance.dsModule.KEY].name;
             } else {
-                console.warn(warnMessageSchemaIdType("string", "int", idProperty, entity[datastore.KEY].name));
+                console.warn(warnMessageSchemaIdType("string", "int", idProperty, entity[Core.Instance.dsModule.KEY].name));
             }
         }
     }
@@ -465,10 +502,10 @@ function convertToType(value: any, type: string) {
             return value.toString();
         }
         case "int": {
-            return datastore.int(value);
+            return Core.Instance.dsModule.int(value);
         }
         case "double": {
-            return datastore.double(value);
+            return Core.Instance.dsModule.double(value);
         }
         case "datetime": {
             if (Object.prototype.toString.call(value) === '[object Date]') {
@@ -478,7 +515,7 @@ function convertToType(value: any, type: string) {
             }
         }
         case "geoPoint": {
-            return datastore.geoPoint(value);
+            return Core.Instance.dsModule.geoPoint(value);
         }
         case "array":
         case "boolean":

@@ -37,12 +37,9 @@ export interface IDatastoreQuery {
     select(property: string | string[]): IDatastoreQuery;
     run(): Promise<DatastoreQueryResponse>;
 }
-export interface IPebbleBedSingleton {
-    ds: any;
-    useDatastore: (datastore: any) => any;
-}
-export declare const PebblebedSingleton: IPebbleBedSingleton;
-export declare const Pebblebed: IPebbleBedSingleton;
+export declare const Pebblebed: {
+    useDatastore: (datastore: any) => void;
+};
 export declare class PebblebedModel {
     private schema;
     private kind;
