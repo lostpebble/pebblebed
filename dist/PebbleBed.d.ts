@@ -44,6 +44,7 @@ export declare class PebblebedModel {
     private schema;
     private kind;
     private idProperty;
+    private idType;
     private hasIdProperty;
     constructor(entityKind: string, entitySchema: SchemaDefinition);
     save(data: object | object[]): DatastoreSave;
@@ -54,12 +55,14 @@ export declare class PebblebedModel {
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition;
     readonly entityIdProperty: string;
+    readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
 }
 export declare class DatastoreOperation {
     protected kind: string;
     protected schema: SchemaDefinition;
     protected idProperty: string;
+    protected idType: string;
     protected hasIdProperty: boolean;
     protected namespace: string;
     protected ancestors: Array<[string, string | number]>;

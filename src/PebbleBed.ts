@@ -1,6 +1,4 @@
-// import * as _ from "lodash";
-// import * as datastore from "@google-cloud/datastore";
-import {warnMessageSchemaIdType} from "./ErrorMessages";
+import {ErrorMessages} from "./ErrorMessages";
 
 export interface SchemaDefinition {
     [property: string]: SchemaPropertyDefinition;
@@ -51,9 +49,15 @@ class Core {
     public dsModule: any;
 
     private constructor() {
-        this.dsModule = require("@google-cloud/datastore");
-        console.dir(this.dsModule);
-        console.log(require.resolve("@google-cloud/datastore"));
+        try {
+            this.dsModule = require("@google-cloud/datastore");
+        } catch (e) {
+            if (e.code === "MODULE_NOT_FOUND") {
+                throw new Error(ErrorMessages.NO_GOOGLE_CLOUD_DEPENDENCY);
+            }
+
+            throw e;
+        }
     }
 
     public static get Instance() {
@@ -71,16 +75,9 @@ export const Pebblebed = {
     },
 };
 
-/*export const PebblebedOld = {
-    ds: null,
-    useDatastore: (datastore: any) => {
-        this.ds = datastore;
-    },
-};*/
-
 function checkDatastore(operation: string) {
     if (Core.Instance.ds == null) {
-        throw new Error(`PEBBLEBED: ${operation} : Can't run operation without connecting to a datastore instance first - connect using Pebblebed.useDatastore( datastore )`);
+        throw new Error();
     }
 }
 
@@ -88,12 +85,14 @@ export class PebblebedModel {
     private schema: SchemaDefinition;
     private kind: string;
     private idProperty: string;
+    private idType: string;
     private hasIdProperty = false;
 
     constructor(entityKind: string, entitySchema: SchemaDefinition) {
         this.schema = entitySchema;
         this.kind = entityKind;
         this.idProperty = getIdPropertyFromSchema(entitySchema);
+        this.idType = this.schema[this.idProperty].type;
 
         if (this.idProperty != null) {
             this.hasIdProperty = true;
@@ -117,6 +116,7 @@ export class PebblebedModel {
 
         const idProp = this.idProperty;
         const type = this.schema[this.idProperty].type;
+        const kind = this.kind;
         const hasIdProp = this.hasIdProperty;
 
         const dsQuery = Core.Instance.ds.createQuery(this.kind);
@@ -128,7 +128,7 @@ export class PebblebedModel {
                 const data = await runQuery();
 
                 if (hasIdProp && data[0].length > 0) {
-                    augmentEntitiesWithIdProperties(data[0], idProp, type);
+                    augmentEntitiesWithIdProperties(data[0], idProp, type, kind);
                 }
 
                 return {
@@ -163,6 +163,10 @@ export class PebblebedModel {
         return this.idProperty;
     }
 
+    public get entityIdType() {
+        return this.idType;
+    }
+
     public get entityHasIdProperty() {
         return this.hasIdProperty;
     }
@@ -172,6 +176,7 @@ export class DatastoreOperation {
     protected kind: string;
     protected schema: SchemaDefinition;
     protected idProperty: string;
+    protected idType: string;
     protected hasIdProperty = false;
     protected namespace = "";
     protected ancestors: Array<[string, string | number]> = [];
@@ -181,6 +186,7 @@ export class DatastoreOperation {
         this.kind = model.entityKind;
         this.schema = model.entitySchema;
         this.idProperty = model.entityIdProperty;
+        this.idType = model.entityIdType;
         this.hasIdProperty = model.entityHasIdProperty;
     }
 
@@ -257,7 +263,7 @@ export class DatastoreLoad extends DatastoreOperation {
         }
 
         if (this.hasIdProperty && resp[0].length > 0) {
-            augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.schema[this.idProperty].type);
+            augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.schema[this.idProperty].type, this.kind);
         }
 
         return resp[0];
@@ -298,10 +304,11 @@ export class DatastoreSave extends DatastoreOperation {
             const keyPart = data[Core.Instance.dsModule.KEY];
 
             if (this.hasIdProperty && data[this.idProperty] != null) {
-                switch (this.schema[this.idProperty].type) {
+                switch (this.idType) {
                     case "string": {
                         if (typeof data[this.idProperty] !== "string") {
-                            throw new Error(`PEBBLEBED: SAVE ENTITY: ID Property [${this.idProperty}] is type [string] but value passed is not string -> ${data[this.idProperty]}`);
+                            throw new Error(ErrorMessages.SAVE_WRONG_ID_TYPE(this.kind, "string", this.idProperty, data[this.idProperty]));
+                            // throw new Error(`PEBBLEBED: SAVE ENTITY: ID Property [${this.idProperty}] is type [string] but value passed is not string -> ${data[this.idProperty]}`);
                         }
 
                         id = data[this.idProperty];
@@ -464,13 +471,13 @@ export class DatastoreDelete extends DatastoreOperation {
     }
 }
 
-function augmentEntitiesWithIdProperties(respArray: any[], idProperty: string, type: string) {
+function augmentEntitiesWithIdProperties(respArray: any[], idProperty: string, type: string, kind: string) {
     for (const entity of respArray) {
         if (entity[Object.getOwnPropertySymbols(entity)[0]].hasOwnProperty("id")) {
             if (type === "int") {
                 entity[idProperty] = entity[Core.Instance.dsModule.KEY].id;
             } else {
-                console.warn(warnMessageSchemaIdType("int", "string", idProperty, entity[Core.Instance.dsModule.KEY].id));
+                console.warn(ErrorMessages.WRONG_SCHEMA_ID_TYPE(kind, "int", "string", idProperty, entity[Core.Instance.dsModule.KEY].id));
             }
         }
 
@@ -478,7 +485,7 @@ function augmentEntitiesWithIdProperties(respArray: any[], idProperty: string, t
             if (type === "string") {
                 entity[idProperty] = entity[Core.Instance.dsModule.KEY].name;
             } else {
-                console.warn(warnMessageSchemaIdType("string", "int", idProperty, entity[Core.Instance.dsModule.KEY].name));
+                console.warn(ErrorMessages.WRONG_SCHEMA_ID_TYPE(kind, "string", "int", idProperty, entity[Core.Instance.dsModule.KEY].name));
             }
         }
     }
