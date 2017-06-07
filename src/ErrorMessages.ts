@@ -90,7 +90,15 @@ First element and every second one after it needs to be of type PebblebedModel o
 
   123 and "idstring" in the above example represent the ids for the ancestors
   TestEntityModel is a created PebblebedModel and "AnotherEntityKind" is a string - they represent the kinds of the ancestors`
-  )
+  );
+}
+
+function SCHEMA_REQUIRED_TYPE_MISSING(property: string, kind: string) {
+  return message(
+    `On Save Error: Property [${property}] is required on datastore entity [${kind
+      ? kind
+      : ""}] - as defined in the Schema`
+  );
 }
 
 export const ErrorMessages = {
@@ -100,6 +108,7 @@ export const ErrorMessages = {
   DELETE_NO_DATA_IDS_ERROR: message(
     `DELETE ENTITY: No ID set on entities passed to delete operation.`
   ),
+  SCHEMA_REQUIRED_TYPE_MISSING,
   INCORRECT_ANCESTOR_KIND,
   OPERATION_CHANGED_ANCESTORS_WARNING,
   OPERATION_MISSING_ID_ERROR,

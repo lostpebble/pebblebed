@@ -668,10 +668,14 @@ function dataArrayFromSchema(
           });
         } else if (schemaProp.required) {
           throw new Error(
-            `PEBBLEBED: SCHEMA ERROR: Property ${property} is required on datastore entity ${entityKind
-              ? entityKind
-              : ""}`
+            ErrorMessages.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind)
           );
+
+          /*
+          * `PEBBLEBED: SCHEMA ERROR: Property ${property} is required on datastore entity ${entityKind
+           ? entityKind
+           : ""}`
+          * */
         } else {
           dataArray.push({
             name: property,

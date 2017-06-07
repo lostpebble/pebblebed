@@ -108,9 +108,9 @@ Our JavaScript entity objects can contain certain types which are converted by o
 
 ### :key: Entity ID
 
-There can only be one property on the schema definition that is defined with `role: "id"` - this property represents the Entity's ID.
+There can only be one property on the schema definition that is defined with `role: "id"`. This property will represent the Entity's ID.
 
-:warning: **N.B. This property is not persisted as an Entity property - it is only used as the ID**
+:warning: **N.B. This property is not persisted as an Entity property in the Datastore - it is only used as the ID**
 
 When saving an entity to the datastore, it can have an id value type of either `string` or `int`.
 
@@ -120,8 +120,6 @@ When saving an entity to the datastore, it can have an id value type of either `
 * It will contain the string or integer ID of the entity whenever it is **loaded** or **queried**
 * It should also be set to whatever ID you would like for the entity when you **save** it (or if it is an `int`, can be left unset to auto-generate an ID).
 
-:warning:
-
 If there is no property in the schema definition which has a `role: "id"` set, then the ID will be auto-generated on save. For ease of use and better control, **this is not recommended though** (even if all your ids are auto-generated).
 
 ### An example schema definition might look like this:
@@ -130,16 +128,15 @@ const schemaDefinition = {
     testId: {
         type: "string",
         role: "id",
-        required: false,
     },
-    amount: {
+    testAmount: {
         type: "double",
     },
-    tags: {
+    testTags: {
         type: "array",
         required: true,
     },
-    embeddedObject: {
+    testEmbeddedObject: {
         type: "object",
         required: true,
         excludeFromIndexes: true,
@@ -151,4 +148,44 @@ const schemaDefinition = {
 };
 ```
 
-This creates an entity with 4 properties: `amount`, `tags`, `embeddedObject`, `testDate`
+This defines an entity with a `string` ID on property `testId`, 
+
+Along with four properties to be persisted in the datastore:
+* `testAmount` _(optional)_
+* `testTags`
+* `testEmbeddedObject`
+* `testDate`
+
+## Create an Entity Model
+
+Entity Models are used to do all our interactions with the Datastore. They are created using the structure defined in your schema and allow operations on your Entities such as load, save or query.
+
+They are very simply created like so:
+
+```
+import { PebblebedModel } from "pebblebed";
+
+const TestEntityModel = new PebblebedModel("TestEntity", schemaDefinition);
+```
+
+In this example, `TestEntity` will be the entity's kind in the Datastore
+
+After which, you can now use that model to perform operations like so (save operation for example):
+
+```
+const entity = {
+  testID: "test-id-one",
+  testTags: ["Great", "Again"],
+  testEmbeddedObject: {
+    who: "let the dogs out",
+  },
+  testDate: new Date(),
+  testAmount: 123.123,
+};
+
+await TestEntityModel.save(entity).run();
+```
+
+This will validate and convert all the entity data from the JavaScript object according to our schema, and save the entity in the Datastore as a `TestEntity` kind with the id `test-id-one`, it would end up like this in your Cloud Datastore Console:
+
+![Google Cloud Console view](https://github.com/lostpebble/pebblebed/raw/master/resources/entity-save-console.png "Google Cloud Console view")
