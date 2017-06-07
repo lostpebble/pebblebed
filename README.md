@@ -188,4 +188,6 @@ await TestEntityModel.save(entity).run();
 
 This will validate and convert all the entity data from the JavaScript object according to our schema, and save the entity in the Datastore as a `TestEntity` kind with the id `test-id-one`, it would end up like this in your Cloud Datastore Console:
 
-![Google Cloud Console view](https://github.com/lostpebble/pebblebed/raw/master/resources/entity-save-console.png "Google Cloud Console view")
+![Google Cloud Console view](https://github.com/lostpebble/pebblebed/raw/master/resources/entity-save-console.jpg "Google Cloud Console view")
+
+**Note that the `testID` property has been used as the ID, and NOT persisted as a property**
