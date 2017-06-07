@@ -1,3 +1,4 @@
+![Pebblebed Logo - a very literal interpretation](https://github.com/lostpebble/pebblebed/raw/master/pebblebed.png "a very literal interpretation")
 # Pebblebed
 #### A simple interface for interacting with the Google Cloud Datastore
 Using NodeJS and on top of with Google's official [`@google-cloud/datastore`](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) library.
@@ -15,7 +16,14 @@ Using NodeJS and on top of with Google's official [`@google-cloud/datastore`](ht
 
 ## Getting Started
 
-
+##### Install the `pebblebed` package in your project:
+```
+yarn add pebblebed
+```
+or
+```
+npm install --save pebblebed
+```
 
 ##### :electric_plug: Connecting client to Pebblebed
 
@@ -53,7 +61,7 @@ const datastoreClient = datastore({
 * :hammer: Generate a model from that schema
 * :blossom: Save, Load or Query on that entity
 
-### Creating an Entity schema
+## Creating an Entity schema
 
 Inspired by another Datastore library (gstore-node), we need to create schemas to let Pebblebed know how our entities are structured. Because JavaScript is weakly typed, this ensures that we make no mistakes about what we intend to save / load / query.
 
@@ -81,7 +89,7 @@ interface SchemaPropertyDefinition {
 
 Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
 
-##### `type` : The type of the value to be stored in the datastore for this property
+#### `type` : The type of the value to be stored in the datastore for this property
 
 Our JavaScript entity objects can contain certain types which are converted by our schema on storage / retrieval from the Datastore:
   * `string`, `int`, `double`, `boolean`, `array` - self explanatory
@@ -94,9 +102,9 @@ Our JavaScript entity objects can contain certain types which are converted by o
 
 
 
-##### `role` : Define which property is our entity `id` (see next)
+#### `role` : Define which property is our entity `id` (see next)
 
-#### :key: Entity ID
+### :key: Entity ID
 
 There can only be one property on the schema definition that is defined with `role: "id"` - this property represents the Entity's ID.
 
@@ -114,7 +122,7 @@ When saving an entity to the datastore, it can have an id value type of either `
 
 If there is no property in the schema definition which has a `role: "id"` set, then the ID will be auto-generated on save. For ease of use and better control, **this is not recommended though** (even if all your ids are auto-generated).
 
-##### An example schema definition might look like this:
+### An example schema definition might look like this:
 ```
 const schemaDefinition = {
     testId: {
