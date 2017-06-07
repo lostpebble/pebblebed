@@ -1,7 +1,9 @@
-![Pebblebed Logo - a very literal interpretation](https://github.com/lostpebble/pebblebed/raw/master/pebblebed.png "a very literal interpretation")
 # Pebblebed
+
+![Pebblebed Logo - a very literal interpretation](https://github.com/lostpebble/pebblebed/raw/master/pebblebed.png "a very literal interpretation")
+
 #### A simple interface for interacting with the Google Cloud Datastore
-Using NodeJS and on top of with Google's official [`@google-cloud/datastore`](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) library.
+Using NodeJS and on top of Google's official [`@google-cloud/datastore`](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) library.
 
 ##### Prerequisites
 
