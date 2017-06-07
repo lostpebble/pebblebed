@@ -49,9 +49,9 @@ const datastoreClient = datastore({
 
 #### Next steps
 
-* Create a schema for an entity
-* Generate a model from that schema
-* Save, Load or Query on that entity
+* :scroll: Create a schema for an entity
+* :hammer: Generate a model from that schema
+* :blossom: Save, Load or Query on that entity
 
 ### Creating an Entity schema
 
