@@ -19,7 +19,7 @@ export interface SchemaPropertyDefinition {
   excludeFromIndexes?: boolean;
   optional?: boolean;
   onSave?: (value: any) => any;
-  "default"?: any;
+  default?: any;
 }
 
 export interface DatastoreEntityKey {
