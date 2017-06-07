@@ -104,16 +104,17 @@ export class PebblebedModel {
     this.schema = entitySchema;
     this.kind = entityKind;
     this.idProperty = getIdPropertyFromSchema(entitySchema);
-    this.idType = this.schema[this.idProperty].type;
-
-    if (this.idType !== "string" && this.idType !== "int") {
-      throw new Error(
-        ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL")
-      );
-    }
 
     if (this.idProperty != null) {
       this.hasIdProperty = true;
+
+      this.idType = this.schema[this.idProperty].type;
+
+      if (this.idType !== "string" && this.idType !== "int") {
+        throw new Error(
+            ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL")
+        );
+      }
     }
   }
 
@@ -133,9 +134,9 @@ export class PebblebedModel {
     checkDatastore("QUERY");
 
     const idProp = this.idProperty;
-    const type = this.schema[this.idProperty].type;
     const kind = this.kind;
     const hasIdProp = this.hasIdProperty;
+    const type = hasIdProp ? this.schema[this.idProperty].type : null;
 
     const dsQuery = namespace != null ?
         Core.Instance.ds.createQuery(namespace, this.kind) :
@@ -616,6 +617,11 @@ function convertToType(value: any, type: string) {
       }
     }
     case "geoPoint": {
+      if (value && value.value != null) {
+        // This is the structure of the GeoPoint object
+        return Core.Instance.dsModule.geoPoint(value.value);
+      }
+
       return Core.Instance.dsModule.geoPoint(value);
     }
     case "array":

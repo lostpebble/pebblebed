@@ -17,7 +17,7 @@ Using NodeJS and on top of with Google's official [`@google-cloud/datastore`](ht
 
 
 
-##### Connecting client to Pebblebed
+##### :electric_plug: Connecting client to Pebblebed
 
 ```
 // Using example from Datastore documentation
@@ -69,15 +69,7 @@ And the **schema property definition** interface:
 
 ```
 interface SchemaPropertyDefinition {
-  type:
-    | "string"
-    | "int"
-    | "double"
-    | "boolean"
-    | "datetime"
-    | "array"
-    | "object"
-    | "geoPoint";
+  type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
   required?: boolean;
   role?: "id";
   excludeFromIndexes?: boolean;
@@ -87,7 +79,24 @@ interface SchemaPropertyDefinition {
 }
 ```
 
-#### Entity ID
+Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
+
+##### `type` : The type of the value to be stored in the datastore for this property
+
+Our JavaScript entity objects can contain certain types which are converted by our schema on storage / retrieval from the Datastore:
+  * `string`, `int`, `double`, `boolean`, `array` - self explanatory
+  * `datetime` converted to / from JavaScript `Date` object
+  * `object` for embedded JavaScript objects
+  * `geoPoint` 
+    * Will be automatically converted to / from an object with a structure of:
+      * `{ latitude: number, longitude: number }`
+    * Can be deliberately set to datastore type `geoPoint` using the client library before save if you want
+
+
+
+##### `role` : Define which property is our entity `id` (see next)
+
+#### :key: Entity ID
 
 When saving an entity to the datastore, it can have an id value of either `string` or `int`.
 
@@ -99,7 +108,7 @@ There can only be one property on the schema definition that is defined with `ro
 * It will contain the string or integer ID of the entity whenever it is **loaded** or **queried**
 * It should also be set to whatever ID you would like for the entity when you **save** it (or if it is an `int`, can be left unset to auto-generate an ID).
 
-If there is no property in the schema definition which has a `role: "id"` set, then the ID will be auto-generated on save.
+:warning: If there is no property in the schema definition which has a `role: "id"` set, then the ID will be auto-generated on save. For ease of use and better control, **this is not recommended though** (even if all your ids are auto-generated).
 
 ##### An example schema definition might look like this:
 ```
