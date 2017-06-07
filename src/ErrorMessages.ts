@@ -40,7 +40,9 @@ function OPERATION_CHANGED_ANCESTORS_WARNING(
 ${prevAncestors}
 
 >>> ${operation} operation being performed on entity, with different, deliberately set ancestor path:
-${nextAncestors}`
+${nextAncestors}
+
+(to prevent this warning use ignoreDetectedAncestors() on this ${operation} operation)`
   );
 }
 
@@ -79,6 +81,18 @@ function OPERATION_DATA_ID_TYPE_ERROR(
   );
 }
 
+function INCORRECT_ANCESTOR_KIND(model: PebblebedModel) {
+  return message(
+    `Operation on entity [${model.entityKind}]: withAncestors() not set correctly.  
+First element and every second one after it needs to be of type PebblebedModel or a string to represent the Ancestor kind. e.g:
+
+---> withAncestors(TestEntityModel, 123, "AnotherEntityKind", "idstring")
+
+  123 and "idstring" in the above example represent the ids for the ancestors
+  TestEntityModel is a created PebblebedModel and "AnotherEntityKind" is a string - they represent the kinds of the ancestors`
+  )
+}
+
 export const ErrorMessages = {
   NO_GOOGLE_CLOUD_DEPENDENCY: message(
     `Pebblebed requires a peerDependency of @google-cloud/datastore - please make sure that you have this dependency installed in your project`
@@ -86,6 +100,7 @@ export const ErrorMessages = {
   DELETE_NO_DATA_IDS_ERROR: message(
     `DELETE ENTITY: No ID set on entities passed to delete operation.`
   ),
+  INCORRECT_ANCESTOR_KIND,
   OPERATION_CHANGED_ANCESTORS_WARNING,
   OPERATION_MISSING_ID_ERROR,
   OPERATION_DATA_ID_TYPE_ERROR,

@@ -82,7 +82,7 @@ class Core {
 }
 
 export const Pebblebed = {
-  useDatastore: (datastore: any) => {
+  connectDatastore: (datastore: any) => {
     Core.Instance.setDatastore(datastore);
   },
 };
@@ -216,8 +216,13 @@ export class DatastoreOperation {
     this.ancestors = [];
 
     for (let i = 0; i < args.length; i += 2) {
-      const model: PebblebedModel = args[i];
-      this.ancestors.push([model.entityKind, args[i + 1]]);
+      if (typeof args[i] === "string") {
+        this.ancestors.push([args[i], args[i + 1]]);
+      } else if (typeof args[i].entityKind === "string") {
+        this.ancestors.push([args[i].entityKind, args[i + 1]]);
+      } else {
+        throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(this.model))
+      }
     }
     return this;
   }
