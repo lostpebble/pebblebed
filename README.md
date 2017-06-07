@@ -125,7 +125,7 @@ If there is no property in the schema definition which has a `role: "id"` set, t
 ### An example schema definition might look like this:
 ```
 const schemaDefinition = {
-    testId: {
+    testID: {
         type: "string",
         role: "id",
     },
@@ -170,7 +170,7 @@ const TestEntityModel = new PebblebedModel("TestEntity", schemaDefinition);
 
 In this example, `TestEntity` will be the entity's kind in the Datastore
 
-After which, you can now use that model to perform operations like so (save operation for example):
+After which, you can now use that model to perform operations like so (**save** operation for example):
 
 ```
 const entity = {
@@ -191,3 +191,105 @@ This will validate and convert all the entity data from the JavaScript object ac
 ![Google Cloud Console view](https://github.com/lostpebble/pebblebed/raw/master/resources/entity-save-console.jpg "Google Cloud Console view")
 
 **Note that the `testID` property has been used as the ID, and NOT persisted as a property**
+
+This entity can later be retrieved from the Datastore using a **query** or a **load** operation, like so:
+
+```
+const query = await TestEntityModel.query().filter("testTags", "=", "Great").run();
+const entity = await TestEntityModel.load("test-id-one").run();
+
+console.dir(JSON.stringify(query.entities));
+console.dir(JSON.stringify(entity));
+```
+
+Both of those `console.dir` outputs will show the following (neatened up a bit):
+```
+[
+  {
+    "testDate": "2017-06-07T15:52:14.109Z",
+    "testEmbeddedObject": {"who":"let the dogs out"},
+    "testTags": ["Great","Again"],
+    "testAmount":123.123,
+    "testID":"test-id-one"
+  }
+]
+```
+
+In this example, an array with a single element.
+
+All load or query operations will return an array in this way to represent results. An empty array indicates no results. The property `testDate` is an actual JavaScript `Date` object, but in our `console.dir()` has been converted to a string by `JSON.stringify()`.
+
+## Full example
+
+```
+import { PebblebedModel } from "pebblebed";
+
+// Create a schema for an entity
+
+const schemaDefinition = {
+    testID: {
+        type: "string",
+        role: "id",
+    },
+    testAmount: {
+        type: "double",
+    },
+    testTags: {
+        type: "array",
+        required: true,
+    },
+    testEmbeddedObject: {
+        type: "object",
+        required: true,
+        excludeFromIndexes: true,
+    },
+    testDate: {
+        type: "datetime",
+        required: true,
+    },
+};
+
+// Create the model for our entity, of kind "TestEntity"
+
+const TestEntityModel = new PebblebedModel("TestEntity", schemaDefinition);
+
+// Create a new entity and save it
+
+const entity = {
+  testID: "test-id-one",
+  testTags: ["Great", "Again"],
+  testEmbeddedObject: {
+    who: "let the dogs out",
+  },
+  testDate: new Date(),
+  testAmount: 123.123,
+};
+
+await TestEntityModel.save(entity).run();
+```
+
+###### _After some time_
+
+```
+// Query for our entity by tag
+const query = await TestEntityModel.query().filter("testTags", "=", "Great").run();
+
+// Or load our entity directly with its string ID
+const entity = await TestEntityModel.load("test-id-one").run();
+
+// ...do work on entity...
+entity.testAmount = 35.50;
+
+// save it again
+await TestEntityModel.save(entity).run();
+```
+
+###### _After some time_
+
+```
+// Delete the unwanted entity
+await TestEntityModel.delete().id("test-id-one").run();
+```
+
+## Full library interface
+
