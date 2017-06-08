@@ -379,7 +379,15 @@ useTransaction(transaction: any)
 useNamespace(namespace: string)
 ```
 
-**In addition to specific methods on each:**
+`withAncestors()` : Pass in an array for ancestors **e.g.**
+
+```
+withAncestors(TestEntityModel, 123, "AnotherEntityKind", "idstring")
+```
+
+`123` and `"idstring"` in the above example represent the IDs for the ancestors. `TestEntityModel` is a `PebblebedModel` and `"AnotherEntityKind"` is a string - they represent the kinds of the ancestors.
+
+#### **In addition to specific functions on each:**
 
 ### Saving entities
 ```
@@ -464,6 +472,8 @@ order(property: string, options?: {
 });
 
 hasAncestor(ancestorKey: DatastoreEntityKey);
+//  ---    OR    ---
+withAncestors(...args: any[]);
 
 end(cursorToken: string);
 
@@ -475,6 +485,14 @@ start(nextPageCursor: any);
 
 select(property: string | string[]);
 ```
+
+To get a key for `ancestorKey`, you can use the `key()` method defined on the Model for that ancestor e.g.:
+
+```
+hasAncestor(AncestorEntityModel.key("test-id"));
+```
+
+**:herb: A method for convenience has been added `withAncestors()` which is in line with the rest of the Pebblebed library operations**
 
 Upon running a Query, the result will be returned with the following interface:
 

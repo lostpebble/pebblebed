@@ -45,6 +45,7 @@ export interface DatastoreQuery {
     value: string | number | boolean | Date
   ): DatastoreQuery;
   order(property: string, options?: { descending: boolean }): DatastoreQuery;
+  withAncestors(...args: any[]): DatastoreQuery;
   hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery;
   end(cursorToken: string): DatastoreQuery;
   limit(amount: number): DatastoreQuery;
@@ -133,6 +134,7 @@ export class PebblebedModel {
   public query(namespace: string = null): DatastoreQuery {
     checkDatastore("QUERY");
 
+    const model = this;
     const idProp = this.idProperty;
     const kind = this.kind;
     const hasIdProp = this.hasIdProperty;
@@ -145,6 +147,13 @@ export class PebblebedModel {
     const runQuery = dsQuery.run.bind(dsQuery);
 
     return Object.assign(dsQuery, {
+      withAncestors(...args: any[]): DatastoreQuery {
+        const ancestors = extractAncestorPaths(model, ...args);
+
+        this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
+
+        return this;
+      },
       async run(): Promise<DatastoreQueryResponse> {
         const data = await runQuery();
 
@@ -193,6 +202,22 @@ export class PebblebedModel {
   }
 }
 
+function extractAncestorPaths(model, ...args: any[]) {
+  let ancestors = [];
+
+  for (let i = 0; i < args.length; i += 2) {
+    if (typeof args[i] === "string") {
+      ancestors.push([args[i], args[i + 1]]);
+    } else if (typeof args[i].entityKind === "string") {
+      ancestors.push([args[i].entityKind, args[i + 1]]);
+    } else {
+      throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(model))
+    }
+  }
+
+  return ancestors;
+}
+
 export class DatastoreOperation {
   protected model: PebblebedModel;
   protected kind: string;
@@ -214,17 +239,7 @@ export class DatastoreOperation {
   }
 
   public withAncestors(...args: any[]) {
-    this.ancestors = [];
-
-    for (let i = 0; i < args.length; i += 2) {
-      if (typeof args[i] === "string") {
-        this.ancestors.push([args[i], args[i + 1]]);
-      } else if (typeof args[i].entityKind === "string") {
-        this.ancestors.push([args[i].entityKind, args[i + 1]]);
-      } else {
-        throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(this.model))
-      }
-    }
+    this.ancestors = extractAncestorPaths(this.model, ...args);
     return this;
   }
 
