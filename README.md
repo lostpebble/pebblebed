@@ -138,7 +138,7 @@ await TestEntityModel.save(entity).run();
 await TestEntityModel.delete().id("test-id-one").run();
 ```
 
-## Creating an Entity schema
+## :scroll: Creating an Entity schema
 
 Inspired by another Datastore library ([gstore-node](https://github.com/sebelga/gstore-node)), we need to create schemas to let Pebblebed know how our entities are structured. Because JavaScript is weakly typed, this ensures that we make no mistakes about what we intend to save / load / query.
 
@@ -255,7 +255,7 @@ Along with four properties to be persisted in the datastore:
 * `testEmbeddedObject`
 * `testDate`
 
-## Create an Entity Model
+## :hammer: Create an Entity Model
 
 Entity Models are used to do all our interactions with the Datastore. They are created using the structure defined in your schema and allow operations on your Entities such as load, save or query.
 
@@ -341,7 +341,7 @@ new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
 const TestEnityModel = new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
 ```
 
-### Datastore Operations
+### :blossom: Datastore Operations
 
 A Datastore operation is enacted through the Models of your entities. You create the operation on the Model using a function, one of these:
 
@@ -414,7 +414,7 @@ On starting a load operation you must pass in the the string or integer IDs you 
 
 #### `DatastoreLoad` allows further functions to describe the operation:
 
-None required :grin:
+None required :relaxed:
 
 ### Deleting entities
 
