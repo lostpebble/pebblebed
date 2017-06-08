@@ -4,6 +4,7 @@
 
 ### A simple interface for interacting with the Google Cloud Datastore
 Using NodeJS and on top of Google's official [`@google-cloud/datastore`](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) library.
+Heavily inspired by the Java library serving the same purpose, [Objectify](https://github.com/objectify/objectify).
 
 #### Prerequisites
 
@@ -63,9 +64,83 @@ const datastoreClient = datastore({
 * :hammer: Generate a model from that schema
 * :blossom: Save, Load or Query on that entity
 
+## A quick taster (example) of how it works
+
+```
+import { PebblebedModel } from "pebblebed";
+
+// Create a schema for an entity
+
+const schemaDefinition = {
+    testID: {
+        type: "string",
+        role: "id",
+    },
+    testAmount: {
+        type: "double",
+    },
+    testTags: {
+        type: "array",
+        required: true,
+    },
+    testEmbeddedObject: {
+        type: "object",
+        required: true,
+        excludeFromIndexes: true,
+    },
+    testDate: {
+        type: "datetime",
+        required: true,
+    },
+};
+
+// Create the model for our entity, of kind "TestEntity", using the schema
+
+const TestEntityModel = new PebblebedModel("TestEntity", schemaDefinition);
+
+// Create an entity object
+
+const entity = {
+  testID: "test-id-one",
+  testTags: ["Great", "Again"],
+  testEmbeddedObject: {
+    who: "let the dogs out",
+  },
+  testDate: new Date(),
+  testAmount: 123.123,
+};
+
+// Save it
+
+await TestEntityModel.save(entity).run();
+```
+
+###### _After some time_
+
+```
+// Query for our entity by tag
+const query = await TestEntityModel.query().filter("testTags", "=", "Great").run();
+
+// OR load our entity directly with its string ID
+const entity = await TestEntityModel.load("test-id-one").run();
+
+// ...do work on entity...
+entity.testAmount = 35.50;
+
+// save it again
+await TestEntityModel.save(entity).run();
+```
+
+###### _After some time_
+
+```
+// Delete the unwanted entity
+await TestEntityModel.delete().id("test-id-one").run();
+```
+
 ## Creating an Entity schema
 
-Inspired by another Datastore library (gstore-node), we need to create schemas to let Pebblebed know how our entities are structured. Because JavaScript is weakly typed, this ensures that we make no mistakes about what we intend to save / load / query.
+Inspired by another Datastore library ([gstore-node](https://github.com/sebelga/gstore-node)), we need to create schemas to let Pebblebed know how our entities are structured. Because JavaScript is weakly typed, this ensures that we make no mistakes about what we intend to save / load / query.
 
 A **schema definition** consists of an object of property names and definitions for each of those properties, conforming to this interface:
 
@@ -74,8 +149,6 @@ interface SchemaDefinition {
   [property: string]: SchemaPropertyDefinition;
 }
 ```
-
-And the **schema property definition** interface:
 
 ```
 interface SchemaPropertyDefinition {
@@ -91,20 +164,46 @@ interface SchemaPropertyDefinition {
 
 Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
 
-#### `type` : The type of the value to be stored in the datastore for this property
+#### `type`: string
+The type of value to be stored in the datastore for this property.
 
 Our JavaScript entity objects can contain certain types which are converted by our schema on storage / retrieval from the Datastore:
   * `string`, `int`, `double`, `boolean`, `array` - self explanatory
   * `datetime` converted to / from JavaScript `Date` object
-  * `object` for embedded JavaScript objects
+  * `object` for embedded objects (converted to / from JavaScript objects)
   * `geoPoint` 
     * Will be automatically converted to / from an object with a structure of:
       * `{ latitude: number, longitude: number }`
     * Can be deliberately set to datastore type `geoPoint` using the client library before save if you want
 
+#### `required`: boolean
+###### (default `false`)
 
+If this property is required to be set upon save, then mark this `true`
 
-#### `role` : Define which property is our entity `id` (see next)
+#### `role: "id"`
+
+Define which property represents our entity ID. (see next section)
+
+#### `excludeFromIndexes`: boolean
+###### (default `false`)
+
+By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set this to `true`.
+
+#### `optional`: boolean
+###### (default `false`)
+
+By default, if you have defined a property in your schema but you don't provide it when saving an entity - the property in the Datastore will be set to `null` or whatever value you have set as a default.
+
+If you have not provided a default, and want properties which are not provided to not be saved at all, then set this to `true`.
+
+#### `onSave`: (value: any) => any;
+
+Transform this property before saving. `OnSave()` is a function which will run on save, with the current value of the property as a parameter. Whatever value you return will end up being saved.
+
+#### `default`: any
+
+If you save an entity without setting a value at this property - this value will be used as the default.
 
 ### :key: Entity ID
 
@@ -218,78 +317,6 @@ Both of those `console.dir` outputs will show the following (neatened up a bit):
 In this example, an array with a single element.
 
 All load or query operations will return an array in this way to represent results. An empty array indicates no results. The property `testDate` is an actual JavaScript `Date` object, but in our `console.dir()` has been converted to a string by `JSON.stringify()`.
-
-## Full example
-
-```
-import { PebblebedModel } from "pebblebed";
-
-// Create a schema for an entity
-
-const schemaDefinition = {
-    testID: {
-        type: "string",
-        role: "id",
-    },
-    testAmount: {
-        type: "double",
-    },
-    testTags: {
-        type: "array",
-        required: true,
-    },
-    testEmbeddedObject: {
-        type: "object",
-        required: true,
-        excludeFromIndexes: true,
-    },
-    testDate: {
-        type: "datetime",
-        required: true,
-    },
-};
-
-// Create the model for our entity, of kind "TestEntity"
-
-const TestEntityModel = new PebblebedModel("TestEntity", schemaDefinition);
-
-// Create a new entity and save it
-
-const entity = {
-  testID: "test-id-one",
-  testTags: ["Great", "Again"],
-  testEmbeddedObject: {
-    who: "let the dogs out",
-  },
-  testDate: new Date(),
-  testAmount: 123.123,
-};
-
-await TestEntityModel.save(entity).run();
-```
-
-###### _After some time_
-
-```
-// Query for our entity by tag
-const query = await TestEntityModel.query().filter("testTags", "=", "Great").run();
-
-// Or load our entity directly with its string ID
-const entity = await TestEntityModel.load("test-id-one").run();
-
-// ...do work on entity...
-entity.testAmount = 35.50;
-
-// save it again
-await TestEntityModel.save(entity).run();
-```
-
-###### _After some time_
-
-```
-// Delete the unwanted entity
-await TestEntityModel.delete().id("test-id-one").run();
-```
 
 ## API
 

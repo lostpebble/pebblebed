@@ -670,13 +670,7 @@ function dataArrayFromSchema(
           throw new Error(
             ErrorMessages.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind)
           );
-
-          /*
-          * `PEBBLEBED: SCHEMA ERROR: Property ${property} is required on datastore entity ${entityKind
-           ? entityKind
-           : ""}`
-          * */
-        } else {
+        } else if (!schemaProp.optional) {
           dataArray.push({
             name: property,
             value: schemaProp.default ? schemaProp.default : null,
