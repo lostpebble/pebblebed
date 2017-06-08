@@ -291,5 +291,174 @@ await TestEntityModel.save(entity).run();
 await TestEntityModel.delete().id("test-id-one").run();
 ```
 
-## Full library interface
+## API
 
+### `Pebblebed`
+
+```
+// Connect to a Datastore client instance
+Pebblebed.connectDatastore: (datastoreClient) => void;
+```
+
+### `PebblebedModel`
+
+```
+// Create a new Model for a Datastore Entity
+new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
+```
+
+### Using a created Model
+
+```
+// Create Model, using above constructor
+const TestEnityModel = new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
+```
+
+### Datastore Operations
+
+A Datastore operation is enacted through the Models of your entities. You create the operation on the Model using a function, one of these:
+
+```
+TestEntityModel.save(data: object | object[]): DatastoreSave;
+TestEntityModel.load(ids?: string | number | Array<(string | number)>): DatastoreLoad;
+TestEntityModel.delete(data?: object | object[]): DatastoreDelete;
+
+TestEnityModel.query(namespace?: string): DatastoreQuery;
+```
+
+An operation is performed by stringing together functions which describe the operation **e.g.**:
+
+```
+TestEntityModel.save(entity).withAncestors(AncestorEntityModel, "test-id").run();
+
+TestEntityModel.delete().ids("test-one", "test-two").useTransaction(transaction).run();
+
+TestEntityModel
+    .load("test-three")
+    .useNamespace("different-namespace")
+    .withAncestors(AncestorEntityModel, "test-id")
+    .run();
+```
+
+Upon using `run()` on any operation, a Promise is returned.
+
+### Saving, Loading or Deleting Operations
+
+These operations all expose the following functions to describe the operation:
+
+```
+withAncestors(...args: any[])
+useTransaction(transaction: any)
+useNamespace(namespace: string)
+```
+
+**In addition to specific methods on each:**
+
+### Saving entities
+```
+// Save an entity / entities of this Model to the Datastore
+TestEntityModel.save(data: object | object[]): DatastoreSave;
+```
+
+On starting a save operation you must pass in the the JavaScript objects which represent your entities (which should conform to your defined Schema). Either a single entity, or an array of entities.
+
+#### `DatastoreSave` allows further functions to describe the operation:
+
+If your schema contains an ID property of `int` and you want them to be generated (you are not deliberately setting them), then use this method:
+```
+generateUnsetId()
+```
+
+When performing load and query operations, entities are returned from the Datastore with meta information containing the ancestors of those entities. If you have previously retrieved an entity from the Datastore and are busy re-saving it - but do not want to use the ancestors that it previously had - use this method:
+
+:warning: This will create a new Entity in the Datastore, the old one will still exist under the previous ancestors
+
+```
+ignoreDetectedAncestors()
+```
+
+### Loading entities
+```
+// Load an entity / entities of this Model to the Datastore
+TestEntityModel.load(ids?: string | number | Array<(string | number)>): DatastoreLoad;
+```
+
+On starting a load operation you must pass in the the string or integer IDs you wish to load for your Model's kind. Either a single ID, or an array of IDs.
+
+#### `DatastoreLoad` allows further functions to describe the operation:
+
+None required :grin:
+
+### Deleting entities
+
+```
+// Delete an entity / entities of this Model in the Datastore
+TestEntityModel.delete(data?: object | object[]): DatastoreDelete;
+```
+
+_Optional_ : On starting a delete operation you can pass in the the JavaScript objects which represent the entities you wish to delete (which should conform to your defined Schema - especially in relation to their IDs). Either a single entity, or an array of entities.
+
+#### `DatastoreDelete` allows further functions to describe the operation:
+
+If you did not pass any entities to the initial operation, you should be providing IDs that you wish to delete:
+
+```
+id(id: string | number);
+ids(ids: Array<(string | number)>);
+```
+
+When performing load and query operations, entities are returned from the Datastore with meta information containing the ancestors of those entities. If you have previously retrieved an entity from the Datastore and want to delete it - but do not want to use the ancestors that it previously had - use this method:
+
+:warning: This will delete a different entity in the Datastore, the old one will still exist under the previous ancestors
+```
+ignoreDetectedAncestors()
+```
+
+### Querying entities
+
+```
+// Query for entities of this Model in the Datastore
+TestEnityModel.query(namespace?: string): DatastoreQuery;
+```
+
+Queries expose a slightly different API to the save, load and delete operations.
+
+_Optional_ : Namespace to be defined when starting the operation.
+
+#### `DatastoreQuery` allows further functions to describe the operation:
+
+_These maintain parity with the official Datastore's querying API_
+
+```
+filter(property: string, comparator: "=" | "<" | ">" | "<=" | ">=", value: string | number | boolean | Date);
+
+order(property: string, options?: {
+    descending: boolean;
+});
+
+hasAncestor(ancestorKey: DatastoreEntityKey);
+
+end(cursorToken: string);
+
+limit(amount: number);
+
+groupBy(properties: string[]);
+
+start(nextPageCursor: any);
+
+select(property: string | string[]);
+```
+
+Upon running a Query, the result will be returned with the following interface:
+
+```
+interface DatastoreQueryResponse {
+    entities: any[];
+    info?: {
+        endCursor?: string;
+        moreResults?: string;
+    };
+}
+```
+
+You can find out more in about this response and operation the [official documentation](https://googlecloudplatform.github.io/google-cloud-node/#/docs/datastore/master/datastore/query?method=run).

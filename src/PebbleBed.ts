@@ -38,19 +38,19 @@ export interface DatastoreQueryResponse {
   };
 }
 
-export interface IDatastoreQuery {
+export interface DatastoreQuery {
   filter(
     property: string,
     comparator: "=" | "<" | ">" | "<=" | ">=",
     value: string | number | boolean | Date
-  ): IDatastoreQuery;
-  order(property: string, options?: { descending: boolean }): IDatastoreQuery;
-  hasAncestor(ancestorKey: DatastoreEntityKey): IDatastoreQuery;
-  end(cursorToken: string): IDatastoreQuery;
-  limit(amount: number): IDatastoreQuery;
-  groupBy(properties: string[]): IDatastoreQuery;
-  start(nextPageCursor: any): IDatastoreQuery;
-  select(property: string | string[]): IDatastoreQuery;
+  ): DatastoreQuery;
+  order(property: string, options?: { descending: boolean }): DatastoreQuery;
+  hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery;
+  end(cursorToken: string): DatastoreQuery;
+  limit(amount: number): DatastoreQuery;
+  groupBy(properties: string[]): DatastoreQuery;
+  start(nextPageCursor: any): DatastoreQuery;
+  select(property: string | string[]): DatastoreQuery;
   run(): Promise<DatastoreQueryResponse>;
 }
 
@@ -124,13 +124,13 @@ export class PebblebedModel {
     return new DatastoreSave(this, data);
   }
 
-  public load(ids?: string | number | Array<(string | number)>) {
+  public load(ids: string | number | Array<(string | number)>) {
     checkDatastore("LOAD");
 
     return new DatastoreLoad(this, ids);
   }
 
-  public query(namespace: string = null): IDatastoreQuery {
+  public query(namespace: string = null): DatastoreQuery {
     checkDatastore("QUERY");
 
     const idProp = this.idProperty;
@@ -264,7 +264,7 @@ export class DatastoreLoad extends DatastoreOperation {
 
   constructor(
     model: PebblebedModel,
-    ids?: string | number | Array<(string | number)>
+    ids: string | number | Array<(string | number)>
   ) {
     super(model);
 
