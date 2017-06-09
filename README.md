@@ -359,14 +359,15 @@ const TestEnityModel = new PebblebedModel(entityKind: string, entitySchema: Sche
 
 ## :blossom: Datastore Operations
 
-A Datastore operation is enacted through the Models of your entities. You create the operation on the Model using a function, one of these:
+A Datastore operation is enacted through the Models of your entities.
+You create the operation on the Model using a function. One of these:
 
 ```
-TestEntityModel.save(data: object | object[]): DatastoreSave;
-TestEntityModel.load(ids?: string | number | Array<(string | number)>): DatastoreLoad;
-TestEntityModel.delete(data?: object | object[]): DatastoreDelete;
+TestEntityModel.save( data: object | object[] )
+TestEntityModel.load( ids?: string | number | Array<(string | number)> )
+TestEntityModel.delete( data?: object | object[] )
 
-TestEntityModel.query(namespace?: string): DatastoreQuery;
+TestEntityModel.query( namespace?: string )
 ```
 
 An operation is performed by stringing together functions which describe the operation **e.g.**:
@@ -383,13 +384,13 @@ TestEntityModel
     .run();
 ```
 
-### API Responses
+## API Responses
 
 Upon using `run()` on any operation, a Promise is returned.
 
 Here is a breakdown of the various responses:
 
-#### Save response
+### Save response
 
 ```
 await TestEntityModel.save(entity).withAncestors(AncestorEntityModel, "test-id").run();
@@ -416,11 +417,11 @@ from the official Datastore library)_:
 ]
 ```
 
-#### Delete response
+### Delete response
 
 Same as save response (above).
 
-#### Load response
+### Load response
 
 ```
 const response = await TestEntityModel.load("test-id-one").run();
@@ -450,7 +451,7 @@ loads and queries (in a hidden object property) - so upon re-saving (under the s
 `ignoreDetectedAncestors()` is used during the save operation or new ancestors are set deliberately
 using `withAncestors()`.**
 
-#### Query response
+### Query response
 
 ```
 const query = await TestEntityModel
@@ -495,15 +496,13 @@ useTransaction(transaction: any)
 useNamespace(namespace: string)
 ```
 
-`withAncestors()` : Pass in an array for ancestors **e.g.**
+`withAncestors()` : Pass in an array for ancestors **e.g:**
 
 ```
 withAncestors(TestEntityModel, 123, "AnotherEntityKind", "idstring")
 ```
 
 `123` and `"idstring"` in the above example represent the IDs for the ancestors. `TestEntityModel` is a `PebblebedModel` and `"AnotherEntityKind"` is a string - they represent the kinds of the ancestors.
-
-### **In addition to specific functions on each:**
 
 ### Saving entities
 ```
