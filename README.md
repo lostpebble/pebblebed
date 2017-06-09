@@ -271,7 +271,7 @@ Along with four properties to be persisted in the datastore:
 * `testEmbeddedObject`
 * `testDate`
 
-## :hammer: Create an Entity Model
+## :hammer: Creating an Entity Model
 
 Entity Models are used to do all our interactions with the Datastore. They are created using the structure defined in your schema and allow operations on your Entities such as load, save or query.
 
