@@ -17,6 +17,24 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
 
 * `@google-cloud/datastore`
 
+### Quick Jump
+
+- [Getting Started](#getting-started)
+- [Quick Example](#a-quick-taster-example-of-how-it-works)
+
+###### Creation
+
+- [Creating a Schema](#creating-an-entity-schema)
+- [Creating a Model](#creating-an-entity-model)
+
+###### Usage
+
+- [API](#api)
+- [Datastore Operations](#datastore-operations)
+- [API Responses](#api-responses)
+- [Saving, Loading or Deleting Operations](#saving-loading-or-deleting-operations)
+- [Querying Operations](#querying-operations)
+
 ## Getting Started
 
 ##### Install the `pebblebed` package in your project:
@@ -546,6 +564,8 @@ When performing load and query operations, entities are returned from the Datast
 ```
 ignoreDetectedAncestors()
 ```
+
+## Querying Operations
 
 ### Querying entities
 
