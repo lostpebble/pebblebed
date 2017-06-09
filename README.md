@@ -316,7 +316,7 @@ In this example, an array with a single element.
 
 All load or query operations will return an array in this way to represent results. An empty array indicates no results. The property `testDate` is an actual JavaScript `Date` object, but in our `console.dir()` has been converted to a string by `JSON.stringify()`.
 
-## API
+# API
 
 ### `Pebblebed`
 
@@ -339,7 +339,7 @@ new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
 const TestEnityModel = new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
 ```
 
-### :blossom: Datastore Operations
+## :blossom: Datastore Operations
 
 A Datastore operation is enacted through the Models of your entities. You create the operation on the Model using a function, one of these:
 
@@ -348,7 +348,7 @@ TestEntityModel.save(data: object | object[]): DatastoreSave;
 TestEntityModel.load(ids?: string | number | Array<(string | number)>): DatastoreLoad;
 TestEntityModel.delete(data?: object | object[]): DatastoreDelete;
 
-TestEnityModel.query(namespace?: string): DatastoreQuery;
+TestEntityModel.query(namespace?: string): DatastoreQuery;
 ```
 
 An operation is performed by stringing together functions which describe the operation **e.g.**:
@@ -365,9 +365,109 @@ TestEntityModel
     .run();
 ```
 
+### API Responses
+
 Upon using `run()` on any operation, a Promise is returned.
 
-### Saving, Loading or Deleting Operations
+Here is a breakdown of the various responses:
+
+#### Save response
+
+```
+await TestEntityModel.save(entity).withAncestors(AncestorEntityModel, "test-id").run();
+```
+
+Will **throw an error** if something goes wrong
+(Schema validation or Datastore operation failure for some reason).
+Otherwise, a response is not really required for a save operation,
+but on success an object is returned that looks like this _(the response returned
+from the official Datastore library)_:
+
+```
+[
+  {
+    mutationResults: [
+      {
+        conflictDetected: false,
+        key: null,
+        version: "12312312232300"
+      }
+    ],
+    indexUpdates: 4
+  }
+]
+```
+
+#### Delete response
+
+Same as save response (above).
+
+#### Load response
+
+```
+const response = await TestEntityModel.load("test-id-one").run();
+```
+
+Will **throw an error** if something goes wrong. Otherwise, returns an empty array (if no entity found), or an array with the result entity objects:
+
+```
+[
+  {
+    testDate: 2017-06-08T10:16:58.591Z,
+    testEmbeddedObject: { who: 'let the dogs out' },
+    testTags: [ 'Great', 'Again' ],
+    testAmount: null,
+    testID: 'test-id-one'
+  }
+]
+```
+
+As you can see, the ID of the entity in the datastore, `test-id-one`, has been populated
+on the resulting entity at `testID` as defined in the schema.
+
+In order to re-save using a different ID just change the value at `testID` accordingly before saving.
+
+:warning: **Even though its not shown in the response here, ancestors are remembered after
+loads and queries (in a hidden object property) - so upon re-saving (under the same ID or a different ID), the same ancestors will apply unless
+`ignoreDetectedAncestors()` is used during the save operation or new ancestors are set deliberately
+using `withAncestors()`.**
+
+#### Query response
+
+```
+const query = await TestEntityModel
+                      .query()
+                      .filter("testTags", "=", "Great")
+                      .withAncestors(TestAncestorEntityModel, "test-id")
+                      .run();
+```
+
+Will **throw an error** if something goes wrong.
+Otherwise, returns an object like so:
+
+```
+{
+  entities: [
+    { 
+      testDate: 2017-06-08T11:09:37.170Z,
+      testEmbeddedObject: { who: 'let the dogs out' },
+      testTags: [ 'Great', 'Again' ],
+      testAmount: null,
+      testID: 'test-id-one'
+    }
+  ],
+  info: { 
+    moreResults: 'NO_MORE_RESULTS',
+    endCursor: 'lc3QtYnJhbmQtdHdvDAsSClRlc3RFbnRpdHkiC3Rlc3QtaWQtb25lDBgAIAA='
+  }
+}
+```
+
+The `entities` array will be empty if there are no results. [See here](https://googlecloudplatform.github.io/google-cloud-node/#/docs/datastore/master/datastore/query?method=run) for more info about the `info` object and the various values for `moreResults`.
+
+**Same warning applies about ancestors (see load response)**
+
+## Saving, Loading or Deleting Operations
 
 These operations all expose the following functions to describe the operation:
 
@@ -385,7 +485,7 @@ withAncestors(TestEntityModel, 123, "AnotherEntityKind", "idstring")
 
 `123` and `"idstring"` in the above example represent the IDs for the ancestors. `TestEntityModel` is a `PebblebedModel` and `"AnotherEntityKind"` is a string - they represent the kinds of the ancestors.
 
-#### **In addition to specific functions on each:**
+### **In addition to specific functions on each:**
 
 ### Saving entities
 ```

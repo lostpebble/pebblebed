@@ -101,6 +101,12 @@ function SCHEMA_REQUIRED_TYPE_MISSING(property: string, kind: string) {
   );
 }
 
+function OPERATION_STRING_ID_EMPTY(model: PebblebedModel, operation: string) {
+  return message(
+      `${operation} entity [${model.entityKind}]: [string] ID is empty at ID property [${model.entityIdProperty}]`
+  );
+}
+
 export const ErrorMessages = {
   NO_GOOGLE_CLOUD_DEPENDENCY: message(
     `Pebblebed requires a peerDependency of @google-cloud/datastore - please make sure that you have this dependency installed in your project`
@@ -108,6 +114,7 @@ export const ErrorMessages = {
   DELETE_NO_DATA_IDS_ERROR: message(
     `DELETE ENTITY: No ID set on entities passed to delete operation.`
   ),
+  OPERATION_STRING_ID_EMPTY,
   SCHEMA_REQUIRED_TYPE_MISSING,
   INCORRECT_ANCESTOR_KIND,
   OPERATION_CHANGED_ANCESTORS_WARNING,

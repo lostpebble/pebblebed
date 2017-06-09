@@ -113,7 +113,7 @@ export class PebblebedModel {
 
       if (this.idType !== "string" && this.idType !== "int") {
         throw new Error(
-            ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL")
+          ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL")
         );
       }
     }
@@ -140,9 +140,9 @@ export class PebblebedModel {
     const hasIdProp = this.hasIdProperty;
     const type = hasIdProp ? this.schema[this.idProperty].type : null;
 
-    const dsQuery = namespace != null ?
-        Core.Instance.ds.createQuery(namespace, this.kind) :
-        Core.Instance.ds.createQuery(this.kind);
+    const dsQuery = namespace != null
+      ? Core.Instance.ds.createQuery(namespace, this.kind)
+      : Core.Instance.ds.createQuery(this.kind);
 
     const runQuery = dsQuery.run.bind(dsQuery);
 
@@ -211,7 +211,7 @@ function extractAncestorPaths(model, ...args: any[]) {
     } else if (typeof args[i].entityKind === "string") {
       ancestors.push([args[i].entityKind, args[i + 1]]);
     } else {
-      throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(model))
+      throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(model));
     }
   }
 
@@ -357,6 +357,15 @@ export class DatastoreSave extends DatastoreOperation {
         switch (this.idType) {
           case "string": {
             if (typeof data[this.idProperty] === "string") {
+              if (data[this.idProperty].length === 0) {
+                throw new Error(
+                    ErrorMessages.OPERATION_STRING_ID_EMPTY(
+                        this.model,
+                        "SAVE"
+                    )
+                );
+              }
+
               id = data[this.idProperty];
             }
             break;
@@ -494,6 +503,15 @@ export class DatastoreDelete extends DatastoreOperation {
               break;
             case "string":
               if (typeof data[this.idProperty] === "string") {
+                if (data[this.idProperty].length === 0) {
+                  throw new Error(
+                    ErrorMessages.OPERATION_STRING_ID_EMPTY(
+                      this.model,
+                      "DELETE"
+                    )
+                  );
+                }
+
                 id = data[this.idProperty];
               }
               break;
