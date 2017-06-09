@@ -24,13 +24,13 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
 
 ###### Creation
 
-- [Creating a Schema](#creating-an-entity-schema)
-- [Creating a Model](#creating-an-entity-model)
+- [Creating a Schema](#scroll-creating-an-entity-schema)
+- [Creating a Model](#hammer-creating-an-entity-model)
 
 ###### Usage
 
 - [API](#api)
-- [Datastore Operations](#datastore-operations)
+- [Datastore Operations](#blossom-datastore-operations)
 - [API Responses](#api-responses)
 - [Saving, Loading or Deleting Operations](#saving-loading-or-deleting-operations)
 - [Querying Operations](#querying-operations)
@@ -610,9 +610,9 @@ To get a key for `ancestorKey`, you can use the `key()` method defined on the Mo
 hasAncestor(AncestorEntityModel.key("test-id"));
 ```
 
-**:herb: A method for convenience has been added `withAncestors()` which is in line with the rest of the Pebblebed library operations**
+**:herb: `withAncestors()` method has been added for convenience, which is in line with the rest of the Pebblebed library operations**
 
-Upon running a Query, the result will be returned with the following interface:
+Upon running a Query the result will be returned with the following interface:
 
 ```
 interface DatastoreQueryResponse {
