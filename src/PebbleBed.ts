@@ -442,9 +442,11 @@ export class DatastoreSave extends DatastoreOperation {
     });
 
     if (this.transaction) {
-      return this.transaction.save(entities).then((data) => {
+      return this.transaction.save(entities);
+
+      /*return this.transaction.save(entities).then((data) => {
         return extractSavedIds(data);
-      });
+      });*/
     }
 
     return Core.Instance.ds.save(entities).then((data) => {
