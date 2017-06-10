@@ -1,6 +1,6 @@
 {
   "name": "pebblebed",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Simplified interactions with Google Datastore for NodeJS",
   "main": "dist-es6/index.js",
   "types": "dist-es6/index.d.ts",
