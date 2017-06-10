@@ -2,15 +2,20 @@
   "name": "pebblebed",
   "version": "0.0.9",
   "description": "Simplified interactions with Google Datastore for NodeJS",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist-es6/index.js",
+  "types": "dist-es6/index.d.ts",
+  "jsnext:main": "dist/index.js",
+  "jsnext:types": "dist/index.d.ts",
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">=6.5.0"
   },
   "scripts": {
+    "build-all": "npm run build && npm run build-es6",
     "build": "tsc",
+    "build-es6": "tsc --p tsconfig.es6.json",
     "watch": "tsc --watch",
-    "prepublish": "npm run build",
+    "watch-es6": "tsc --p tsconfig.es6.json --watch",
+    "prepublish": "npm run build-all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
