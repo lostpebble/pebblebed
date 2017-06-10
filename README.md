@@ -405,6 +405,7 @@ from the official Datastore library)_:
 ```
 [
   {
+    generatedIds: [ null ],
     mutationResults: [
       {
         conflictDetected: false,
@@ -417,9 +418,32 @@ from the official Datastore library)_:
 ]
 ```
 
+Pebblebed has augmented this Datastore response with the property `generatedIds`.
+
+If we were using `int` IDs and were **auto-generating** them when saving to the Datastore,
+those generated IDs will show up here in the array `generatedIds`.
+In this example, we saved an entity with a deliberately set `string` ID, so the array only has one value of
+`null` - indicating that the first entity saved did not have a generated ID (we already know what it is).
+
+This array keeps the order of the entities as you passed them to the save operation.
+So should you have mixed together auto-generated and deliberately set IDs, they will keep their order here,
+for example: (`generateIds` after saving an array of 5 entities, all with auto-generated IDs except the middle entity):
+
+```
+generatedIds: [
+  '5704726691708928',
+  '5141776738287616',
+  null,
+  '6267676645130240',
+  '4860301761576960'
+]
+```
+
+_Mixing an entity kind with a variation of auto-generated and deliberately set IDs is not really recommended though_
+
 ### Delete response
 
-Same as save response (above).
+Same as save response (above) - except for the `generatedIds` array.
 
 ### Load response
 

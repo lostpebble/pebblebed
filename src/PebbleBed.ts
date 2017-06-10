@@ -442,10 +442,14 @@ export class DatastoreSave extends DatastoreOperation {
     });
 
     if (this.transaction) {
-      return this.transaction.save(entities);
+      return this.transaction.save(entities).then((data) => {
+        return extractSavedIds(data);
+      });
     }
 
-    return Core.Instance.ds.save(entities);
+    return Core.Instance.ds.save(entities).then((data) => {
+      return extractSavedIds(data);
+    });
   }
 }
 
@@ -574,8 +578,48 @@ export class DatastoreDelete extends DatastoreOperation {
   }
 }
 
+function get(obj, path, def) {
+  let cur = obj;
+
+  for (let i = 0; i < path.length; i += 1) {
+    if (cur == null) {
+      return def;
+    }
+
+    if (typeof path[i] === "number") {
+      if (Array.isArray(cur) && cur.length > path[i]) {
+        cur = cur[path[i]];
+      }
+    } else if (typeof path[i] === "string") {
+      if (cur.hasOwnProperty(path[i])) {
+        cur = cur[path[i]];
+      }
+    } else {
+      return def;
+    }
+  }
+
+  return cur;
+}
+
 function isNumber(value) {
   return Number.isInteger(value) || /^\d+$/.test(value);
+}
+
+function extractSavedIds(data) {
+  const results = get(data, [0, "mutationResults"], null);
+
+  const ids = [];
+
+  if (results) {
+    for (const result of results) {
+      ids.push(get(result, ["key", "path", 0, "id"], null));
+    }
+  }
+
+  data[0].generatedIds = ids;
+
+  return data;
 }
 
 function augmentEntitiesWithIdProperties(
