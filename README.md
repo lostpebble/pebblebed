@@ -9,7 +9,7 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
 #### Prerequisites
 
 * Google Cloud Datastore client. See [here](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) for steps on activating your own Datastore client
-* NodeJS **v7.6.0** _( async / await support )_
+* NodeJS **>= v6.5.0** _( ES6 support )_
 * Promises
 * ( _optional_ ) Typescript for auto-complete goodness
 
