@@ -29,10 +29,14 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
 
 ###### Usage
 
-- [API](#api)
+- [**API**](#api)
 - [Datastore Operations](#blossom-datastore-operations)
 - [API Responses](#api-responses)
 - [Saving, Loading or Deleting Operations](#saving-loading-or-deleting-operations)
+  - [Saving Entities](#saving-entities)
+    - [Accessing Generated IDs on Save](#accessing-generated-ids-on-save)
+  - [Loading Entities](#loading-entities)
+  - [Deleting Entities](#deleting-entities)
 - [Querying Operations](#querying-operations)
 
 ## Getting Started
@@ -403,8 +407,7 @@ but on success an object is returned that looks like this _(the response returne
 from the official Datastore library)_:
 
 ```
-[
-  {
+{
     generatedIds: [ null ],
     mutationResults: [
       {
@@ -414,8 +417,7 @@ from the official Datastore library)_:
       }
     ],
     indexUpdates: 4
-  }
-]
+}
 ```
 
 Pebblebed has augmented this Datastore response with the property `generatedIds`.
@@ -540,7 +542,7 @@ On starting a save operation you must pass in the the JavaScript objects which r
 
 If your schema contains an ID property of `int` and you want them to be generated (you are not deliberately setting them), then use this method:
 ```
-generateUnsetId()
+generateUnsetIds()
 ```
 
 When performing load and query operations, entities are returned from the Datastore with meta information containing the ancestors of those entities. If you have previously retrieved an entity from the Datastore and are busy re-saving it - but do not want to use the ancestors that it previously had - use this method:
@@ -550,6 +552,52 @@ When performing load and query operations, entities are returned from the Datast
 ```
 ignoreDetectedAncestors()
 ```
+
+### Accessing Generated IDs on Save
+
+When saving entities for which you would like to generate IDs, you can do so using `generateUnsetIds()` on the save operation, like so:
+
+```
+const response = await TestEntityModel.save([testEntity, testEntityTwo]).generateUnsetIds().run();
+```
+
+As seen in the **Save Response** section above - `response` will be on object with an
+extra property, `generatedIds` containing an array with the generated IDs after this operation.
+
+**_Transactions_** work somewhat differently though.
+
+#### Accessing Generated IDs during transaction
+
+Usually transactions only allocate IDs and reconcile all their various operations together during
+their final `commit()` method. This makes it difficult to retrieve generated IDs unless we have
+run `transaction.allocateIds()` beforehand and manually assigned them to the entities we want to
+save (basically, actually deliberately setting their IDs).
+
+While saving with a transaction, you can use a special option only available on save operations, like so:
+
+```
+const response = await TestEntityModel.save([testEntity, testEntityTwo])
+                             .useTransaction(transaction, { allocateIdsNow: true })
+                             .generateUnsetIds()
+                             .run();
+```
+
+Passing on options object with `allocateIdsNow: true` as a second parameter to `useTransaction()` tells this operation you would
+like to allocate IDs during this operation and have them returned. `response` will now be in the same format as a regular
+save, containing a `generatedIds` property:
+
+```
+{
+  generatedIds: [
+    '5704726691708928',
+    '5141776738287616',
+  ]
+}
+```
+
+This just means that for this operation, unlike a regular transaction operation which doesn't
+do much actual work, Pebblebed will run the `allocateIds()` method for you (batched, on the
+culmination of all the entities that require it in this operation).
 
 ### Loading entities
 ```

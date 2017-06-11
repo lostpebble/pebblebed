@@ -25,6 +25,10 @@ export interface SchemaPropertyDefinition {
 export interface DatastoreTransaction {
   run: () => Promise<void>;
   commit: () => Promise<void>;
+  createQuery: (kindOrNamespace: string, kind?: string) => any;
+  allocateIds: (key: any, amount: number) => Promise<any>;
+  rollback: () => Promise<void>;
+  [property: string]: any,
 }
 
 export interface DatastoreEntityKey {
@@ -344,13 +348,15 @@ export class DatastoreSave extends DatastoreOperation {
     }
   }
 
-  public useTransaction(transaction: any, allocateIdsNow: boolean = false) {
+  public useTransaction(transaction: any, options = {
+    allocateIdsNow: false,
+  }) {
     super.useTransaction(transaction);
-    this.transAllocateIds = allocateIdsNow;
+    this.transAllocateIds = options.allocateIdsNow;
     return this;
   }
 
-  public generateUnsetId() {
+  public generateUnsetIds() {
     this.generate = true;
     return this;
   }
