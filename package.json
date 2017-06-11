@@ -10,12 +10,13 @@
     "node": ">=6.5.0"
   },
   "scripts": {
-    "build-all": "npm run build && npm run build-es6",
-    "build": "tsc",
+    "build": "concurrently \"npm run build-es2017\" \"npm run build-es6\"",
+    "watch": "concurrently \"npm run watch-es2017\" \"npm run watch-es6\"",
+    "build-es2017": "tsc",
     "build-es6": "tsc --p tsconfig.es6.json",
-    "watch": "tsc --watch",
     "watch-es6": "tsc --p tsconfig.es6.json --watch",
-    "prepublish": "npm run build-all",
+    "watch-es2017": "tsc --watch",
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -46,6 +47,7 @@
     "@types/node": "^7.0.12",
     "lodash": "^4.17.4",
     "ts-node": "^3.0.2",
-    "typescript": "^2.2.2"
+    "typescript": "^2.2.2",
+    "concurrently": "^3.4.0"
   }
 }

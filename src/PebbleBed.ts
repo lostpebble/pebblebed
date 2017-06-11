@@ -22,6 +22,11 @@ export interface SchemaPropertyDefinition {
   default?: any;
 }
 
+export interface DatastoreTransaction {
+  run: () => Promise<void>;
+  commit: () => Promise<void>;
+}
+
 export interface DatastoreEntityKey {
   name: string;
   kind: string;
@@ -86,6 +91,9 @@ export const Pebblebed = {
   connectDatastore: (datastore: any) => {
     Core.Instance.setDatastore(datastore);
   },
+  transaction: (): DatastoreTransaction => {
+    return Core.Instance.ds.transaction();
+  }
 };
 
 function checkDatastore(operation: string) {
@@ -324,6 +332,7 @@ export class DatastoreSave extends DatastoreOperation {
   private dataObjects: any[];
   private ignoreAnc = false;
   private generate = false;
+  private transAllocateIds = false;
 
   constructor(model: PebblebedModel, data: object | object[]) {
     super(model);
@@ -333,6 +342,12 @@ export class DatastoreSave extends DatastoreOperation {
     } else {
       this.dataObjects = [data];
     }
+  }
+
+  public useTransaction(transaction: any, allocateIdsNow: boolean = false) {
+    super.useTransaction(transaction);
+    this.transAllocateIds = allocateIdsNow;
+    return this;
   }
 
   public generateUnsetId() {
@@ -345,7 +360,7 @@ export class DatastoreSave extends DatastoreOperation {
     return this;
   }
 
-  public run() {
+  public async run() {
     const baseKey = this.getBaseKey();
 
     const entities = this.dataObjects.map(data => {
@@ -437,20 +452,31 @@ export class DatastoreSave extends DatastoreOperation {
 
       return {
         key,
+        generated: id == null,
         data: dataArrayFromSchema(data, this.schema, this.kind),
       };
     });
 
     if (this.transaction) {
-      return this.transaction.save(entities);
+      if (this.transAllocateIds) {
+        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(entities, this.transaction);
+        this.transaction.save(newEntities);
 
-      /*return this.transaction.save(entities).then((data) => {
-        return extractSavedIds(data);
-      });*/
+        return {
+          generatedIds: ids,
+        };
+      }
+
+      this.transaction.save(entities);
+
+      return { get generatedIds() {
+        console.warn(ErrorMessages.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
+        return null;
+      }};
     }
 
     return Core.Instance.ds.save(entities).then((data) => {
-      return extractSavedIds(data);
+      return extractSavedIds(data)[0];
     });
   }
 }
@@ -608,6 +634,42 @@ function isNumber(value) {
   return Number.isInteger(value) || /^\d+$/.test(value);
 }
 
+async function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
+  let allocateAmount = 0;
+  let incompleteKey = null;
+
+  for (const entity of entities) {
+    if (entity.generated) {
+      allocateAmount += 1;
+
+      if (incompleteKey == null) {
+        incompleteKey = entity.key;
+      }
+    }
+  }
+
+  let allocatedKeys;
+
+  if (transaction) {
+    allocatedKeys = await transaction.allocateIds(incompleteKey, allocateAmount);
+  } else {
+    allocatedKeys = await Core.Instance.ds.allocateIds(incompleteKey, allocateAmount);
+  }
+
+  let ids = [];
+
+  for (let i = 0; i < entities.length; i += 1) {
+    if (entities[i].generated) {
+      entities[i].key = allocatedKeys[0].shift();
+      ids.push(entities[i].key.id);
+    } else {
+      ids.push(null);
+    }
+  }
+
+  return { ids, newEntities: entities };
+}
+
 function extractSavedIds(data) {
   const results = get(data, [0, "mutationResults"], null);
 
@@ -615,7 +677,8 @@ function extractSavedIds(data) {
 
   if (results) {
     for (const result of results) {
-      ids.push(get(result, ["key", "path", 0, "id"], null));
+      const paths = get(result, ["key", "path"], [null]);
+      ids.push(get(paths, [paths.length - 1, "id"], null));
     }
   }
 

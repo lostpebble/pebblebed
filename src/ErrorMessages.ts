@@ -114,6 +114,12 @@ export const ErrorMessages = {
   DELETE_NO_DATA_IDS_ERROR: message(
     `DELETE ENTITY: No ID set on entities passed to delete operation.`
   ),
+  ACCESS_TRANSACTION_GENERATED_IDS_ERROR: message(
+    `To get generated IDs on transaction, use following method parameters:
+---> useTransaction(transaction, true)
+
+This will allocate IDs for all unset entity IDs during this operation and return them in the response object: { generatedIds: [x, x, x] }`
+  ),
   OPERATION_STRING_ID_EMPTY,
   SCHEMA_REQUIRED_TYPE_MISSING,
   INCORRECT_ANCESTOR_KIND,
