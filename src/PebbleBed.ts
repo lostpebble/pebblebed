@@ -28,7 +28,7 @@ export interface DatastoreTransaction {
   createQuery: (kindOrNamespace: string, kind?: string) => any;
   allocateIds: (key: any, amount: number) => Promise<any>;
   rollback: () => Promise<void>;
-  [property: string]: any,
+  [property: string]: any;
 }
 
 export interface DatastoreEntityKey {
@@ -97,7 +97,7 @@ export const Pebblebed = {
   },
   transaction: (): DatastoreTransaction => {
     return Core.Instance.ds.transaction();
-  }
+  },
 };
 
 function checkDatastore(operation: string) {
@@ -301,6 +301,24 @@ export class DatastoreLoad extends DatastoreOperation {
       } else {
         this.loadIds = [ids];
       }
+
+      this.loadIds = this.loadIds.map(id => {
+        if (this.idType === "int" && isNumber(id)) {
+          return Core.Instance.dsModule.int(id);
+        } else if (this.idType === "string" && typeof id === "string") {
+          if (id.length === 0) {
+            throw new Error(
+              ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD")
+            );
+          }
+
+          return id;
+        }
+
+        throw new Error(
+          ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id)
+        );
+      });
     }
   }
 
@@ -348,9 +366,12 @@ export class DatastoreSave extends DatastoreOperation {
     }
   }
 
-  public useTransaction(transaction: any, options = {
-    allocateIdsNow: false,
-  }) {
+  public useTransaction(
+    transaction: any,
+    options = {
+      allocateIdsNow: false,
+    }
+  ) {
     super.useTransaction(transaction);
     this.transAllocateIds = options.allocateIdsNow;
     return this;
@@ -380,10 +401,7 @@ export class DatastoreSave extends DatastoreOperation {
             if (typeof data[this.idProperty] === "string") {
               if (data[this.idProperty].length === 0) {
                 throw new Error(
-                    ErrorMessages.OPERATION_STRING_ID_EMPTY(
-                        this.model,
-                        "SAVE"
-                    )
+                  ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "SAVE")
                 );
               }
 
@@ -465,7 +483,10 @@ export class DatastoreSave extends DatastoreOperation {
 
     if (this.transaction) {
       if (this.transAllocateIds) {
-        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(entities, this.transaction);
+        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(
+          entities,
+          this.transaction
+        );
         this.transaction.save(newEntities);
 
         return {
@@ -475,13 +496,15 @@ export class DatastoreSave extends DatastoreOperation {
 
       this.transaction.save(entities);
 
-      return { get generatedIds() {
-        console.warn(ErrorMessages.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
-        return null;
-      }};
+      return {
+        get generatedIds() {
+          console.warn(ErrorMessages.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
+          return null;
+        },
+      };
     }
 
-    return Core.Instance.ds.save(entities).then((data) => {
+    return Core.Instance.ds.save(entities).then(data => {
       return extractSavedIds(data)[0];
     });
   }
@@ -657,9 +680,15 @@ async function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
   let allocatedKeys;
 
   if (transaction) {
-    allocatedKeys = await transaction.allocateIds(incompleteKey, allocateAmount);
+    allocatedKeys = await transaction.allocateIds(
+      incompleteKey,
+      allocateAmount
+    );
   } else {
-    allocatedKeys = await Core.Instance.ds.allocateIds(incompleteKey, allocateAmount);
+    allocatedKeys = await Core.Instance.ds.allocateIds(
+      incompleteKey,
+      allocateAmount
+    );
   }
 
   let ids = [];

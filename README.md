@@ -2,22 +2,24 @@
 
 ![Pebblebed Logo - a very literal interpretation](https://github.com/lostpebble/pebblebed/raw/master/pebblebed.png "a very literal interpretation")
 
-### A simple interface for interacting with the Google Cloud Datastore
+## A simple interface for interacting with the Google Cloud Datastore
 Using NodeJS and on top of Google's official [`@google-cloud/datastore`](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) library.
 Heavily inspired by the Java library serving the same purpose, [Objectify](https://github.com/objectify/objectify).
 
-#### Prerequisites
+### Prerequisites
 
 * Google Cloud Datastore client. See [here](https://github.com/GoogleCloudPlatform/google-cloud-node#cloud-datastore-ga) for steps on activating your own Datastore client
 * NodeJS **>= v6.5.0** _( ES6 support )_
 * Promises
 * ( _optional_ ) Typescript for auto-complete goodness
 
-#### Only one (peer) dependency
+### Only one (peer) dependency
 
 * `@google-cloud/datastore`
 
-### Quick Jump
+## Quick Jump
+
+###### Get Going
 
 - [Getting Started](#getting-started)
 - [Quick Example](#a-quick-taster-example-of-how-it-works)
@@ -38,10 +40,11 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
   - [Loading Entities](#loading-entities)
   - [Deleting Entities](#deleting-entities)
 - [Querying Operations](#querying-operations)
+- [Transactions](#transactions)
 
 ## Getting Started
 
-##### Install the `pebblebed` package in your project:
+#### Install the `pebblebed` package in your project:
 ```
 yarn add pebblebed
 ```
@@ -50,7 +53,7 @@ or
 npm install --save pebblebed
 ```
 
-##### :electric_plug: Connecting client to Pebblebed
+#### :electric_plug: Connecting client to Pebblebed
 
 ```
 // Using example from Datastore documentation
@@ -65,9 +68,9 @@ const datastoreClient = datastore({
 Pebblebed.connectDatastore(datastoreClient);
 ```
 
-##### _And you're all set!_
+#### _And you're all set!_
 
-###### Running Datastore locally for development
+### Running Datastore locally for development
 By default, the above sets up the Datastore Client to connect to your datastore in the cloud. But you can also run a datastore instance locally using the `gcloud` command line tool, specifically:
 
 `gcloud beta emulators datastore start`
@@ -80,7 +83,7 @@ const datastoreClient = datastore({
 });
 ```
 
-#### Next steps
+### Next steps
 
 * :scroll: Create a schema for an entity
 * :hammer: Generate a model from that schema
@@ -144,7 +147,10 @@ await TestEntityModel.save(entity).run();
 const query = await TestEntityModel.query().filter("testTags", "=", "Great").run();
 
 // OR load our entity directly with its string ID
-const entity = await TestEntityModel.load("test-id-one").run();
+const entities = await TestEntityModel.load("test-id-one").run();
+
+// Load response always comes back as an array of entities
+const entity = entities[0];
 
 // ...do work on entity...
 entity.testAmount = 35.50;
@@ -345,6 +351,9 @@ All load or query operations will return an array in this way to represent resul
 ```
 // Connect to a Datastore client instance
 Pebblebed.connectDatastore: (datastoreClient) => void;
+
+// Get a Datastore transaction object
+Pebblebed.transaction: () => transaction;
 ```
 
 ### `PebblebedModel`
@@ -359,6 +368,9 @@ new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
 ```
 // Create Model, using above constructor
 const TestEnityModel = new PebblebedModel(entityKind: string, entitySchema: SchemaDefinition);
+
+// Get a Datastore key for this entity (not really required using Pebblebed)
+TestEntityModel.key(id: string | number):
 ```
 
 ## :blossom: Datastore Operations
@@ -394,7 +406,7 @@ Upon using `run()` on any operation, a Promise is returned.
 
 Here is a breakdown of the various responses:
 
-### Save response
+## Save response
 
 ```
 await TestEntityModel.save(entity).withAncestors(AncestorEntityModel, "test-id").run();
@@ -443,11 +455,11 @@ generatedIds: [
 
 _Mixing an entity kind with a variation of auto-generated and deliberately set IDs is not really recommended though_
 
-### Delete response
+## Delete response
 
 Same as save response (above) - except for the `generatedIds` array.
 
-### Load response
+## Load response
 
 ```
 const response = await TestEntityModel.load("test-id-one").run();
@@ -477,7 +489,7 @@ loads and queries (in a hidden object property) - so upon re-saving (under the s
 `ignoreDetectedAncestors()` is used during the save operation or new ancestors are set deliberately
 using `withAncestors()`.**
 
-### Query response
+## Query response
 
 ```
 const query = await TestEntityModel
@@ -530,15 +542,15 @@ withAncestors(TestEntityModel, 123, "AnotherEntityKind", "idstring")
 
 `123` and `"idstring"` in the above example represent the IDs for the ancestors. `TestEntityModel` is a `PebblebedModel` and `"AnotherEntityKind"` is a string - they represent the kinds of the ancestors.
 
-### Saving entities
+## Saving entities
 ```
 // Save an entity / entities of this Model to the Datastore
-TestEntityModel.save(data: object | object[]): DatastoreSave;
+TestEntityModel.save(data: object | object[])
 ```
 
 On starting a save operation you must pass in the the JavaScript objects which represent your entities (which should conform to your defined Schema). Either a single entity, or an array of entities.
 
-#### `DatastoreSave` allows further functions to describe the operation:
+### Functions unique to `save()` to describe the operation:
 
 If your schema contains an ID property of `int` and you want them to be generated (you are not deliberately setting them), then use this method:
 ```
@@ -566,7 +578,7 @@ extra property, `generatedIds` containing an array with the generated IDs after 
 
 **_Transactions_** work somewhat differently though.
 
-#### Accessing Generated IDs during transaction
+### Accessing Generated IDs during transaction
 
 Usually transactions only allocate IDs and reconcile all their various operations together during
 their final `commit()` method. This makes it difficult to retrieve generated IDs unless we have
@@ -599,28 +611,28 @@ This just means that for this operation, unlike a regular transaction operation 
 do much actual work, Pebblebed will run the `allocateIds()` method for you (batched, on the
 culmination of all the entities that require it in this operation).
 
-### Loading entities
+## Loading entities
 ```
 // Load an entity / entities of this Model to the Datastore
-TestEntityModel.load(ids?: string | number | Array<(string | number)>): DatastoreLoad;
+TestEntityModel.load(ids?: string | number | Array<(string | number)>)
 ```
 
 On starting a load operation you must pass in the the string or integer IDs you wish to load for your Model's kind. Either a single ID, or an array of IDs.
 
-#### `DatastoreLoad` allows further functions to describe the operation:
+### Functions unique to `load()` to describe the operation:
 
 None required :relaxed:
 
-### Deleting entities
+## Deleting entities
 
 ```
 // Delete an entity / entities of this Model in the Datastore
-TestEntityModel.delete(data?: object | object[]): DatastoreDelete;
+TestEntityModel.delete(data?: object | object[])
 ```
 
 _Optional_ : On starting a delete operation you can pass in the the JavaScript objects which represent the entities you wish to delete (which should conform to your defined Schema - especially in relation to their IDs). Either a single entity, or an array of entities.
 
-#### `DatastoreDelete` allows further functions to describe the operation:
+### Functions unique to `delete()` to describe the operation:
 
 If you did not pass any entities to the initial operation, you should be providing IDs that you wish to delete:
 
@@ -638,7 +650,7 @@ ignoreDetectedAncestors()
 
 ## Querying Operations
 
-### Querying entities
+## Querying entities
 
 ```
 // Query for entities of this Model in the Datastore
@@ -649,7 +661,7 @@ Queries expose a slightly different API to the save, load and delete operations.
 
 _Optional_ : Namespace to be defined when starting the operation.
 
-#### `DatastoreQuery` allows further functions to describe the operation:
+### Functions unique to `query()` to describe the operation:
 
 _These maintain parity with the official Datastore's querying API_
 
@@ -696,3 +708,25 @@ interface DatastoreQueryResponse {
 ```
 
 You can find out more about this operation and response in the [official documentation](https://googlecloudplatform.github.io/google-cloud-node/#/docs/datastore/master/datastore/query?method=run).
+
+## Transactions
+
+You can use the `Pebblebed` class, once connected to your Datastore client, to access transaction objects. They are used like so:
+
+```
+const transaction = Pebblebed.transaction();
+
+await transaction.run();
+
+const entities = await TestEntityModel.load("test-id-one", "test-id-two").useTransaction(transaction).run();
+
+// ...do work on entities...
+entities[0].amount -= 11.10;
+entities[1].amount += 11.10;
+
+await TestEntityModel.save(entities).useTransaction(transaction).run();
+
+await transaction.commit();
+```
+
+Transactions ensure that all operations pass successfully - or else non of them do. See more in the official [transaction documentation](https://googlecloudplatform.github.io/google-cloud-node/#/docs/datastore/1.0.0/datastore/transaction).
