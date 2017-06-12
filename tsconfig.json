@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es6",
     "module": "commonjs",
     "noEmitOnError": true,
     "noImplicitAny": false,
@@ -14,7 +14,6 @@
   },
   "exclude": [
     "dist",
-    "dist-es6",
     "test",
     "node_modules"
   ]

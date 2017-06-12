@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
     "noEmitOnError": true,
     "noImplicitAny": false,
@@ -10,11 +10,10 @@
     "inlineSourceMap": true,
     "declaration": true,
     "sourceRoot": "src",
-    "outDir": "dist-es6"
+    "outDir": "dist-next"
   },
   "exclude": [
-    "dist",
-    "dist-es6",
+    "dist-next",
     "test",
     "node_modules"
   ]
