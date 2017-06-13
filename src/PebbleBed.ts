@@ -184,7 +184,14 @@ export class PebblebedModel {
       withAncestors(...args: any[]): DatastoreQuery {
         const ancestors = extractAncestorPaths(model, ...args);
 
-        this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
+        if (ns != null) {
+          this.hasAncestor(Core.Instance.ds.key({
+            namespace: ns,
+            path: [].concat.apply([], ancestors)
+          }));
+        } else {
+          this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
+        }
 
         return this;
       },
