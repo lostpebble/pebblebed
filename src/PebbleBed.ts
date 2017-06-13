@@ -172,8 +172,10 @@ export class PebblebedModel {
     const hasIdProp = this.hasIdProperty;
     const type = hasIdProp ? this.schema[this.idProperty].type : null;
 
-    const dsQuery = namespace != null
-      ? Core.Instance.ds.createQuery(namespace, this.kind)
+    const ns = namespace != null ? namespace : Core.Instance.namespace;
+
+    const dsQuery = ns != null
+      ? Core.Instance.ds.createQuery(ns, this.kind)
       : Core.Instance.ds.createQuery(this.kind);
 
     const runQuery = dsQuery.run.bind(dsQuery);
