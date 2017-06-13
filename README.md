@@ -747,7 +747,8 @@ Pebblebed.setDefaultNamespace("testing-ground");
 
 Pebblebed.setDefaultNamespace(null);
 
-// ... do some work on entities on the default (empty) Datastore namespace
+// ... do some work on entities on the namespace which was set on creation of your client
+// ... (or the default base namespace if you didn't set one)
 ```
 
 This globally set default namespace **will be overridden** by the other method of
