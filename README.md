@@ -41,6 +41,7 @@ Heavily inspired by the Java library serving the same purpose, [Objectify](https
   - [Deleting Entities](#deleting-entities)
 - [Querying Operations](#querying-operations)
 - [Transactions](#transactions)
+- [Namespaces](#namespaces)
 
 ## Getting Started
 
@@ -730,3 +731,37 @@ await transaction.commit();
 ```
 
 Transactions ensure that all operations pass successfully - or else non of them do. See more in the official [transaction documentation](https://googlecloudplatform.github.io/google-cloud-node/#/docs/datastore/1.0.0/datastore/transaction).
+
+## Namespaces
+
+Besides setting your Datastore namespace on the creation of your Datastore client, Pebblebed allows you to easily switch between namespaces, in one of two ways:
+
+### Use the global Pebblebed module
+```
+Pebblebed.setDefaultNamespace("testing-ground");
+
+// ... do some work on entities on the "testing-ground" namespace ...
+
+Pebblebed.setDefaultNamespace(null);
+
+// ... do some work on entities on the default (empty) Datastore namespace
+```
+
+This globally set default namespace **will be overridden** by the other method of
+setting a namespace on the fly:
+
+### Set namespace on the actual operation
+
+As seen in the API documentation above, you can also set namespace on individual operations:
+
+```
+await TestModel.save(testEntity).useNamespace("testing-ground-two").run();
+const entities = await TestModel.load("test-id-one").useNamespace("testing-ground-three").run();
+
+// Queries must set namespace on creation
+const query = await TestModel.query("testing-ground-two").filter("testTags", "=", "Great").run();
+```
+
+All datastore operations can set a namespace in this way and will override the namespaces
+set by either the client (when you created your Datastore client), or by the global module
+above.

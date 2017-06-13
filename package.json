@@ -8,11 +8,11 @@
     "node": ">=6.5.0"
   },
   "scripts": {
-    "build": "concurrently \"npm run build-es2017\" \"npm run build-es6\"",
-    "watch": "concurrently \"npm run watch-es2017\" \"npm run watch-es6\"",
-    "build-es2017": "tsc --p tsconfig.next.json",
+    "build": "npm run build-es6",
+    "watch": "npm run watch-es6",
+    "build-es2017": "rimraf ./dist-next tsc --p tsconfig.next.json",
     "watch-es2017": "tsc --p tsconfig.next.json --watch",
-    "build-es6": "tsc",
+    "build-es6": "rimraf ./dist && tsc",
     "watch-es6": "tsc --watch",
     "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"

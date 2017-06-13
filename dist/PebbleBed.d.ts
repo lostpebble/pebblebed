@@ -49,6 +49,7 @@ export interface DatastoreQuery {
 export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
     transaction: () => DatastoreTransaction;
+    setDefaultNamespace: (namespace: string) => void;
 };
 export declare class PebblebedModel {
     private schema;

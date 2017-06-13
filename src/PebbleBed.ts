@@ -69,6 +69,7 @@ class Core {
 
   public ds: any;
   public dsModule: any;
+  public namespace: string = null;
 
   private constructor() {
     try {
@@ -89,6 +90,10 @@ class Core {
   public setDatastore(datastore) {
     this.ds = datastore;
   }
+
+  public setNamespace(namespace: string) {
+    this.namespace = namespace;
+  }
 }
 
 export const Pebblebed = {
@@ -97,6 +102,21 @@ export const Pebblebed = {
   },
   transaction: (): DatastoreTransaction => {
     return Core.Instance.ds.transaction();
+  },
+  setDefaultNamespace: (namespace: string) => {
+    if (namespace != null) {
+      if (typeof namespace === "string") {
+        if (namespace.length > 0) {
+          Core.Instance.setNamespace(namespace);
+        } else {
+          Core.Instance.setNamespace(null);
+        }
+      } else {
+        throw new Error(ErrorMessages.SET_NAMESPACE_INCORRECT);
+      }
+    } else {
+      Core.Instance.setNamespace(null);
+    }
   },
 };
 
@@ -269,6 +289,11 @@ export class DatastoreOperation {
     if (this.namespace != null) {
       return Core.Instance.ds.key({
         namespace: this.namespace,
+        path: fullPath,
+      });
+    } else if (Core.Instance.namespace != null) {
+      return Core.Instance.ds.key({
+        namespace: Core.Instance.namespace,
         path: fullPath,
       });
     }

@@ -120,6 +120,9 @@ export const ErrorMessages = {
 
 This will allocate IDs for all unset entity IDs during this operation and return them in the response object: { generatedIds: [x, x, x] }`
   ),
+  SET_NAMESPACE_INCORRECT: message(
+    "Pebblebed.setDefaultNamespace(): Default namespace must be set to a string. Default namespace can be unset with null or an empty string."
+  ),
   OPERATION_STRING_ID_EMPTY,
   SCHEMA_REQUIRED_TYPE_MISSING,
   INCORRECT_ANCESTOR_KIND,
