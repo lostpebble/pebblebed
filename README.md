@@ -355,6 +355,9 @@ Pebblebed.connectDatastore: (datastoreClient) => void;
 
 // Get a Datastore transaction object
 Pebblebed.transaction: () => transaction;
+
+// Set a default namespace for operations
+setDefaultNamespace: (namespace: string) => void;
 ```
 
 ### `PebblebedModel`
