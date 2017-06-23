@@ -122,7 +122,7 @@ export const Pebblebed = {
 
 function checkDatastore(operation: string) {
   if (Core.Instance.ds == null) {
-    throw new Error();
+    throw new Error("Datastore has not been connected to Pebblebed");
   }
 }
 
