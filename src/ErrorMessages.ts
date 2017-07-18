@@ -1,4 +1,4 @@
-import { PebblebedModel } from "./PebbleBed";
+import { PebblebedModel } from "./Pebblebed";
 /**
  * Created by Paul on 2017-06-02.
  *

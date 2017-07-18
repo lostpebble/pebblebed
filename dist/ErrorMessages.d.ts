@@ -1,4 +1,4 @@
-import { PebblebedModel } from "./PebbleBed";
+import { PebblebedModel } from "./Pebblebed";
 export declare function LOAD_QUERY_DATA_ID_TYPE_ERROR(kind: string, wrongType: string, rightType: string, idProperty: string, id: number | string): string;
 export declare const ErrorMessages: {
     NO_GOOGLE_CLOUD_DEPENDENCY: string;
