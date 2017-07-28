@@ -349,15 +349,69 @@ All load or query operations will return an array in this way to represent resul
 
 ### `Pebblebed`
 
+The base helper module for various tasks.
+
+Connect to a Datastore client instance
 ```
-// Connect to a Datastore client instance
 Pebblebed.connectDatastore: (datastoreClient) => void;
+```
 
-// Get a Datastore transaction object
+Get a Datastore transaction object
+```
 Pebblebed.transaction: () => transaction;
+```
 
-// Set a default namespace for operations
-setDefaultNamespace: (namespace: string) => void;
+Set a default namespace for operations
+
+```
+Pebblebed.setDefaultNamespace: (namespace: string) => void;
+```
+
+Create a datastore key using Models and ids
+
+```
+Pebblebed.key(...args: any[])
+
+E.g:
+const newKey = Pebblebed.key(TestEntityModel, "123abc");
+```
+
+Extract datastore keys from an array of objects
+
+```
+Pebblebed.keysFromObjectArray(sourceArray: object[], ...args: any[]);
+
+E.g:
+const objectArray = [
+  {
+    first: "king",
+    something: "cool",
+  },
+  {
+    first: "king",
+    something: "cooler",
+  }
+]
+
+const newKeys = Pebblebed.keysFromObjectArray(objectArray, TestParentEntityModel, "first", TestEntityModel, "something");
+```
+Conceptually, this example will return two keys with paths similar to this:
+```
+["TestParentKind", "king", "TestKind", "cool"]
+["TestParentKind", "king", "TestKind", "cooler"]
+```
+
+If you have an array of objects but want to extract only keys which are unique in their path,
+use this method:
+
+```
+const newKeys = Pebblebed.uniqueKeysFromObjectArray(objectArray, TestEntityModel, "first");
+```
+
+Even though there are two objects in the array, a single key 
+will be returned with a path conceptually similar to this:
+```
+["TestEntityKind", "king"]
 ```
 
 ### `PebblebedModel`
@@ -618,7 +672,13 @@ culmination of all the entities that require it in this operation).
 ## Loading entities
 ```
 // Load an entity / entities of this Model to the Datastore
-TestEntityModel.load(ids?: string | number | Array<(string | number)>)
+TestEntityModel.load(id: string | ids: array[])
+
+OR
+
+TestEntityModel.load(keys: DatastoreKey[])
+
+// See the Pebblebed base module for helper methods to generate keys
 ```
 
 On starting a load operation you must pass in the the string or integer IDs you wish to load for your Model's kind. Either a single ID, or an array of IDs.

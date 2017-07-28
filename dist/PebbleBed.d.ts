@@ -51,6 +51,8 @@ export declare const Pebblebed: {
     transaction: () => DatastoreTransaction;
     setDefaultNamespace: (namespace: string) => void;
     key(...args: any[]): any;
+    keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel | (keyof T))[]): DatastoreEntityKey[];
+    uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel | (keyof T))[]): DatastoreEntityKey[];
 };
 export declare class PebblebedModel {
     private schema;

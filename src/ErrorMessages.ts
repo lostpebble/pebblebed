@@ -129,6 +129,9 @@ This will allocate IDs for all unset entity IDs during this operation and return
   SET_NAMESPACE_INCORRECT: message(
     "Pebblebed.setDefaultNamespace(): Default namespace must be set to a string. Default namespace can be unset with null or an empty string."
   ),
+  INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY: message(
+    "Can't use keysFromArray() without an even number of \"plucking\" arguments (pairs of an Entity model and the property to pluck out of the array, representing: kind, id), \nThis method takes the form of: ([sourceArray], EntityModel, propertyName, EntityModel, propertyName, ...) etc."
+  ),
   OPERATION_KEYS_WRONG,
   OPERATION_STRING_ID_EMPTY,
   SCHEMA_REQUIRED_TYPE_MISSING,

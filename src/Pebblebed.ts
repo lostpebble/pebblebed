@@ -123,14 +123,53 @@ export const Pebblebed = {
 
     for (let i = 0; i < args.length; i += 1) {
       if (i % 2 === 0) {
-        const model: PebblebedModel = args[i];
-        keyPath.push(model.entityKind);
+        keyPath.push((args[i] as PebblebedModel).entityKind);
       } else {
         keyPath.push(args[i]);
       }
     }
 
     return Core.Instance.ds.key(keyPath);
+  },
+  keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel|keyof T>): DatastoreEntityKey[] {
+    if (args.length % 2 !== 0) {
+      throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+    }
+
+    return sourceArray.map(source => {
+      const keyPath = [];
+
+      for (let i = 0; i < args.length; i += 2) {
+        keyPath.push(args[i], source[(args[i + 1] as keyof T)]);
+      }
+
+      return Pebblebed.key(...keyPath);
+    })
+  },
+  uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel|keyof T>): DatastoreEntityKey[] {
+    if (args.length % 2 !== 0) {
+      throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+    }
+
+    const obj = {};
+    const keys: DatastoreEntityKey[] = [];
+
+    for (const source of sourceArray) {
+      const keyPath = [];
+      const kindKeyPath = [];
+
+      for (let i = 0; i < args.length; i += 2) {
+        keyPath.push(args[i], source[(args[i + 1] as keyof T)]);
+        kindKeyPath.push((args[i] as PebblebedModel).entityKind, source[(args[i + 1] as keyof T)]);
+      }
+
+      if (get(obj, kindKeyPath, false) === false) {
+        keys.push(Pebblebed.key(...keyPath));
+        set(obj, kindKeyPath, true);
+      }
+    }
+
+    return keys;
   }
 };
 
@@ -403,8 +442,6 @@ export class DatastoreLoad extends DatastoreOperation {
     } else {
       resp = await Core.Instance.ds.get(loadKeys);
     }
-
-    console.dir(resp);
 
     if (this.hasIdProperty && resp[0].length > 0) {
       augmentEntitiesWithIdProperties(
@@ -704,28 +741,46 @@ export class DatastoreDelete extends DatastoreOperation {
   }
 }
 
-function get(obj, path, def) {
+function get(obj, path, defaultValue) {
   let cur = obj;
 
   for (let i = 0; i < path.length; i += 1) {
     if (cur == null) {
-      return def;
+      return defaultValue;
     }
 
     if (typeof path[i] === "number") {
       if (Array.isArray(cur) && cur.length > path[i]) {
         cur = cur[path[i]];
+      } else {
+        return defaultValue;
       }
     } else if (typeof path[i] === "string") {
       if (cur.hasOwnProperty(path[i])) {
         cur = cur[path[i]];
+      } else {
+        return defaultValue;
       }
     } else {
-      return def;
+      return defaultValue;
     }
   }
 
   return cur;
+}
+
+function set(obj, path, value) {
+  if (path.length === 1) {
+    obj[path[0]] = value;
+    return obj;
+  }
+
+  if (obj[path[0]] == null) {
+    obj[path[0]] = {};
+  }
+
+  obj[path[0]] = set(obj[path[0]], path.slice(1), value);
+  return obj;
 }
 
 function isNumber(value) {
