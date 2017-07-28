@@ -41,14 +41,14 @@
   },
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
   "peerDependencies": {
-    "@google-cloud/datastore": "^1.0.2"
+    "@google-cloud/datastore": "^1.0.7"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.65",
-    "@types/node": "^7.0.12",
+    "@types/lodash": "^4.14.71",
+    "@types/node": "^8.0.17",
     "lodash": "^4.17.4",
-    "ts-node": "^3.0.2",
-    "typescript": "^2.2.2",
-    "concurrently": "^3.4.0"
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2",
+    "concurrently": "^3.5.0"
   }
 }

@@ -107,6 +107,12 @@ function OPERATION_STRING_ID_EMPTY(model: PebblebedModel, operation: string) {
   );
 }
 
+function OPERATION_KEYS_WRONG(model: PebblebedModel, operation: string) {
+  return message(
+    `${operation} entity [${model.entityKind}]: Passed key / keys to ${operation} are incorrect (last part of key must be of the same kind)`
+  );
+}
+
 export const ErrorMessages = {
   NO_GOOGLE_CLOUD_DEPENDENCY: message(
     `Pebblebed requires a peerDependency of @google-cloud/datastore - please make sure that you have this dependency installed in your project`
@@ -123,6 +129,7 @@ This will allocate IDs for all unset entity IDs during this operation and return
   SET_NAMESPACE_INCORRECT: message(
     "Pebblebed.setDefaultNamespace(): Default namespace must be set to a string. Default namespace can be unset with null or an empty string."
   ),
+  OPERATION_KEYS_WRONG,
   OPERATION_STRING_ID_EMPTY,
   SCHEMA_REQUIRED_TYPE_MISSING,
   INCORRECT_ANCESTOR_KIND,

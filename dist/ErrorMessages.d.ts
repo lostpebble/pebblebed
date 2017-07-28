@@ -5,6 +5,7 @@ export declare const ErrorMessages: {
     DELETE_NO_DATA_IDS_ERROR: string;
     ACCESS_TRANSACTION_GENERATED_IDS_ERROR: string;
     SET_NAMESPACE_INCORRECT: string;
+    OPERATION_KEYS_WRONG: (model: PebblebedModel, operation: string) => string;
     OPERATION_STRING_ID_EMPTY: (model: PebblebedModel, operation: string) => string;
     SCHEMA_REQUIRED_TYPE_MISSING: (property: string, kind: string) => string;
     INCORRECT_ANCESTOR_KIND: (model: PebblebedModel) => string;

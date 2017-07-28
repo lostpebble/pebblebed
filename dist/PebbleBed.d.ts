@@ -50,6 +50,7 @@ export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
     transaction: () => DatastoreTransaction;
     setDefaultNamespace: (namespace: string) => void;
+    key(...args: any[]): any;
 };
 export declare class PebblebedModel {
     private schema;
@@ -59,7 +60,7 @@ export declare class PebblebedModel {
     private hasIdProperty;
     constructor(entityKind: string, entitySchema: SchemaDefinition);
     save(data: object | object[]): DatastoreSave;
-    load(ids: string | number | Array<(string | number)>): DatastoreLoad;
+    load(idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>): DatastoreLoad;
     query(namespace?: string): DatastoreQuery;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: object | object[]): DatastoreDelete;
@@ -88,7 +89,8 @@ export declare class DatastoreOperation {
 }
 export declare class DatastoreLoad extends DatastoreOperation {
     private loadIds;
-    constructor(model: PebblebedModel, ids: string | number | Array<(string | number)>);
+    private usingKeys;
+    constructor(model: PebblebedModel, idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>);
     run(): Promise<any>;
 }
 export declare class DatastoreSave extends DatastoreOperation {

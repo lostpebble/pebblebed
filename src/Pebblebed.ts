@@ -118,6 +118,20 @@ export const Pebblebed = {
       Core.Instance.setNamespace(null);
     }
   },
+  key(...args: any[]) {
+    const keyPath = [];
+
+    for (let i = 0; i < args.length; i += 1) {
+      if (i % 2 === 0) {
+        const model: PebblebedModel = args[i];
+        keyPath.push(model.entityKind);
+      } else {
+        keyPath.push(args[i]);
+      }
+    }
+
+    return Core.Instance.ds.key(keyPath);
+  }
 };
 
 function checkDatastore(operation: string) {
@@ -157,10 +171,10 @@ export class PebblebedModel {
     return new DatastoreSave(this, data);
   }
 
-  public load(ids: string | number | Array<(string | number)>) {
+  public load(idsOrKeys: string | number| DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>) {
     checkDatastore("LOAD");
 
-    return new DatastoreLoad(this, ids);
+    return new DatastoreLoad(this, idsOrKeys);
   }
 
   public query(namespace: string = null): DatastoreQuery {
@@ -321,47 +335,66 @@ export class DatastoreOperation {
 }
 
 export class DatastoreLoad extends DatastoreOperation {
-  private loadIds: Array<(string | number)> = [];
+  private loadIds: Array<(string | number | DatastoreEntityKey)> = [];
+  private usingKeys = false;
 
   constructor(
     model: PebblebedModel,
-    ids: string | number | Array<(string | number)>
+    idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>
   ) {
     super(model);
 
-    if (ids != null) {
-      if (Array.isArray(ids)) {
-        this.loadIds = ids;
+    if (idsOrKeys != null) {
+      if (Array.isArray(idsOrKeys)) {
+        this.loadIds = idsOrKeys;
       } else {
-        this.loadIds = [ids];
+        this.loadIds = [idsOrKeys];
       }
 
-      this.loadIds = this.loadIds.map(id => {
-        if (this.idType === "int" && isNumber(id)) {
-          return Core.Instance.dsModule.int(id);
-        } else if (this.idType === "string" && typeof id === "string") {
-          if (id.length === 0) {
-            throw new Error(
-              ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD")
-            );
+      if (typeof this.loadIds[0] === "object") {
+        if ((this.loadIds[0] as DatastoreEntityKey).kind === this.kind) {
+          this.usingKeys = true;
+        } else {
+          throw new Error(
+            ErrorMessages.OPERATION_KEYS_WRONG(this.model, "LOAD")
+          );
+        }
+      } else {
+        this.loadIds = this.loadIds.map(id => {
+          if (this.idType === "int" && isNumber(id)) {
+            return Core.Instance.dsModule.int(id);
+          } else if (this.idType === "string" && typeof id === "string") {
+            if (id.length === 0) {
+              throw new Error(
+                ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD")
+              );
+            }
+
+            return id;
           }
 
-          return id;
-        }
-
-        throw new Error(
-          ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id)
-        );
-      });
+          throw new Error(
+            ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id)
+          );
+        });
+      }
     }
   }
 
   public async run() {
-    const baseKey = this.getBaseKey();
+    let loadKeys;
 
-    const loadKeys = this.loadIds.map(id => {
-      return this.createFullKey(baseKey.concat(this.kind, id));
-    });
+    if (this.usingKeys) {
+      loadKeys = this.loadIds.map(key => {
+        return this.createFullKey((key as DatastoreEntityKey).path);
+      })
+    } else {
+      const baseKey = this.getBaseKey();
+
+      loadKeys = this.loadIds.map(id => {
+        return this.createFullKey(baseKey.concat(this.kind, id));
+      });
+    }
 
     let resp;
 
@@ -370,6 +403,8 @@ export class DatastoreLoad extends DatastoreOperation {
     } else {
       resp = await Core.Instance.ds.get(loadKeys);
     }
+
+    console.dir(resp);
 
     if (this.hasIdProperty && resp[0].length > 0) {
       augmentEntitiesWithIdProperties(
