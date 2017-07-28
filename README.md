@@ -353,18 +353,18 @@ The base helper module for various tasks.
 
 Connect to a Datastore client instance
 ```
-Pebblebed.connectDatastore: (datastoreClient) => void;
+Pebblebed.connectDatastore(datastoreClient);
 ```
 
 Get a Datastore transaction object
 ```
-Pebblebed.transaction: () => transaction;
+const transaction = Pebblebed.transaction();
 ```
 
 Set a default namespace for operations
 
 ```
-Pebblebed.setDefaultNamespace: (namespace: string) => void;
+Pebblebed.setDefaultNamespace(namespace: string);
 ```
 
 Create a datastore key using Models and ids
@@ -372,7 +372,8 @@ Create a datastore key using Models and ids
 ```
 Pebblebed.key(...args: any[])
 
-E.g:
+-- example --
+
 const newKey = Pebblebed.key(TestEntityModel, "123abc");
 ```
 
@@ -381,7 +382,8 @@ Extract datastore keys from an array of objects
 ```
 Pebblebed.keysFromObjectArray(sourceArray: object[], ...args: any[]);
 
-E.g:
+-- example --
+
 const objectArray = [
   {
     first: "king",
@@ -681,7 +683,7 @@ TestEntityModel.load(keys: DatastoreKey[])
 // See the Pebblebed base module for helper methods to generate keys
 ```
 
-On starting a load operation you must pass in the the string or integer IDs you wish to load for your Model's kind. Either a single ID, or an array of IDs.
+On starting a load operation you must pass in the the string or integer IDs you wish to load for your Model's kind. Either a single ID, or an array of IDs. You may also pass in an array of keys.
 
 ### Functions unique to `load()` to describe the operation:
 
