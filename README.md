@@ -98,6 +98,7 @@ import { PebblebedModel } from "pebblebed";
 // Create a schema for an entity
 
 const schemaDefinition = {
+    __excludeFromIndexes: ["testEmbeddedObject"],
     testID: {
         type: "string",
         role: "id",
@@ -112,7 +113,6 @@ const schemaDefinition = {
     testEmbeddedObject: {
         type: "object",
         required: true,
-        excludeFromIndexes: true,
     },
     testDate: {
         type: "datetime",
@@ -175,6 +175,7 @@ A **schema definition** consists of an object of property names and definitions 
 
 ```
 interface SchemaDefinition {
+  __excludeFromIndexes: string[];
   [property: string]: SchemaPropertyDefinition;
 }
 ```
@@ -184,7 +185,6 @@ interface SchemaPropertyDefinition {
   type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
   required?: boolean;
   role?: "id";
-  excludeFromIndexes?: boolean;
   optional?: boolean;
   onSave?: (value: any) => any;
   default?: any;
@@ -192,6 +192,22 @@ interface SchemaPropertyDefinition {
 ```
 
 Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
+
+### `__excludeFromIndexes`
+
+This is a string array which contains the names of the properties that you would like to not be indexed. Example:
+
+```
+    __excludeFromIndexes: [
+        "embeddedObjectEntityProperty",
+        "reallyLongStringProperty",
+        "embeddedObject.someProperty"
+    ];
+```
+
+By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set them in this string array.
+
+Limitations in the way the Datastore library currently works means that you need to set each property that you don't want indexed in an embedded object. See this issue: https://github.com/GoogleCloudPlatform/google-cloud-node/issues/2510
 
 ### Entity Property Definition
 
@@ -213,10 +229,12 @@ Our JavaScript entity objects can contain certain types which are converted by o
 
 If this property is required to be set in the entity (not `null`), then mark this `true`
 
-#### `excludeFromIndexes`: boolean
-###### (default `false`)
+#### ~~excludeFromIndexes: boolean~~
+###### ~~(default false)~~
 
-By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set this to `true`.
+~~By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set this to true~~
+
+_This property has be deprecated in favour of setting the `__excludeFromIndexes` property in the root of your schema object._
 
 #### `optional`: boolean
 ###### (default `false`)
@@ -251,6 +269,7 @@ If there is no property in the schema definition which has a `role: "id"` set, t
 ### An example schema definition might look like this:
 ```
 const schemaDefinition = {
+    __excludeFromIndexes: ["testEmbeddedObject"],
     testID: {
         type: "string",
         role: "id",
@@ -265,7 +284,6 @@ const schemaDefinition = {
     testEmbeddedObject: {
         type: "object",
         required: true,
-        excludeFromIndexes: true,
     },
     testDate: {
         type: "datetime",
