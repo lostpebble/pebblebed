@@ -1,7 +1,11 @@
-export interface SchemaDefinition {
-    [property: string]: SchemaPropertyDefinition;
-}
-export interface SchemaPropertyDefinition {
+export declare type SchemaDefinitionProperties<T> = {
+    [P in keyof T]: SchemaPropertyDefinition;
+};
+export declare type SchemaDefinitionOptions = {
+    __excludeFromIndexes?: string[];
+};
+export declare type SchemaDefinition<T> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
+export declare type SchemaPropertyDefinition = {
     type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
     required?: boolean;
     role?: "id";
@@ -9,7 +13,7 @@ export interface SchemaPropertyDefinition {
     optional?: boolean;
     onSave?: (value: any) => any;
     default?: any;
-}
+};
 export interface DatastoreTransaction {
     run: () => Promise<void>;
     commit: () => Promise<void>;
@@ -60,14 +64,14 @@ export declare class PebblebedModel {
     private idProperty;
     private idType;
     private hasIdProperty;
-    constructor(entityKind: string, entitySchema: SchemaDefinition);
+    constructor(entityKind: string, entitySchema: SchemaDefinition<any>);
     save(data: object | object[]): DatastoreSave;
-    load(idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>): DatastoreLoad;
+    load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreLoad;
     query(namespace?: string): DatastoreQuery;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: object | object[]): DatastoreDelete;
     readonly entityKind: string;
-    readonly entitySchema: SchemaDefinition;
+    readonly entitySchema: any;
     readonly entityIdProperty: string;
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
@@ -75,7 +79,7 @@ export declare class PebblebedModel {
 export declare class DatastoreOperation {
     protected model: PebblebedModel;
     protected kind: string;
-    protected schema: SchemaDefinition;
+    protected schema: SchemaDefinition<any>;
     protected idProperty: string;
     protected idType: string;
     protected hasIdProperty: boolean;
@@ -92,7 +96,7 @@ export declare class DatastoreOperation {
 export declare class DatastoreLoad extends DatastoreOperation {
     private loadIds;
     private usingKeys;
-    constructor(model: PebblebedModel, idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>);
+    constructor(model: PebblebedModel, idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>);
     run(): Promise<any>;
 }
 export declare class DatastoreSave extends DatastoreOperation {
@@ -115,7 +119,7 @@ export declare class DatastoreDelete extends DatastoreOperation {
     private ignoreAnc;
     constructor(model: PebblebedModel, data?: object | object[]);
     id(id: string | number): this;
-    ids(ids: Array<(string | number)>): this;
+    ids(ids: Array<string | number>): this;
     ignoreDetectedAncestors(): this;
     run(): any;
 }

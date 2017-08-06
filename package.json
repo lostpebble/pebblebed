@@ -14,7 +14,7 @@
     "watch-es2017": "tsc --p tsconfig.next.json --watch",
     "build-es6": "rimraf ./dist && tsc",
     "watch-es6": "tsc --watch",
-    "prepublish": "npm run build",
+    "prepublish": "in-publish && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "cut-patch-release": "npm version patch && git push --follow-tags && npm publish",
     "cut-minor-release": "npm version minor && git push --follow-tags && npm publish",
@@ -41,14 +41,15 @@
   },
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
   "peerDependencies": {
-    "@google-cloud/datastore": "^1.0.7"
+    "@google-cloud/datastore": "^1.1.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.71",
     "@types/node": "^8.0.17",
+    "concurrently": "^3.5.0",
+    "in-publish": "^2.0.0",
     "lodash": "^4.17.4",
     "ts-node": "^3.3.0",
-    "typescript": "^2.4.2",
-    "concurrently": "^3.5.0"
+    "typescript": "^2.4.2"
   }
 }
