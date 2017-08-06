@@ -1,19 +1,12 @@
 import { ErrorMessages } from "./ErrorMessages";
 
-export interface SchemaDefinition {
-  [property: string]: SchemaPropertyDefinition;
-}
+export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };
+export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
-export interface SchemaPropertyDefinition {
-  type:
-    | "string"
-    | "int"
-    | "double"
-    | "boolean"
-    | "datetime"
-    | "array"
-    | "object"
-    | "geoPoint";
+export type SchemaDefinition<T> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
+
+export type SchemaPropertyDefinition = {
+  type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
   required?: boolean;
   role?: "id";
   excludeFromIndexes?: boolean;
@@ -131,7 +124,10 @@ export const Pebblebed = {
 
     return Core.Instance.ds.key(keyPath);
   },
-  keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel|keyof T>): DatastoreEntityKey[] {
+  keysFromObjectArray<T>(
+    sourceArray: T[],
+    ...args: Array<PebblebedModel | keyof T>
+  ): DatastoreEntityKey[] {
     if (args.length % 2 !== 0) {
       throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
@@ -140,13 +136,16 @@ export const Pebblebed = {
       const keyPath = [];
 
       for (let i = 0; i < args.length; i += 2) {
-        keyPath.push(args[i], source[(args[i + 1] as keyof T)]);
+        keyPath.push(args[i], source[args[i + 1] as keyof T]);
       }
 
       return Pebblebed.key(...keyPath);
-    })
+    });
   },
-  uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel|keyof T>): DatastoreEntityKey[] {
+  uniqueKeysFromObjectArray<T>(
+    sourceArray: T[],
+    ...args: Array<PebblebedModel | keyof T>
+  ): DatastoreEntityKey[] {
     if (args.length % 2 !== 0) {
       throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
@@ -159,8 +158,8 @@ export const Pebblebed = {
       const kindKeyPath = [];
 
       for (let i = 0; i < args.length; i += 2) {
-        keyPath.push(args[i], source[(args[i + 1] as keyof T)]);
-        kindKeyPath.push((args[i] as PebblebedModel).entityKind, source[(args[i + 1] as keyof T)]);
+        keyPath.push(args[i], source[args[i + 1] as keyof T]);
+        kindKeyPath.push((args[i] as PebblebedModel).entityKind, source[args[i + 1] as keyof T]);
       }
 
       if (get(obj, kindKeyPath, false) === false) {
@@ -170,7 +169,7 @@ export const Pebblebed = {
     }
 
     return keys;
-  }
+  },
 };
 
 function checkDatastore(operation: string) {
@@ -180,13 +179,13 @@ function checkDatastore(operation: string) {
 }
 
 export class PebblebedModel {
-  private schema: SchemaDefinition;
+  private schema: SchemaDefinition<any>;
   private kind: string;
   private idProperty: string;
   private idType: string;
   private hasIdProperty = false;
 
-  constructor(entityKind: string, entitySchema: SchemaDefinition) {
+  constructor(entityKind: string, entitySchema: SchemaDefinition<any>) {
     this.schema = entitySchema;
     this.kind = entityKind;
     this.idProperty = getIdPropertyFromSchema(entitySchema);
@@ -197,9 +196,7 @@ export class PebblebedModel {
       this.idType = this.schema[this.idProperty].type;
 
       if (this.idType !== "string" && this.idType !== "int") {
-        throw new Error(
-          ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL")
-        );
+        throw new Error(ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL"));
       }
     }
   }
@@ -210,7 +207,9 @@ export class PebblebedModel {
     return new DatastoreSave(this, data);
   }
 
-  public load(idsOrKeys: string | number| DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>) {
+  public load(
+    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+  ) {
     checkDatastore("LOAD");
 
     return new DatastoreLoad(this, idsOrKeys);
@@ -227,9 +226,10 @@ export class PebblebedModel {
 
     const ns = namespace != null ? namespace : Core.Instance.namespace;
 
-    const dsQuery = ns != null
-      ? Core.Instance.ds.createQuery(ns, this.kind)
-      : Core.Instance.ds.createQuery(this.kind);
+    const dsQuery =
+      ns != null
+        ? Core.Instance.ds.createQuery(ns, this.kind)
+        : Core.Instance.ds.createQuery(this.kind);
 
     const runQuery = dsQuery.run.bind(dsQuery);
 
@@ -238,10 +238,12 @@ export class PebblebedModel {
         const ancestors = extractAncestorPaths(model, ...args);
 
         if (ns != null) {
-          this.hasAncestor(Core.Instance.ds.key({
-            namespace: ns,
-            path: [].concat.apply([], ancestors)
-          }));
+          this.hasAncestor(
+            Core.Instance.ds.key({
+              namespace: ns,
+              path: [].concat.apply([], ancestors),
+            })
+          );
         } else {
           this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
         }
@@ -315,7 +317,7 @@ function extractAncestorPaths(model, ...args: any[]) {
 export class DatastoreOperation {
   protected model: PebblebedModel;
   protected kind: string;
-  protected schema: SchemaDefinition;
+  protected schema: SchemaDefinition<any>;
   protected idProperty: string;
   protected idType: string;
   protected hasIdProperty = false;
@@ -374,12 +376,12 @@ export class DatastoreOperation {
 }
 
 export class DatastoreLoad extends DatastoreOperation {
-  private loadIds: Array<(string | number | DatastoreEntityKey)> = [];
+  private loadIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
 
   constructor(
     model: PebblebedModel,
-    idsOrKeys: string | number | DatastoreEntityKey | Array<(string | number | DatastoreEntityKey)>
+    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
   ) {
     super(model);
 
@@ -394,9 +396,7 @@ export class DatastoreLoad extends DatastoreOperation {
         if ((this.loadIds[0] as DatastoreEntityKey).kind === this.kind) {
           this.usingKeys = true;
         } else {
-          throw new Error(
-            ErrorMessages.OPERATION_KEYS_WRONG(this.model, "LOAD")
-          );
+          throw new Error(ErrorMessages.OPERATION_KEYS_WRONG(this.model, "LOAD"));
         }
       } else {
         this.loadIds = this.loadIds.map(id => {
@@ -404,17 +404,13 @@ export class DatastoreLoad extends DatastoreOperation {
             return Core.Instance.dsModule.int(id);
           } else if (this.idType === "string" && typeof id === "string") {
             if (id.length === 0) {
-              throw new Error(
-                ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD")
-              );
+              throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD"));
             }
 
             return id;
           }
 
-          throw new Error(
-            ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id)
-          );
+          throw new Error(ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id));
         });
       }
     }
@@ -426,7 +422,7 @@ export class DatastoreLoad extends DatastoreOperation {
     if (this.usingKeys) {
       loadKeys = this.loadIds.map(key => {
         return this.createFullKey((key as DatastoreEntityKey).path);
-      })
+      });
     } else {
       const baseKey = this.getBaseKey();
 
@@ -444,12 +440,7 @@ export class DatastoreLoad extends DatastoreOperation {
     }
 
     if (this.hasIdProperty && resp[0].length > 0) {
-      augmentEntitiesWithIdProperties(
-        resp[0],
-        this.idProperty,
-        this.idType,
-        this.kind
-      );
+      augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.idType, this.kind);
     }
 
     return resp[0];
@@ -506,9 +497,7 @@ export class DatastoreSave extends DatastoreOperation {
           case "string": {
             if (typeof data[this.idProperty] === "string") {
               if (data[this.idProperty].length === 0) {
-                throw new Error(
-                  ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "SAVE")
-                );
+                throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
               }
 
               id = data[this.idProperty];
@@ -525,11 +514,7 @@ export class DatastoreSave extends DatastoreOperation {
 
         if (id == null) {
           throw new Error(
-            ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(
-              this.model,
-              "SAVE",
-              data[this.idProperty]
-            )
+            ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty])
           );
         }
       } else {
@@ -545,13 +530,8 @@ export class DatastoreSave extends DatastoreOperation {
             id = entityKey.name;
           }
         } else {
-          if (
-            this.hasIdProperty &&
-            (this.idType === "string" || !this.generate)
-          ) {
-            throw new Error(
-              ErrorMessages.OPERATION_MISSING_ID_ERROR(this.model, "SAVE")
-            );
+          if (this.hasIdProperty && (this.idType === "string" || !this.generate)) {
+            throw new Error(ErrorMessages.OPERATION_MISSING_ID_ERROR(this.model, "SAVE"));
           }
         }
       }
@@ -580,10 +560,13 @@ export class DatastoreSave extends DatastoreOperation {
         ? this.createFullKey(setAncestors.concat([this.kind, id]))
         : this.createFullKey(setAncestors.concat([this.kind]));
 
+      const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
+
       return {
         key,
+        excludeFromIndexes,
         generated: id == null,
-        data: dataArrayFromSchema(data, this.schema, this.kind),
+        data: dataObject,
       };
     });
 
@@ -618,7 +601,7 @@ export class DatastoreSave extends DatastoreOperation {
 
 export class DatastoreDelete extends DatastoreOperation {
   private dataObjects: any[];
-  private deleteIds: Array<(string | number)> = [];
+  private deleteIds: Array<string | number> = [];
   private useIds = false;
   private ignoreAnc = false;
 
@@ -641,7 +624,7 @@ export class DatastoreDelete extends DatastoreOperation {
     return this;
   }
 
-  public ids(ids: Array<(string | number)>) {
+  public ids(ids: Array<string | number>) {
     this.deleteIds = ids;
     return this;
   }
@@ -671,12 +654,7 @@ export class DatastoreDelete extends DatastoreOperation {
             case "string":
               if (typeof data[this.idProperty] === "string") {
                 if (data[this.idProperty].length === 0) {
-                  throw new Error(
-                    ErrorMessages.OPERATION_STRING_ID_EMPTY(
-                      this.model,
-                      "DELETE"
-                    )
-                  );
+                  throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
                 }
 
                 id = data[this.idProperty];
@@ -723,9 +701,7 @@ export class DatastoreDelete extends DatastoreOperation {
           }
         }
 
-        deleteKeys.push(
-          this.createFullKey(setAncestors.concat([this.kind, id]))
-        );
+        deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id])));
       }
     } else {
       deleteKeys = this.deleteIds.map(id => {
@@ -804,15 +780,9 @@ async function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
   let allocatedKeys;
 
   if (transaction) {
-    allocatedKeys = await transaction.allocateIds(
-      incompleteKey,
-      allocateAmount
-    );
+    allocatedKeys = await transaction.allocateIds(incompleteKey, allocateAmount);
   } else {
-    allocatedKeys = await Core.Instance.ds.allocateIds(
-      incompleteKey,
-      allocateAmount
-    );
+    allocatedKeys = await Core.Instance.ds.allocateIds(incompleteKey, allocateAmount);
   }
 
   let ids = [];
@@ -887,7 +857,7 @@ function augmentEntitiesWithIdProperties(
   }
 }
 
-function getIdPropertyFromSchema(schema: SchemaDefinition) {
+function getIdPropertyFromSchema(schema: SchemaDefinition<any>) {
   for (const property in schema) {
     if (schema.hasOwnProperty(property)) {
       if (schema[property].role != null && schema[property].role === "id") {
@@ -936,21 +906,31 @@ function convertToType(value: any, type: string) {
   }
 }
 
-function dataArrayFromSchema(
+const schemaOptionProps = {
+  __excludeFromIndexes: true,
+};
+
+function buildDataFromSchema(
   data: any,
-  schema: SchemaDefinition,
+  schema: SchemaDefinition<any>,
   entityKind?: string
-) {
-  const dataArray = [];
+): { excludeFromIndexes: string[]; dataObject: object } {
+  let excludeFromIndexesArray: string[] = [];
+  const dataObject = {};
 
   for (const property in schema) {
-    if (schema.hasOwnProperty(property)) {
+    if (schema.hasOwnProperty(property) && !schemaOptionProps[property]) {
       const schemaProp: SchemaPropertyDefinition = schema[property];
 
       if (schemaProp.role !== "id") {
-        const exclude = typeof schemaProp.excludeFromIndexes === "boolean"
-          ? schemaProp.excludeFromIndexes
-          : false;
+        const exclude =
+          typeof schemaProp.excludeFromIndexes === "boolean"
+            ? schemaProp.excludeFromIndexes
+            : false;
+
+        if (exclude && schemaProp.type !== "array") {
+          excludeFromIndexesArray.push(property);
+        }
 
         let value = data[property];
 
@@ -958,29 +938,23 @@ function dataArrayFromSchema(
           value = schemaProp.onSave(value);
         }
 
-        if (
-          !(value == null) ||
-          (data.hasOwnProperty(property) && !(data[property] == null))
-        ) {
-          dataArray.push({
-            name: property,
-            value: convertToType(value, schemaProp.type),
-            excludeFromIndexes: exclude,
-          });
+        if (!(value == null) || (data.hasOwnProperty(property) && !(data[property] == null))) {
+          dataObject[property] = convertToType(value, schemaProp.type);
         } else if (schemaProp.required) {
-          throw new Error(
-            ErrorMessages.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind)
-          );
+          throw new Error(ErrorMessages.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
         } else if (!schemaProp.optional) {
-          dataArray.push({
-            name: property,
-            value: schemaProp.default ? schemaProp.default : null,
-            excludeFromIndexes: exclude,
-          });
+          dataObject[property] = schemaProp.default ? schemaProp.default : null;
         }
       }
     }
   }
 
-  return dataArray;
+  if (schema.__excludeFromIndexes != null) {
+    excludeFromIndexesArray = schema.__excludeFromIndexes;
+  }
+
+  return {
+    excludeFromIndexes: excludeFromIndexesArray,
+    dataObject,
+  };
 }
