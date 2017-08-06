@@ -191,9 +191,7 @@ interface SchemaPropertyDefinition {
 }
 ```
 
-Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
-
-### `__excludeFromIndexes`
+### The `__excludeFromIndexes` schema property
 
 This is a string array which contains the names of the properties that you would like to not be indexed. Example:
 
@@ -208,6 +206,10 @@ This is a string array which contains the names of the properties that you would
 By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set them in this string array.
 
 Limitations in the way the Datastore library currently works means that you need to set each property that you don't want indexed in an embedded object. See this issue: https://github.com/GoogleCloudPlatform/google-cloud-node/issues/2510
+
+---
+
+Schemas are contracts between your JavaScript objects and the eventual stored objects in the datastore. In that sense, you need to pay close attention to how you define each property in the schema. Let's go over the options for each property on the schema:
 
 ### Entity Property Definition
 
@@ -234,7 +236,7 @@ If this property is required to be set in the entity (not `null`), then mark thi
 
 ~~By default all properties on your entities will be indexed. This can become costly depending on the amount of indexed properties on an entity. To prevent this for certain properties set this to true~~
 
-_This property has be deprecated in favour of setting the `__excludeFromIndexes` property in the root of your schema object._
+_As of version 0.4.0 This property has be deprecated in favour of setting the `__excludeFromIndexes` property in the root of your schema object._
 
 #### `optional`: boolean
 ###### (default `false`)
