@@ -3,7 +3,7 @@ import { ErrorMessages } from "./ErrorMessages";
 export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };
 export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
-export type SchemaDefinition<T> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
+export type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 
 export type SchemaPropertyDefinition = {
   type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";

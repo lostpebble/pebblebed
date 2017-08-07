@@ -4,7 +4,7 @@ export declare type SchemaDefinitionProperties<T> = {
 export declare type SchemaDefinitionOptions = {
     __excludeFromIndexes?: string[];
 };
-export declare type SchemaDefinition<T> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
+export declare type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 export declare type SchemaPropertyDefinition = {
     type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
     required?: boolean;
