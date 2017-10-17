@@ -25,7 +25,8 @@ export interface DatastoreTransaction {
 }
 
 export interface DatastoreEntityKey {
-  name: string;
+  name?: string;
+  id?: string;
   kind: string;
   namespace?: string;
   parent?: DatastoreEntityKey;
@@ -275,6 +276,20 @@ export class PebblebedModel {
     checkDatastore("DELETE");
 
     return new DatastoreDelete(this, data);
+  }
+
+  public async allocateIds(amount: number, withAncestors: any[] = null): Promise<Array<DatastoreEntityKey>> {
+    checkDatastore("ALLOCATE IDS");
+
+    let keyPath = [this.kind];
+
+    if (withAncestors != null) {
+      keyPath = [].concat(...extractAncestorPaths(this, ...withAncestors), keyPath);
+    }
+
+    const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);
+
+    return allocateIds[0];
   }
 
   public get entityKind() {

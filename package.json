@@ -50,6 +50,7 @@
     "in-publish": "^2.0.0",
     "lodash": "^4.17.4",
     "ts-node": "^3.3.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.4.2",
+    "rimraf": "^2.6.2"
   }
 }

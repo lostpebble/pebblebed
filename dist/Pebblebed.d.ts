@@ -23,7 +23,8 @@ export interface DatastoreTransaction {
     [property: string]: any;
 }
 export interface DatastoreEntityKey {
-    name: string;
+    name?: string;
+    id?: string;
     kind: string;
     namespace?: string;
     parent?: DatastoreEntityKey;
@@ -70,6 +71,7 @@ export declare class PebblebedModel {
     query(namespace?: string): DatastoreQuery;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: object | object[]): DatastoreDelete;
+    allocateIds(amount: number, withAncestors?: any[]): Promise<Array<DatastoreEntityKey>>;
     readonly entityKind: string;
     readonly entitySchema: any;
     readonly entityIdProperty: string;
