@@ -116,7 +116,7 @@ export const Pebblebed = {
     const keyPath = [];
 
     for (let i = 0; i < args.length; i += 1) {
-      if (i % 2 === 0) {
+      if (i % 2 === 0 && typeof args[i] !== "string") {
         keyPath.push((args[i] as PebblebedModel).entityKind);
       } else {
         keyPath.push(args[i]);
