@@ -1,8 +1,9 @@
-import { PebblebedModel } from "./Pebblebed";
 /**
  * Created by Paul on 2017-06-02.
  *
  */
+import PebblebedModel from "./PebblebedModel";
+
 function message(message: string) {
   return `\n--- --- --- Pebblebed --- --- --- -- -- -- - - - .
 
@@ -113,7 +114,7 @@ function OPERATION_KEYS_WRONG(model: PebblebedModel, operation: string) {
   );
 }
 
-export const ErrorMessages = {
+export default {
   NO_GOOGLE_CLOUD_DEPENDENCY: message(
     `Pebblebed requires a peerDependency of @google-cloud/datastore - please make sure that you have this dependency installed in your project`
   ),

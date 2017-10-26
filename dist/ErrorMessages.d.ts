@@ -1,6 +1,10 @@
-import { PebblebedModel } from "./Pebblebed";
+/**
+ * Created by Paul on 2017-06-02.
+ *
+ */
+import PebblebedModel from "./PebblebedModel";
 export declare function LOAD_QUERY_DATA_ID_TYPE_ERROR(kind: string, wrongType: string, rightType: string, idProperty: string, id: number | string): string;
-export declare const ErrorMessages: {
+declare const _default: {
     NO_GOOGLE_CLOUD_DEPENDENCY: string;
     DELETE_NO_DATA_IDS_ERROR: string;
     ACCESS_TRANSACTION_GENERATED_IDS_ERROR: string;
@@ -17,3 +21,4 @@ export declare const ErrorMessages: {
     DATASTORE_INSTANCE_ERROR: (operation: any) => string;
     LOAD_QUERY_DATA_ID_TYPE_ERROR: (kind: string, wrongType: string, rightType: string, idProperty: string, id: string | number) => string;
 };
+export default _default;
