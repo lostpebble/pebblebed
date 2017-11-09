@@ -1,13 +1,18 @@
-import { DatastoreEntityKey, DatastoreQuery, DatastoreQueryResponse, SchemaDefinition } from "./types/PebblebedTypes";
+import {
+  DatastoreEntityKey,
+  DatastoreQuery,
+  DatastoreQueryResponse,
+  SchemaDefinition,
+} from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
 import Core from "./Core";
-import ErrorMessages from "./ErrorMessages";
 import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import extractAncestorPaths from "./utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "./utility/augmentEntitiesWithIdProperties";
+import { CreateMessage, throwError } from "./Messaging";
 
 export default class PebblebedModel {
   private schema: SchemaDefinition<any>;
@@ -27,7 +32,7 @@ export default class PebblebedModel {
       this.idType = this.schema[this.idProperty].type;
 
       if (this.idType !== "string" && this.idType !== "int") {
-        throw new Error(ErrorMessages.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL"));
+        throwError(CreateMessage.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL"));
       }
     }
   }
@@ -38,9 +43,7 @@ export default class PebblebedModel {
     return new DatastoreSave(this, data);
   }
 
-  public load(
-    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
-  ) {
+  public load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
     checkDatastore("LOAD");
 
     return new DatastoreLoad(this, idsOrKeys);
@@ -58,9 +61,7 @@ export default class PebblebedModel {
     const ns = namespace != null ? namespace : Core.Instance.namespace;
 
     const dsQuery =
-      ns != null
-        ? Core.Instance.ds.createQuery(ns, this.kind)
-        : Core.Instance.ds.createQuery(this.kind);
+      ns != null ? Core.Instance.ds.createQuery(ns, this.kind) : Core.Instance.ds.createQuery(this.kind);
 
     const runQuery = dsQuery.run.bind(dsQuery);
 

@@ -1,7 +1,8 @@
 import Core from "../Core";
+import { throwError } from "../Messaging";
 
 export default function checkDatastore(operation: string) {
   if (Core.Instance.ds == null) {
-    throw new Error("Datastore has not been connected to Pebblebed");
+    throwError("Datastore has not been connected to Pebblebed");
   }
 }

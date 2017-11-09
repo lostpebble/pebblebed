@@ -1,5 +1,5 @@
 import Core from "../Core";
-import ErrorMessages from "../ErrorMessages";
+import { CreateMessage, warn } from "../Messaging";
 
 export default function augmentEntitiesWithIdProperties(
   respArray: any[],
@@ -12,8 +12,8 @@ export default function augmentEntitiesWithIdProperties(
       if (type === "int") {
         entity[idProperty] = entity[Core.Instance.dsModule.KEY].id;
       } else {
-        console.warn(
-          ErrorMessages.LOAD_QUERY_DATA_ID_TYPE_ERROR(
+        warn(
+          CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(
             kind,
             "int",
             "string",
@@ -28,8 +28,8 @@ export default function augmentEntitiesWithIdProperties(
       if (type === "string") {
         entity[idProperty] = entity[Core.Instance.dsModule.KEY].name;
       } else {
-        console.warn(
-          ErrorMessages.LOAD_QUERY_DATA_ID_TYPE_ERROR(
+        warn(
+          CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(
             kind,
             "string",
             "int",

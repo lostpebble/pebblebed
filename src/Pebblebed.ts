@@ -2,11 +2,13 @@ import { DatastoreEntityKey, DatastoreTransaction } from "./types/PebblebedTypes
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
 import Core from "./Core";
-import ErrorMessages from "./ErrorMessages";
+import { CreateMessage, throwError } from "./Messaging";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
     Core.Instance.setDatastore(datastore);
+
+    console.log("Connecting Pebbledbed to Datastore");
   },
   transaction: (): DatastoreTransaction => {
     return Core.Instance.ds.transaction();
@@ -20,7 +22,7 @@ export const Pebblebed = {
           Core.Instance.setNamespace(null);
         }
       } else {
-        throw new Error(ErrorMessages.SET_NAMESPACE_INCORRECT);
+        throwError(CreateMessage.SET_NAMESPACE_INCORRECT);
       }
     } else {
       Core.Instance.setNamespace(null);
@@ -41,7 +43,7 @@ export const Pebblebed = {
   },
   keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): DatastoreEntityKey[] {
     if (args.length % 2 !== 0) {
-      throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+      throwError(CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
 
     return sourceArray.map(source => {
@@ -54,9 +56,12 @@ export const Pebblebed = {
       return Pebblebed.key(...keyPath);
     });
   },
-  uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): DatastoreEntityKey[] {
+  uniqueKeysFromObjectArray<T>(
+    sourceArray: T[],
+    ...args: Array<PebblebedModel | keyof T>
+  ): DatastoreEntityKey[] {
     if (args.length % 2 !== 0) {
-      throw new Error(ErrorMessages.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+      throwError(CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
 
     const obj = {};

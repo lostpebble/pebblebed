@@ -1,10 +1,10 @@
 import { DatastoreEntityKey } from "../types/PebblebedTypes";
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
-import ErrorMessages from "../ErrorMessages";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
+import { CreateMessage, throwError } from "../Messaging";
 
 export default class DatastoreLoad extends DatastoreOperation {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
@@ -27,7 +27,7 @@ export default class DatastoreLoad extends DatastoreOperation {
         if ((this.loadIds[0] as DatastoreEntityKey).kind === this.kind) {
           this.usingKeys = true;
         } else {
-          throw new Error(ErrorMessages.OPERATION_KEYS_WRONG(this.model, "LOAD"));
+          throwError(CreateMessage.OPERATION_KEYS_WRONG(this.model, "LOAD"));
         }
       } else {
         this.loadIds = this.loadIds.map(id => {
@@ -35,13 +35,13 @@ export default class DatastoreLoad extends DatastoreOperation {
             return Core.Instance.dsModule.int(id);
           } else if (this.idType === "string" && typeof id === "string") {
             if (id.length === 0) {
-              throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "LOAD"));
+              throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "LOAD"));
             }
 
             return id;
           }
 
-          throw new Error(ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id));
+          throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id));
         });
       }
     }

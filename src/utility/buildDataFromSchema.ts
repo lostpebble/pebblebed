@@ -1,6 +1,6 @@
 import { SchemaDefinition, SchemaPropertyDefinition } from "../types/PebblebedTypes";
 import convertToType from "./convertToType";
-import ErrorMessages from "../ErrorMessages";
+import { CreateMessage, throwError } from "../Messaging";
 
 const schemaOptionProps = {
   __excludeFromIndexes: true,
@@ -20,9 +20,7 @@ export default function buildDataFromSchema(
 
       if (schemaProp.role !== "id") {
         const exclude =
-          typeof schemaProp.excludeFromIndexes === "boolean"
-            ? schemaProp.excludeFromIndexes
-            : false;
+          typeof schemaProp.excludeFromIndexes === "boolean" ? schemaProp.excludeFromIndexes : false;
 
         if (exclude && schemaProp.type !== "array") {
           excludeFromIndexesArray.push(property);
@@ -37,7 +35,7 @@ export default function buildDataFromSchema(
         if (!(value == null) || (data.hasOwnProperty(property) && !(data[property] == null))) {
           dataObject[property] = convertToType(value, schemaProp.type);
         } else if (schemaProp.required) {
-          throw new Error(ErrorMessages.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
+          throwError(CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
         } else if (!schemaProp.optional) {
           dataObject[property] = schemaProp.default ? schemaProp.default : null;
         }

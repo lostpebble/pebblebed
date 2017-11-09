@@ -11,7 +11,7 @@ export type SchemaPropertyDefinition = {
   optional?: boolean;
   onSave?: (value: any) => any;
   default?: any;
-}
+};
 
 export interface DatastoreTransaction {
   run: () => Promise<void>;

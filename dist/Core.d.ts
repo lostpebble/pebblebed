@@ -3,6 +3,7 @@ export default class Core {
     ds: any;
     dsModule: any;
     namespace: string;
+    isProductionEnv: boolean;
     private constructor();
     static readonly Instance: Core;
     setDatastore(datastore: any): void;

@@ -1,11 +1,11 @@
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
-import ErrorMessages from "../ErrorMessages";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
+import { CreateMessage, throwError, warn } from "../Messaging";
 
 export default class DatastoreSave extends DatastoreOperation {
   private dataObjects: any[];
@@ -57,7 +57,7 @@ export default class DatastoreSave extends DatastoreOperation {
           case "string": {
             if (typeof data[this.idProperty] === "string") {
               if (data[this.idProperty].length === 0) {
-                throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
+                throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
               }
 
               id = data[this.idProperty];
@@ -73,17 +73,10 @@ export default class DatastoreSave extends DatastoreOperation {
         }
 
         if (id == null) {
-          throw new Error(
-            ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty])
-          );
+          throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty]));
         }
       } else {
-        if (
-          entityKey &&
-          entityKey.path &&
-          entityKey.path.length > 0 &&
-          entityKey.path.length % 2 === 0
-        ) {
+        if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
           if (entityKey.hasOwnProperty("id")) {
             id = Core.Instance.dsModule.int(entityKey.id);
           } else {
@@ -91,7 +84,7 @@ export default class DatastoreSave extends DatastoreOperation {
           }
         } else {
           if (this.hasIdProperty && (this.idType === "string" || !this.generate)) {
-            throw new Error(ErrorMessages.OPERATION_MISSING_ID_ERROR(this.model, "SAVE"));
+            throwError(CreateMessage.OPERATION_MISSING_ID_ERROR(this.model, "SAVE"));
           }
         }
       }
@@ -104,8 +97,8 @@ export default class DatastoreSave extends DatastoreOperation {
           const nextAncestors = setAncestors.toString();
 
           if (prevAncestors !== nextAncestors) {
-            console.warn(
-              ErrorMessages.OPERATION_CHANGED_ANCESTORS_WARNING(
+            warn(
+              CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(
                 this.model,
                 "SAVE",
                 prevAncestors,
@@ -132,10 +125,7 @@ export default class DatastoreSave extends DatastoreOperation {
 
     if (this.transaction) {
       if (this.transAllocateIds) {
-        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(
-          entities,
-          this.transaction
-        );
+        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(entities, this.transaction);
         this.transaction.save(newEntities);
 
         return {
@@ -147,7 +137,7 @@ export default class DatastoreSave extends DatastoreOperation {
 
       return {
         get generatedIds() {
-          console.warn(ErrorMessages.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
+          warn(CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
           return null;
         },
       };

@@ -2,7 +2,7 @@ import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
-import ErrorMessages from "../ErrorMessages";
+import { CreateMessage, throwError, warn } from "../Messaging";
 
 export default class DatastoreDelete extends DatastoreOperation {
   private dataObjects: any[];
@@ -59,7 +59,7 @@ export default class DatastoreDelete extends DatastoreOperation {
             case "string":
               if (typeof data[this.idProperty] === "string") {
                 if (data[this.idProperty].length === 0) {
-                  throw new Error(ErrorMessages.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
+                  throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
                 }
 
                 id = data[this.idProperty];
@@ -68,12 +68,8 @@ export default class DatastoreDelete extends DatastoreOperation {
           }
 
           if (id == null) {
-            throw new Error(
-              ErrorMessages.OPERATION_DATA_ID_TYPE_ERROR(
-                this.model,
-                "DELETE",
-                data[this.idProperty]
-              )
+            throwError(
+              CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", data[this.idProperty])
             );
           }
         } else if (entityKey != null) {
@@ -83,7 +79,7 @@ export default class DatastoreDelete extends DatastoreOperation {
             id = entityKey.name;
           }
         } else {
-          throw new Error(ErrorMessages.DELETE_NO_DATA_IDS_ERROR);
+          throwError(CreateMessage.DELETE_NO_DATA_IDS_ERROR);
         }
 
         if (entityKey && entityKey.parent && !this.ignoreAnc) {
@@ -94,8 +90,8 @@ export default class DatastoreDelete extends DatastoreOperation {
             const nextAncestors = setAncestors.toString();
 
             if (prevAncestors !== nextAncestors) {
-              console.warn(
-                ErrorMessages.OPERATION_CHANGED_ANCESTORS_WARNING(
+              warn(
+                CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(
                   this.model,
                   "DELETE",
                   prevAncestors,

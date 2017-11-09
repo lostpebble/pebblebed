@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Core_1 = require("../Core");
+const Messaging_1 = require("../Messaging");
 function checkDatastore(operation) {
     if (Core_1.default.Instance.ds == null) {
-        throw new Error("Datastore has not been connected to Pebblebed");
+        Messaging_1.throwError("Datastore has not been connected to Pebblebed");
     }
 }
 exports.default = checkDatastore;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2hlY2tEYXRhc3RvcmUuanMiLCJzb3VyY2VSb290IjoiL2hvbWUvbG9zdHBlYmJsZS9EZXYvb3RoZXJfcHJvamVjdHMvZ2l0aHViL3BlYmJsZWJlZC9zcmMvIiwic291cmNlcyI6WyJ1dGlsaXR5L2NoZWNrRGF0YXN0b3JlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsa0NBQTJCO0FBRTNCLHdCQUF1QyxTQUFpQjtJQUN0RCxFQUFFLENBQUMsQ0FBQyxjQUFJLENBQUMsUUFBUSxDQUFDLEVBQUUsSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDO1FBQzdCLE1BQU0sSUFBSSxLQUFLLENBQUMsK0NBQStDLENBQUMsQ0FBQztJQUNuRSxDQUFDO0FBQ0gsQ0FBQztBQUpELGlDQUlDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2hlY2tEYXRhc3RvcmUuanMiLCJzb3VyY2VSb290IjoiRDovRGV2L19Qcm9qZWN0cy9HaXRodWIvcGViYmxlYmVkL3NyYy8iLCJzb3VyY2VzIjpbInV0aWxpdHkvY2hlY2tEYXRhc3RvcmUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxrQ0FBMkI7QUFDM0IsNENBQTBDO0FBRTFDLHdCQUF1QyxTQUFpQjtJQUN0RCxFQUFFLENBQUMsQ0FBQyxjQUFJLENBQUMsUUFBUSxDQUFDLEVBQUUsSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDO1FBQzdCLHNCQUFVLENBQUMsK0NBQStDLENBQUMsQ0FBQztJQUM5RCxDQUFDO0FBQ0gsQ0FBQztBQUpELGlDQUlDIn0=

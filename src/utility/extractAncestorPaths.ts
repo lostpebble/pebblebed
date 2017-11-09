@@ -1,4 +1,4 @@
-import ErrorMessages from "../ErrorMessages";
+import { CreateMessage, throwError } from "../Messaging";
 
 export default function extractAncestorPaths(model, ...args: any[]) {
   let ancestors = [];
@@ -9,7 +9,7 @@ export default function extractAncestorPaths(model, ...args: any[]) {
     } else if (typeof args[i].entityKind === "string") {
       ancestors.push([args[i].entityKind, args[i + 1]]);
     } else {
-      throw new Error(ErrorMessages.INCORRECT_ANCESTOR_KIND(model));
+      throwError(CreateMessage.INCORRECT_ANCESTOR_KIND(model));
     }
   }
 
