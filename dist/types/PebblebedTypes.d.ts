@@ -14,6 +14,18 @@ export interface IOJoiSchemaPropertyMetaInput {
 export interface IOJoiSchemaDefaultMetaInput {
     indexed?: boolean;
 }
+export interface IJoiDescribeObjectProperty {
+    type: string;
+    meta?: any[];
+    invalids?: any[];
+    flags?: {
+        sparse?: boolean;
+        presence?: "required";
+    };
+}
+export interface IJoiDescribeObject {
+    [prop: string]: IJoiDescribeObjectProperty;
+}
 export interface IPebblebedJoiSchema {
     isPebbledbedJoiSchema: boolean;
     entityPropertyMetaDefaults: IOJoiSchemaDefaultMetaInput;

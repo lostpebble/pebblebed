@@ -60,16 +60,32 @@ export class PebblebedJoiSchema<T> {
       depth: 4,
     }));
 
+    let roleIdSet = false;
+
     for (const property in (entityProperties as IJoiDescribeObject)) {
       if (Object.hasOwnProperty(property)) {
-        const basicTypeDefinition: SchemaPropertyDefinition;
         const currentProp: IJoiDescribeObjectProperty = entityProperties[property];
+
+        const basicTypeDefinition: Partial<SchemaPropertyDefinition> = {};
 
         if (currentProp.meta != null) {
           currentProp.meta.forEach((metaObject) => {
-            
+            if (metaObject.__typeDefinition) {
+              basicTypeDefinition.type = metaObject.type;
+
+              if (basicTypeDefinition.role && basicTypeDefinition.role === "id") {
+                if (!roleIdSet) {
+                  basicTypeDefinition.role = "id";
+                  roleIdSet = true;
+                } else {
+                  throwError(`Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`);
+                }
+              }
+            }
           })
         }
+
+
       }
     }
 

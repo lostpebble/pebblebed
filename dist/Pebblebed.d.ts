@@ -4,7 +4,7 @@ import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
     transaction: () => DatastoreTransaction;
-    createJoiSchema: <T = any>() => PebblebedJoiSchema<T>;
+    createSchema: <T = any>() => PebblebedJoiSchema<T>;
     setDefaultNamespace: (namespace: string) => void;
     key(...args: any[]): any;
     keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];
