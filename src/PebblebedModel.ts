@@ -13,17 +13,23 @@ import DatastoreDelete from "./operations/DatastoreDelete";
 import extractAncestorPaths from "./utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "./utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "./Messaging";
+import {PebblebedJoiSchema} from "./validation/PebblebedValidation";
 
-export default class PebblebedModel {
-  private schema: SchemaDefinition<any>;
-  private joiSchema: any;
+export default class PebblebedModel<T = any> {
+  private schema: SchemaDefinition<T>;
+  private joiSchema: PebblebedJoiSchema<T> = null;
   private kind: string;
   private idProperty: string;
   private idType: string;
   private hasIdProperty = false;
 
-  constructor(entityKind: string, entitySchema: SchemaDefinition<any>) {
-    this.schema = entitySchema;
+  constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>) {
+    if ((entitySchema as PebblebedJoiSchema<T>).__isPebblebedJoiSchema) {
+      this.schema = (entitySchema as PebblebedJoiSchema<T>).__generateBasicSchema();
+    } else {
+      this.schema = (entitySchema as SchemaDefinition<T>);
+    }
+
     this.kind = entityKind;
     this.idProperty = getIdPropertyFromSchema(entitySchema);
 

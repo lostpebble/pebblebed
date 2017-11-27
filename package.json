@@ -42,16 +42,18 @@
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
   "peerDependencies": {
     "@google-cloud/datastore": "^1.1.0",
-    "joi": "^13.0.2"
+    "joi": "^11.0.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.71",
     "@types/node": "^8.0.17",
+    "@types/joi": "^13.0.0",
     "concurrently": "^3.5.0",
     "in-publish": "^2.0.0",
     "lodash": "^4.17.4",
     "ts-node": "^3.3.0",
     "typescript": "^2.4.2",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "joi": "^13.0.2"
   }
 }

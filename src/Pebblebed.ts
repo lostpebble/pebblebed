@@ -1,8 +1,15 @@
-import { DatastoreEntityKey, DatastoreTransaction } from "./types/PebblebedTypes";
+import * as Joi from "joi";
+import {
+  DatastoreEntityKey,
+  DatastoreTransaction,
+  IOJoiSchemaDefaultMetaInput,
+} from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
 import Core from "./Core";
 import { CreateMessage, throwError } from "./Messaging";
+import { TJoiValidObjectKeys } from "./utility/JoiUtils";
+import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
@@ -12,6 +19,9 @@ export const Pebblebed = {
   },
   transaction: (): DatastoreTransaction => {
     return Core.Instance.ds.transaction();
+  },
+  createJoiSchema: <T = any>(): PebblebedJoiSchema<T> => {
+    return new PebblebedJoiSchema<T>();
   },
   setDefaultNamespace: (namespace: string) => {
     if (namespace != null) {

@@ -1,13 +1,39 @@
+import * as Joi from "joi";
+
 export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };
 export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
 export type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 
-export interface JoiSchemaDefaultMeta {
+export interface IOJoiSchemaPropertyMetaInput {
+  role?: "id";
+  indexed?: boolean;
+  onSave?: (value: any) => any;
+}
+
+export interface IOJoiSchemaDefaultMetaInput {
   indexed?: boolean;
 }
 
-// export const AVJoiSchemaDefaultMeta =
+export interface IJoiDescribeObjectProperty {
+  type: string;
+  meta?: any[];
+  invalids?: any[];
+  flags?: {
+    sparse?: boolean;
+    presence?: "required";
+  }
+}
+
+export interface IJoiDescribeObject {
+  [prop: string]: IJoiDescribeObjectProperty;
+}
+
+export interface IPebblebedJoiSchema {
+  isPebbledbedJoiSchema: boolean;
+  entityPropertyMetaDefaults: IOJoiSchemaDefaultMetaInput;
+  entitySchema: Joi.Schema;
+}
 
 export type SchemaPropertyDefinition = {
   type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
