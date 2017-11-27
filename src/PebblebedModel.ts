@@ -16,6 +16,7 @@ import { CreateMessage, throwError } from "./Messaging";
 
 export default class PebblebedModel {
   private schema: SchemaDefinition<any>;
+  private joiSchema: any;
   private kind: string;
   private idProperty: string;
   private idType: string;

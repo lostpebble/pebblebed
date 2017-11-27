@@ -3,6 +3,12 @@ export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
 export type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 
+export interface JoiSchemaDefaultMeta {
+  indexed?: boolean;
+}
+
+// export const AVJoiSchemaDefaultMeta =
+
 export type SchemaPropertyDefinition = {
   type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
   required?: boolean;
