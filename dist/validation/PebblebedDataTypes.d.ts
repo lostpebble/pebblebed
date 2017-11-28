@@ -1,6 +1,6 @@
 import * as Joi from "joi";
-import { IOJoiSchemaPropertyMetaInput } from "../";
-export declare type TPebblebedJoiTypeFunction<T> = (meta?: IOJoiSchemaPropertyMetaInput) => T;
+import { IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput } from "../";
+export declare type TPebblebedJoiTypeFunction<T, I = IOJoiSchemaPropertyMetaInput> = (meta?: I) => T;
 export declare const PebbleStringId: () => Joi.StringSchema;
 export declare const PebbleIntegerId: () => Joi.NumberSchema;
 export declare const PebbleInteger: TPebblebedJoiTypeFunction<Joi.NumberSchema>;
@@ -10,4 +10,4 @@ export declare const PebbleString: TPebblebedJoiTypeFunction<Joi.StringSchema>;
 export declare const PebbleBoolean: TPebblebedJoiTypeFunction<Joi.BooleanSchema>;
 export declare const PebbleDateTime: TPebblebedJoiTypeFunction<Joi.DateSchema>;
 export declare const PebbleArray: TPebblebedJoiTypeFunction<Joi.ArraySchema>;
-export declare const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema>;
+export declare const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema, IOJoiSchemaPropertyMetaInput & IOJoiSchemaObjectPropertyMetaInput>;

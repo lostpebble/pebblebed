@@ -9,10 +9,15 @@ export declare type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & 
 export interface IOJoiSchemaPropertyMetaInput {
     role?: "id";
     indexed?: boolean;
+    nullValueIfUnset?: boolean;
     onSave?: (value: any) => any;
+}
+export interface IOJoiSchemaObjectPropertyMetaInput {
+    serialize?: boolean;
 }
 export interface IOJoiSchemaDefaultMetaInput {
     indexed?: boolean;
+    nullValueIfUnset?: boolean;
 }
 export interface IJoiDescribeObjectProperty {
     type: string;
@@ -21,6 +26,7 @@ export interface IJoiDescribeObjectProperty {
     flags?: {
         sparse?: boolean;
         presence?: "required";
+        default?: any;
     };
 }
 export interface IJoiDescribeObject {
@@ -36,6 +42,7 @@ export declare type SchemaPropertyDefinition = {
     required?: boolean;
     role?: "id";
     excludeFromIndexes?: boolean;
+    serialize?: boolean;
     optional?: boolean;
     onSave?: (value: any) => any;
     default?: any;

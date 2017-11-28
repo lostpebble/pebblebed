@@ -1,7 +1,7 @@
 import * as Joi from "joi";
-import {IOJoiSchemaPropertyMetaInput} from "../";
+import {IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput} from "../";
 
-export type TPebblebedJoiTypeFunction<T> = (meta?: IOJoiSchemaPropertyMetaInput) => T;
+export type TPebblebedJoiTypeFunction<T, I = IOJoiSchemaPropertyMetaInput> = (meta?: I) => T;
 
 export const PebbleStringId: () => Joi.StringSchema = () => Joi.string().meta({
   __typeDefinition: true,
@@ -50,7 +50,7 @@ export const PebbleArray: TPebblebedJoiTypeFunction<Joi.ArraySchema> = (meta = {
   type: "array",
 }).meta(meta);
 
-export const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema> = (meta = {}) => Joi.object().meta({
+export const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema, IOJoiSchemaPropertyMetaInput & IOJoiSchemaObjectPropertyMetaInput> = (meta = {}) => Joi.object().meta({
   __typeDefinition: true,
   type: "object",
-});
+}).meta(meta);
