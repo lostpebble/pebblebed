@@ -115,6 +115,10 @@ export default class DatastoreSave extends DatastoreOperation {
 
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
 
+      if (this.runValidation) {
+        const validation = Core.Joi.validate(dataObject, this.model.entityJoiSchema);
+      }
+
       return {
         key,
         excludeFromIndexes,

@@ -9,17 +9,35 @@ import {
   SchemaPropertyDefinition,
 } from "../";
 import * as util from "util";
-import {inspect} from "util";
+import Core from "../Core";
 
-export const AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput>({
-  indexed: Joi.bool().default(true),
-  role: Joi.string().valid(["id"]),
-  onSave: Joi.func(),
-});
+class PebblebedValidations {
+  private static _AVJoiSchemaPropertyMetaInput = null;
+  private static _AVJoiSchemaDefaultMetaInput = null;
 
-export const AVJoiSchemaDefaultMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaDefaultMetaInput>({
-  indexed: Joi.bool().default(true),
-});
+  static get AVJoiSchemaPropertyMetaInput() {
+    if (this._AVJoiSchemaPropertyMetaInput == null) {
+      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput>({
+        indexed: Core.Joi.bool().default(true),
+        role: Core.Joi.string().valid(["id"]),
+        onSave: Core.Joi.func(),
+        nullValueIfUnset: Core.Joi.bool().default(true),
+      });
+    }
+
+    return this._AVJoiSchemaPropertyMetaInput;
+  }
+
+  static get AVJoiSchemaDefaultMetaInput() {
+    if (this._AVJoiSchemaDefaultMetaInput == null) {
+      this._AVJoiSchemaDefaultMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaDefaultMetaInput>({
+        indexed: Core.Joi.bool().default(true),
+      });
+    }
+
+    return this._AVJoiSchemaDefaultMetaInput;
+  }
+}
 
 export class PebblebedJoiSchema<T> {
   public __isPebblebedJoiSchema = true;
@@ -32,7 +50,7 @@ export class PebblebedJoiSchema<T> {
   constructor() {}
 
   setDefaultMeta(defaultMeta: IOJoiSchemaDefaultMetaInput) {
-    const validate = Joi.validate(defaultMeta, AVJoiSchemaDefaultMetaInput);
+    const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, { allowUnknown: false });
 
     if (validate.error != null) {
       throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error}`);
@@ -97,6 +115,12 @@ export class PebblebedJoiSchema<T> {
                 }
               }
             } else {
+              const validate = Core.Joi.validate(metaObject, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
+
+              if (validate.error != null) {
+                throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
+              }
+
               const propertyMeta = Object.assign({}, this.defaultMeta, metaObject);
 
               if (!propertyMeta.nullValueIfUnset) {
@@ -121,15 +145,15 @@ export class PebblebedJoiSchema<T> {
           });
         }
 
-        basicSchema.__excludeFromIndexes = basicSchema.__excludeFromIndexes.concat(propertyExcludeFromIndexes);
+        basicSchema.__excludeFromIndexes = basicSchema.__excludeFromIndexes.concat(
+          propertyExcludeFromIndexes
+        );
         basicSchema[property] = basicPropertyDefinition;
       }
     }
 
     console.log(util.inspect(basicSchema, { depth: 4 }));
 
-    return {
-      __excludeFromIndexes: [],
-    } as SchemaDefinition<T>;
+    return basicSchema;
   }
 }

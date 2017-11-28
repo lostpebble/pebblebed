@@ -26,6 +26,7 @@ export default class PebblebedModel<T = any> {
   constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>) {
     if ((entitySchema as PebblebedJoiSchema<T>).__isPebblebedJoiSchema) {
       this.schema = (entitySchema as PebblebedJoiSchema<T>).__generateBasicSchema();
+      this.joiSchema = (entitySchema as PebblebedJoiSchema<T>);
     } else {
       this.schema = (entitySchema as SchemaDefinition<T>);
     }
@@ -148,5 +149,9 @@ export default class PebblebedModel<T = any> {
 
   public get entityHasIdProperty() {
     return this.hasIdProperty;
+  }
+
+  public get entityJoiSchema() {
+    return this.joiSchema;
   }
 }

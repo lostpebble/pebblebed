@@ -29,7 +29,7 @@ export interface IJoiDescribeObjectProperty {
     sparse?: boolean;
     presence?: "required";
     default?: any;
-  }
+  };
 }
 
 export interface IJoiDescribeObject {

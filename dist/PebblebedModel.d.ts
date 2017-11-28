@@ -22,4 +22,5 @@ export default class PebblebedModel<T = any> {
     readonly entityIdProperty: string;
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
+    readonly entityJoiSchema: PebblebedJoiSchema<T>;
 }

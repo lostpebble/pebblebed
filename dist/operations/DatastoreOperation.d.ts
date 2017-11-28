@@ -10,8 +10,10 @@ export default class DatastoreOperation {
     protected namespace: any;
     protected ancestors: Array<[string, string | number]>;
     protected transaction: any;
+    protected runValidation: boolean;
     constructor(model: PebblebedModel);
     withAncestors(...args: any[]): this;
+    setValidations(on: boolean): void;
     useTransaction(transaction: any): this;
     useNamespace(namespace: string): this;
     protected createFullKey(fullPath: any): any;

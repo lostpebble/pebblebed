@@ -13,6 +13,7 @@ export default class DatastoreOperation {
   protected namespace = null;
   protected ancestors: Array<[string, string | number]> = [];
   protected transaction: any = null;
+  protected runValidation: boolean = true;
 
   constructor(model: PebblebedModel) {
     this.model = model;
@@ -21,11 +22,16 @@ export default class DatastoreOperation {
     this.idProperty = model.entityIdProperty;
     this.idType = model.entityIdType;
     this.hasIdProperty = model.entityHasIdProperty;
+    this.runValidation = Core.Instance.validations;
   }
 
   public withAncestors(...args: any[]) {
     this.ancestors = extractAncestorPaths(this.model, ...args);
     return this;
+  }
+
+  public setValidations(on: boolean) {
+    this.runValidation = on;
   }
 
   public useTransaction(transaction: any) {

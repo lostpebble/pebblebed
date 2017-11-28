@@ -1,5 +1,5 @@
-import * as Joi from "joi";
 import { IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput } from "../";
+import * as Joi from "joi";
 export declare type TPebblebedJoiTypeFunction<T, I = IOJoiSchemaPropertyMetaInput> = (meta?: I) => T;
 export declare const PebbleStringId: () => Joi.StringSchema;
 export declare const PebbleIntegerId: () => Joi.NumberSchema;
