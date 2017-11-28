@@ -9,13 +9,13 @@ export const PebbleStringId: () => Joi.StringSchema = () => Joi.string().meta({
   role: "id",
 });
 
-export const PebbleIntegerId: () => Joi.NumberSchema = () => Joi.number().meta({
+export const PebbleIntegerId: () => Joi.NumberSchema = () => Joi.number().integer().meta({
   __typeDefinition: true,
   type: "int",
   role: "id",
 });
 
-export const PebbleInteger: TPebblebedJoiTypeFunction<Joi.NumberSchema> = (meta = {}) => Joi.number().meta({
+export const PebbleInteger: TPebblebedJoiTypeFunction<Joi.NumberSchema> = (meta = {}) => Joi.number().integer().meta({
   __typeDefinition: true,
   type: "int",
 }).meta(meta);
