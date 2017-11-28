@@ -21,7 +21,9 @@ export const AVJoiSchemaDefaultMetaInput = JoiUtils.createObjectValidator<IOJoiS
 export class PebblebedJoiSchema<T> {
   public __isPebblebedJoiSchema = true;
   private schema: Joi.Schema = null;
-  private defaultMeta: IOJoiSchemaDefaultMetaInput = {};
+  private defaultMeta: IOJoiSchemaDefaultMetaInput = {
+    indexed: true,
+  };
 
   constructor() {}
 
@@ -61,6 +63,7 @@ export class PebblebedJoiSchema<T> {
     }));
 
     let roleIdSet = false;
+    const excludeFromIndexesMap = {};
 
     for (const property in (entityProperties as IJoiDescribeObject)) {
       if (Object.hasOwnProperty(property)) {
@@ -80,6 +83,12 @@ export class PebblebedJoiSchema<T> {
                 } else {
                   throwError(`Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`);
                 }
+              }
+            } else {
+              const propertyMeta = Object.assign({}, this.defaultMeta, metaObject);
+
+              if (!propertyMeta.indexed) {
+                basicTypeDefinition.excludeFromIndexes = true;
               }
             }
           })
