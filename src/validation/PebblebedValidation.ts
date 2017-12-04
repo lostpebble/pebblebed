@@ -65,6 +65,10 @@ export class PebblebedJoiSchema<T> {
     return this;
   }
 
+  __getJoiSchema() {
+    return this.schema;
+  }
+
   __generateBasicSchema(): SchemaDefinition<T> {
     if (this.schema == null) {
       throwError(`Pebblebed: Can't create a model without a schema defined`);

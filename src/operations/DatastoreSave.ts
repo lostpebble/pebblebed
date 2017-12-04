@@ -109,15 +109,19 @@ export default class DatastoreSave extends DatastoreOperation {
         }
       }
 
+      if (this.runValidation && this.model.entityJoiSchema !== null) {
+        const validation = Core.Joi.validate(data, this.model.entityJoiSchema.__getJoiSchema());
+
+        if (validation.error !== null) {
+          throwError(`Pebblebed: Entity ( ${this.model.entityKind} ): ${validation.error}`);
+        }
+      }
+
       const key = id
         ? this.createFullKey(setAncestors.concat([this.kind, id]))
         : this.createFullKey(setAncestors.concat([this.kind]));
 
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
-
-      if (this.runValidation) {
-        const validation = Core.Joi.validate(dataObject, this.model.entityJoiSchema);
-      }
 
       return {
         key,
