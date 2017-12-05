@@ -4,6 +4,7 @@ import { get, set } from "./utility/BasicUtils";
 import Core from "./Core";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
+import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
@@ -16,6 +17,9 @@ export const Pebblebed = {
   },
   createSchema: <T = any>(): PebblebedJoiSchema<T> => {
     return new PebblebedJoiSchema<T>();
+  },
+  setCacheStore: (cacheStore: PebblebedCacheStore) => {
+    Core.Instance.setCacheStore(cacheStore);
   },
   setDefaultNamespace: (namespace: string) => {
     if (namespace != null) {

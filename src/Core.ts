@@ -1,13 +1,16 @@
 import { CreateMessage, throwError } from "./Messaging";
+import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 
 export default class Core {
   private static _instance: Core;
+  private static _redisClient = null;
 
   public ds: any;
   public dsModule: any;
   public namespace: string = null;
   public isProductionEnv = process.env.NODE_ENV === "production";
   public validations = true;
+  public cacheStore: PebblebedCacheStore = null;
 
   private constructor() {
     try {
@@ -41,6 +44,10 @@ export default class Core {
 
   public setDatastore(datastore) {
     this.ds = datastore;
+  }
+
+  public setCacheStore(cacheStore: PebblebedCacheStore) {
+    this.cacheStore = cacheStore;
   }
 
   public setNamespace(namespace: string) {

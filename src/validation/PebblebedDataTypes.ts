@@ -4,7 +4,7 @@ import * as Joi from "joi";
 
 export type TPebblebedJoiTypeFunction<T, I = IOJoiSchemaPropertyMetaInput> = (meta?: I) => T;
 
-export const PebbleStringId: () => Joi.StringSchema = () => Core.Joi.string().meta({
+export const PebbleStringId: () => Joi.StringSchema = () => Core.Joi.string().required().meta({
   __typeDefinition: true,
   type: "string",
   role: "id",

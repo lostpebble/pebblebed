@@ -2,6 +2,16 @@
 # yarn lockfile v1
 
 
+"@types/events@*":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/events/-/events-1.1.0.tgz#93b1be91f63c184450385272c47b6496fd028e02"
+
+"@types/ioredis@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-3.2.1.tgz#af7b2b025a665cdee935392e7262b1a3a734150a"
+  dependencies:
+    "@types/node" "*"
+
 "@types/joi@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@types/joi/-/joi-13.0.0.tgz#63c066d901e87f464fa075d02bf2f390344241fc"
@@ -9,6 +19,12 @@
 "@types/lodash@^4.14.71":
   version "4.14.71"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.71.tgz#0dc383f78981216ac76e2f2c3afd998e0450e4c1"
+
+"@types/node@*":
+  version "8.0.54"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.54.tgz#3fd9357db4af388b79e03845340259440edffde6"
+  dependencies:
+    "@types/events" "*"
 
 "@types/node@^8.0.17":
   version "8.0.17"
