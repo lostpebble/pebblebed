@@ -11,9 +11,13 @@ export default class DatastoreOperation {
     protected ancestors: Array<[string, string | number]>;
     protected transaction: any;
     protected runValidation: boolean;
+    protected useCache: boolean;
+    protected cachingTimeSeconds: number;
     constructor(model: PebblebedModel);
     withAncestors(...args: any[]): this;
-    setValidations(on: boolean): void;
+    enableValidations(on: boolean): void;
+    enableCaching(on: boolean): void;
+    cachingSeconds(seconds: number): void;
     useTransaction(transaction: any): this;
     useNamespace(namespace: string): this;
     protected createFullKey(fullPath: any): any;

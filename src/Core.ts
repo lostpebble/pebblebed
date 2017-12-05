@@ -9,7 +9,9 @@ export default class Core {
   public dsModule: any;
   public namespace: string = null;
   public isProductionEnv = process.env.NODE_ENV === "production";
+  public defaultCachingSeconds = 60 * 5;
   public validations = true;
+  public caching = true;
   public cacheStore: PebblebedCacheStore = null;
 
   private constructor() {
@@ -54,7 +56,11 @@ export default class Core {
     this.namespace = namespace;
   }
 
-  public setValidations(on: boolean) {
+  public enableValidations(on: boolean = true) {
     this.validations = on;
+  }
+
+  public enableCaching(on: boolean = true) {
+    this.caching = on;
   }
 }

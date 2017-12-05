@@ -8,6 +8,9 @@ export declare const Pebblebed: {
     createSchema: <T = any>() => PebblebedJoiSchema<T>;
     setCacheStore: (cacheStore: PebblebedCacheStore) => void;
     setDefaultNamespace: (namespace: string) => void;
+    setDefaultCachingSeconds: (seconds: number) => void;
+    enableValidations(on?: boolean): void;
+    enableCaching(on?: boolean): void;
     key(...args: any[]): any;
     keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];
     uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];

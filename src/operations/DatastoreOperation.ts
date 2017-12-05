@@ -14,6 +14,8 @@ export default class DatastoreOperation {
   protected ancestors: Array<[string, string | number]> = [];
   protected transaction: any = null;
   protected runValidation: boolean = true;
+  protected useCache: boolean = true;
+  protected cachingTimeSeconds: number = 60 * 5;
 
   constructor(model: PebblebedModel) {
     this.model = model;
@@ -23,6 +25,8 @@ export default class DatastoreOperation {
     this.idType = model.entityIdType;
     this.hasIdProperty = model.entityHasIdProperty;
     this.runValidation = Core.Instance.validations;
+    this.useCache = Core.Instance.caching;
+    this.cachingTimeSeconds = Core.Instance.defaultCachingSeconds;
   }
 
   public withAncestors(...args: any[]) {
@@ -30,8 +34,16 @@ export default class DatastoreOperation {
     return this;
   }
 
-  public setValidations(on: boolean) {
+  public enableValidations(on: boolean) {
     this.runValidation = on;
+  }
+
+  public enableCaching(on: boolean) {
+    this.useCache = on;
+  }
+
+  public cachingSeconds(seconds: number) {
+    this.cachingTimeSeconds = seconds;
   }
 
   public useTransaction(transaction: any) {

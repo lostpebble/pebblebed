@@ -6,7 +6,9 @@ export default class Core {
     dsModule: any;
     namespace: string;
     isProductionEnv: boolean;
+    defaultCachingSeconds: number;
     validations: boolean;
+    caching: boolean;
     cacheStore: PebblebedCacheStore;
     private constructor();
     static readonly Instance: Core;
@@ -14,5 +16,6 @@ export default class Core {
     setDatastore(datastore: any): void;
     setCacheStore(cacheStore: PebblebedCacheStore): void;
     setNamespace(namespace: string): void;
-    setValidations(on: boolean): void;
+    enableValidations(on?: boolean): void;
+    enableCaching(on?: boolean): void;
 }

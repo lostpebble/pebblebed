@@ -67,7 +67,26 @@ export default class DatastoreLoad extends DatastoreOperation {
     if (this.transaction) {
       resp = await this.transaction.get(loadKeys);
     } else {
-      resp = await Core.Instance.ds.get(loadKeys);
+      if (this.useCache && Core.Instance.cacheStore != null) {
+        let cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
+
+        if (cachedEntities != null && cachedEntities.length > 0) {
+          cachedEntities = cachedEntities.map((entity, index) => {
+            entity[Core.Instance.dsModule.KEY] = loadKeys[index];
+            return entity;
+          });
+
+          return augmentEntitiesWithIdProperties(cachedEntities, this.idProperty, this.idType, this.kind);
+        }
+
+        resp = await Core.Instance.ds.get(loadKeys);
+
+        if (resp[0].length > 0) {
+          Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(resp[0], this.cachingTimeSeconds);
+        }
+      } else {
+        resp = await Core.Instance.ds.get(loadKeys);
+      }
     }
 
     if (this.hasIdProperty && resp[0].length > 0) {

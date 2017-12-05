@@ -32,7 +32,7 @@ export default class PebblebedModel<T = any> {
     }
 
     this.kind = entityKind;
-    this.idProperty = getIdPropertyFromSchema(entitySchema);
+    this.idProperty = getIdPropertyFromSchema(this.schema);
 
     if (this.idProperty != null) {
       this.hasIdProperty = true;

@@ -1,7 +1,9 @@
+import { DatastoreEntityKey } from "../";
 export declare class PebblebedCacheStore {
-    onSave(entity: string): void;
-    onLoad(): void;
-    onQuery(): void;
-    onFlushEntities(): void;
-    onFlushQueries(): void;
+    getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<null | any[]>;
+    setEntitiesAfterLoadOrSave(entities: any[], secondsToCache: number): Promise<any>;
+    getEntitiesByQuery(query: any): Promise<any>;
+    onFlushEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<any>;
+    onFlushEntities(): Promise<any>;
+    onFlushQueries(): Promise<any>;
 }

@@ -1,21 +1,34 @@
+import { warn } from "../Messaging";
+import { DatastoreEntityKey } from "../";
+
 export class PebblebedCacheStore {
-  onSave(entity: string) {
-    console.log(`Pebblebed: Caching: Trying to cache entities after a save, but onSave() hasn't been implemented in your cache store yet.`);
+  async getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<null | any[]> {
+    warn(`Pebblebed: Caching: Trying to get cached entities before a load, but getEntitiesByKeys() hasn't been implemented in your cache store yet.`);
+    return null;
   }
 
-  onLoad() {
-    console.log(`Pebblebed: Caching: Trying to cache entities after a load, but onLoad() hasn't been implemented in your cache store yet.`);
+  async setEntitiesAfterLoadOrSave(entities: any[], secondsToCache: number) {
+    warn(`Pebblebed: Caching: Trying to cache entities after a load or save, but setEntitiesAfterLoadOrSave() hasn't been implemented in your cache store yet.`);
+    return null;
   }
 
-  onQuery() {
-    console.log(`Pebblebed: Caching: Trying to cache a query, but onQuery() hasn't been implemented in your cache store yet.`);
+  async getEntitiesByQuery(query: any) {
+    warn(`Pebblebed: Caching: Trying to cache a query, but onQuery() hasn't been implemented in your cache store yet.`);
+    return null;
   }
 
-  onFlushEntities() {
-    console.log(`Pebblebed: Caching: Trying to flush / rehydrate entities, but onFlushEntities() hasn't been implemented in your cache store yet.`);
+  async onFlushEntitiesByKeys(keys: DatastoreEntityKey[]) {
+    warn(`Pebblebed: Caching: Trying to flush / rehydrate entities by keys, but onFlushEntitiesByKeys() hasn't been implemented in your cache store yet.`);
+    return null;
   }
 
-  onFlushQueries() {
-    console.log(`Pebblebed: Caching: Trying to flush / rehydrate queries, but onFlushQueries() hasn't been implemented in your cache store yet.`);
+  async onFlushEntities() {
+    warn(`Pebblebed: Caching: Trying to flush / rehydrate entities, but onFlushEntities() hasn't been implemented in your cache store yet.`);
+    return null;
+  }
+
+  async onFlushQueries() {
+    warn(`Pebblebed: Caching: Trying to flush / rehydrate queries, but onFlushQueries() hasn't been implemented in your cache store yet.`);
+    return null;
   }
 }

@@ -12,15 +12,19 @@ export const Pebblebed = {
 
     console.log("Connecting Pebbledbed to Datastore");
   },
+
   transaction: (): DatastoreTransaction => {
     return Core.Instance.ds.transaction();
   },
+
   createSchema: <T = any>(): PebblebedJoiSchema<T> => {
     return new PebblebedJoiSchema<T>();
   },
+
   setCacheStore: (cacheStore: PebblebedCacheStore) => {
     Core.Instance.setCacheStore(cacheStore);
   },
+
   setDefaultNamespace: (namespace: string) => {
     if (namespace != null) {
       if (typeof namespace === "string") {
@@ -36,6 +40,19 @@ export const Pebblebed = {
       Core.Instance.setNamespace(null);
     }
   },
+
+  setDefaultCachingSeconds: (seconds: number) => {
+    Core.Instance.defaultCachingSeconds = seconds;
+  },
+
+  enableValidations(on: boolean = true) {
+    Core.Instance.enableValidations(on);
+  },
+
+  enableCaching(on: boolean = true) {
+    Core.Instance.enableCaching(on);
+  },
+
   key(...args: any[]) {
     const keyPath = [];
 
@@ -49,6 +66,7 @@ export const Pebblebed = {
 
     return Core.Instance.ds.key(keyPath);
   },
+
   keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): DatastoreEntityKey[] {
     if (args.length % 2 !== 0) {
       throwError(CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
@@ -64,6 +82,7 @@ export const Pebblebed = {
       return Pebblebed.key(...keyPath);
     });
   },
+
   uniqueKeysFromObjectArray<T>(
     sourceArray: T[],
     ...args: Array<PebblebedModel | keyof T>
