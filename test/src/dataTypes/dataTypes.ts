@@ -8,7 +8,7 @@ export const DefaultDateTimeNow = PebbleDateTime({
 
     return value;
   }
-}).required();
+});
 
 export interface ICoordinates {
   latitude: number;

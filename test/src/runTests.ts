@@ -3,18 +3,18 @@ import { waitSeconds } from "./utility";
 console.log("Pebbledbed: Running tests");
 
 import "./setupPebblebed";
-import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
+import { runAllOperations } from "./tests/_allOperations";
 
-async function something() {
-  console.log("Starting something");
+async function runTests() {
 
-  await waitSeconds(2);
+  console.log("Running allOperations");
 
-  console.log("Waited 2 seconds");
+  await runAllOperations();
 
-  const entities = await TestEntityStringIdModel.load("123").run();
+  console.log("Finished");
+  // const entities = await TestEntityStringIdModel.load("123").run();
 
-  console.dir(entities);
+  // console.dir(entities);
 }
 
-something();
+runTests();

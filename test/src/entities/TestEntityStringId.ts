@@ -4,7 +4,7 @@ import {
 } from "pebblebed";
 import { DefaultDateTimeNow, ICoordinates } from "../dataTypes/dataTypes";
 
-interface IDSTestEntityStringId {
+export interface IDSTestEntityStringId {
   idThing: string;
   date?: Date;
   tags: string[];

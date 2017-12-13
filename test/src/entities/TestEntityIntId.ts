@@ -1,11 +1,11 @@
 import {
-  PebbleArray, Pebblebed, PebbleBoolean, PebbleDateTime, PebbleDouble, PebbleGeoPoint,
-  PebbleStringId, PebblebedModel, PebbleIntegerId
+  PebbleArray, Pebblebed, PebblebedModel, PebbleBoolean, PebbleDouble, PebbleGeoPoint,
+  PebbleIntegerId
 } from "pebblebed";
 import { DefaultDateTimeNow, ICoordinates } from "../dataTypes/dataTypes";
 
-interface IDSTestEntityIntId {
-  idThing?: string;
+export interface IDSTestEntityIntId {
+  idThing?: number;
   date?: Date;
   tags: string[];
   amount?: number;
@@ -24,4 +24,4 @@ const schema = Pebblebed.createSchema<IDSTestEntityIntId>().setDefaultMeta({
   worthy: PebbleBoolean(),
 });
 
-export const TestEntityStringIdModel = new PebblebedModel("TestEntityStringId", schema);
+export const TestEntityIntIdModel = new PebblebedModel("TestEntityIntId", schema);

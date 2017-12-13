@@ -32,6 +32,7 @@ class PebblebedValidations {
     if (this._AVJoiSchemaDefaultMetaInput == null) {
       this._AVJoiSchemaDefaultMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaDefaultMetaInput>({
         indexed: Core.Joi.bool().default(true),
+        nullValueIfUnset: Core.Joi.bool().default(true),
       });
     }
 
@@ -56,7 +57,7 @@ export class PebblebedJoiSchema<T> {
       throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error}`);
     }
 
-    this.defaultMeta = defaultMeta;
+    Object.assign(this.defaultMeta, defaultMeta);
     return this;
   }
 
