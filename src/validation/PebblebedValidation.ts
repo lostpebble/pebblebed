@@ -76,7 +76,7 @@ export class PebblebedJoiSchema<T> {
 
     const entityProperties = this.schema.describe().children;
 
-    console.log(util.inspect(entityProperties, { depth: 4 }));
+    // console.log(util.inspect(entityProperties, { depth: 4 }));
 
     let roleIdSet = false;
 
@@ -86,8 +86,6 @@ export class PebblebedJoiSchema<T> {
 
     for (const property in entityProperties as IJoiDescribeObject) {
       if (entityProperties.hasOwnProperty(property)) {
-        console.log(`Got property ${property}`, entityProperties[property]);
-
         const currentProp: IJoiDescribeObjectProperty = entityProperties[property];
 
         const propertyExcludeFromIndexes = [];

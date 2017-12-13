@@ -3,8 +3,7 @@ import { waitSeconds } from "./utility";
 console.log("Pebbledbed: Running tests");
 
 import "./setupPebblebed";
-import { TestEntityStringIdModel } from "./TestEntityStringId";
-import { inspect } from "util";
+import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
 
 async function something() {
   console.log("Starting something");
