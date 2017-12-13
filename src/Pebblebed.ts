@@ -56,12 +56,32 @@ export const Pebblebed = {
   key(...args: any[]) {
     const keyPath = [];
 
+    let currentIdType = "unknown";
+
     for (let i = 0; i < args.length; i += 1) {
-      if (i % 2 === 0 && typeof args[i] !== "string") {
-        keyPath.push((args[i] as PebblebedModel).entityKind);
+      if (i % 2 === 0) {
+        if (typeof args[i] !== "string") {
+          keyPath.push((args[i] as PebblebedModel).entityKind);
+          currentIdType = (args[i] as PebblebedModel).entityIdType;
+        } else {
+          keyPath.push(args[i]);
+        }
       } else {
-        keyPath.push(args[i]);
+        if (currentIdType === "int") {
+          keyPath.push(Core.Instance.dsModule.int(args[i]));
+        } else {
+          keyPath.push(args[i]);
+        }
+
+        currentIdType = "unknown";
       }
+    }
+
+    if (Core.Instance.namespace != null) {
+      return Core.Instance.ds.key({
+        path: keyPath,
+        namespace: Core.Instance.namespace,
+      });
     }
 
     return Core.Instance.ds.key(keyPath);
