@@ -1,0 +1,36 @@
+{
+  "name": "pebblebed-test",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=6.5.0"
+  },
+  "scripts": {
+    "test": "ts-node --preserve-symlinks src/runTests.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lostpebble/pebblebed.git"
+  },
+  "keywords": [
+    "google",
+    "cloud",
+    "datastore",
+    "nodejs",
+    "entities",
+    "query",
+    "load",
+    "save"
+  ],
+  "author": "Paul Myburgh",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/lostpebble/pebblebed/issues"
+  },
+  "homepage": "https://github.com/lostpebble/pebblebed#readme",
+  "devDependencies": {
+    "@google-cloud/datastore": "^1.1.0",
+    "typescript": "^2.6.2",
+    "ts-node": "^3.3.0",
+    "joi": "^13.0.2"
+  }
+}

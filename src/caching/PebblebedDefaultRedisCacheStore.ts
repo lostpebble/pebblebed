@@ -14,7 +14,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
 
   async getEntitiesByKeys(keys: DatastoreEntityKey[]) {
     // return this.redis.get
-    console.log(`Trying to get entities by keys:`);
+    console.log(`Trying to get entities from cache using keys:`);
     console.log(util.inspect(keys, true, 3));
 
     const keyStrings = keys.map((key) => key.path.join(":"));
@@ -44,7 +44,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async setEntitiesAfterLoadOrSave(entities, secondsToCache) {
-    console.log(`Trying to set entities:`);
+    console.log(`Trying to set entities in cache after load or save:`);
     console.log(util.inspect(entities, true, 4));
 
     if (entities.length > 0) {
