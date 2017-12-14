@@ -8,7 +8,7 @@ const datastore = require("@google-cloud/datastore");
 
 const doubleQueryValue = datastore.double(20);
 
-export async function runAllOperations() {
+export async function runAllOperations(prefix: string = "") {
   const entityGenerated: IDSTestEntityIntId = {
     amount: 10,
     tags: ["what"],
@@ -30,9 +30,19 @@ export async function runAllOperations() {
     },
   };
 
+  const entityStringTwo: IDSTestEntityStringId = {
+    idThing: "abc123",
+    amount: 35,
+    tags: ["what", "red", "stuff"],
+    location: {
+      latitude: 14.0,
+      longitude: 14.0,
+    },
+  };
+
   // Generated Int ID
   console.log("\nSAVE: Generated Int ID Entity\n");
-  performance.mark("START");
+  performance.mark(`START${prefix.length ? `_${prefix}` : ""}`);
 
   let result = await TestEntityIntIdModel.save(entityGenerated).generateUnsetIds().run();
   performance.mark("SAVE:GENERATED_INT_ID");
@@ -53,8 +63,11 @@ export async function runAllOperations() {
   performance.mark("SAVE:MIXED_GENERATED_SET_INT_IDS");
 
   // Deliberately set String ID
-  console.log("\nSAVE: String ID Entity\n", inspect(await TestEntityStringIdModel.save(entityString).run()));
-  performance.mark("SAVE:STRING_ID");
+  console.log("\nSAVE: String ID Entity Single\n", inspect(await TestEntityStringIdModel.save(entityString).run()));
+  performance.mark("SAVE:STRING_ID_SINGLE");
+
+  console.log("\nSAVE: String ID Entity Multiple\n", inspect(await TestEntityStringIdModel.save([entityString, entityStringTwo]).run()));
+  performance.mark("SAVE:STRING_ID_MULTIPLE");
 
   console.log("\nWaiting 2 seconds\n");
   await waitSeconds(2);
@@ -95,9 +108,11 @@ export async function runAllOperations() {
   );
   performance.mark("QUERY:TAGS_INT_ID");
 
+  const query = await TestEntityIntIdModel.query().filter("amount", "<", 20.5).limit(4).run();
+
   console.log(
     `\nQUERY: Amount INT ID Entities, limited -> 3`,
-    inspect(await TestEntityIntIdModel.query().filter("amount", "<", 20.5).limit(3).run())
+    inspect(query)
   );
   performance.mark("QUERY:AMOUNT_INT_ID");
 
@@ -107,5 +122,13 @@ export async function runAllOperations() {
   );
   performance.mark("QUERY:DATE_STRING_ID");
 
-  printMarkMeasurements(performance.getEntriesByType("mark"));
+  console.log(`\nDELETE: (By Objects) Queried Int Entities`, inspect(await TestEntityIntIdModel.delete(query.entities).run(), false, 6));
+  performance.mark("DELETE:BY_OBJECTS:QUERIED_AMOUNT_INT_IDS");
+
+  console.log(`\nDELETE: (By Ids) String Entity`, inspect(await TestEntityStringIdModel.delete().ids(["abc123"]).run(), false, 6));
+  performance.mark("DELETE:BY_ID:STRING_ID");
+
+  printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
+
+  performance.clearMarks();
 }

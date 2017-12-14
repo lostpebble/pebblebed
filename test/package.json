@@ -31,6 +31,7 @@
     "@google-cloud/datastore": "^1.1.0",
     "typescript": "^2.6.2",
     "ts-node": "^3.3.0",
-    "joi": "^13.0.2"
+    "joi": "^13.0.2",
+    "ioredis": "^3.2.2"
   }
 }
