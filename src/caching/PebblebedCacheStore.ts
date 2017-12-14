@@ -2,6 +2,9 @@ import { warn } from "../Messaging";
 import { DatastoreEntityKey } from "../";
 
 export class PebblebedCacheStore {
+  cacheOnSave = true;
+  cacheOnLoad = true;
+
   async getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<null | any[]> {
     warn(`Pebblebed: Caching: Trying to get cached entities before a load, but getEntitiesByKeys() hasn't been implemented in your cache store yet.`);
     return null;
@@ -12,23 +15,28 @@ export class PebblebedCacheStore {
     return null;
   }
 
+  async setEntitiesByQuery(query: any) {
+    warn(`Pebblebed: Caching: Trying to cache entities after a query, but setEntitiesByQuery() hasn't been implemented in your cache store yet.`);
+    return null;
+  }
+
   async getEntitiesByQuery(query: any) {
-    warn(`Pebblebed: Caching: Trying to cache a query, but onQuery() hasn't been implemented in your cache store yet.`);
+    warn(`Pebblebed: Caching: Trying to get a query result from the cache, but getEntitiesByQuery() hasn't been implemented in your cache store yet.`);
     return null;
   }
 
-  async onFlushEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    warn(`Pebblebed: Caching: Trying to flush / rehydrate entities by keys, but onFlushEntitiesByKeys() hasn't been implemented in your cache store yet.`);
+  async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
+    warn(`Pebblebed: Caching: Trying to flush entities by keys, but flushEntitiesByKeys() hasn't been implemented in your cache store yet.`);
     return null;
   }
 
-  async onFlushEntities() {
-    warn(`Pebblebed: Caching: Trying to flush / rehydrate entities, but onFlushEntities() hasn't been implemented in your cache store yet.`);
+  async flushEntities() {
+    warn(`Pebblebed: Caching: Trying to flush entities, but flushEntities() hasn't been implemented in your cache store yet.`);
     return null;
   }
 
-  async onFlushQueries() {
-    warn(`Pebblebed: Caching: Trying to flush / rehydrate queries, but onFlushQueries() hasn't been implemented in your cache store yet.`);
+  async flushQueries() {
+    warn(`Pebblebed: Caching: Trying to flush queries, but flushQueries() hasn't been implemented in your cache store yet.`);
     return null;
   }
 }

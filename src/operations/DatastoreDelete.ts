@@ -39,7 +39,7 @@ export default class DatastoreDelete extends DatastoreOperation {
     return this;
   }
 
-  public run() {
+  public async run() {
     const baseKey = this.getBaseKey();
     let deleteKeys = [];
 
@@ -110,10 +110,18 @@ export default class DatastoreDelete extends DatastoreOperation {
       });
     }
 
+    let deleteResponse;
+
     if (this.transaction) {
-      return this.transaction.delete(deleteKeys);
+      deleteResponse = await this.transaction.delete(deleteKeys);
+    } else {
+      deleteResponse = await Core.Instance.ds.delete(deleteKeys);
     }
 
-    return Core.Instance.ds.delete(deleteKeys);
+    if (Core.Instance.cacheStore != null) {
+      Core.Instance.cacheStore.flushEntitiesByKeys(deleteKeys);
+    }
+
+    return deleteResponse;
   }
 }

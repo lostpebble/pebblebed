@@ -9,5 +9,5 @@ export default class DatastoreDelete extends DatastoreOperation {
     id(id: string | number): this;
     ids(ids: Array<string | number>): this;
     ignoreDetectedAncestors(): this;
-    run(): any;
+    run(): Promise<any>;
 }

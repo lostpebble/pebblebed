@@ -6,6 +6,7 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
+import * as util from "util";
 
 export default class DatastoreSave extends DatastoreOperation {
   private dataObjects: any[];
@@ -152,7 +153,35 @@ export default class DatastoreSave extends DatastoreOperation {
     }
 
     return Core.Instance.ds.save(entities).then(data => {
-      return extractSavedIds(data)[0];
+      const saveResponse = extractSavedIds(data)[0];
+
+      if (this.useCache && Core.Instance.cacheStore != null && entities.length > 0) {
+        const cacheEntities = [];
+
+        for (let i = 0; i < entities.length; i += 1) {
+          cacheEntities.push({
+            [Core.Instance.dsModule.KEY]: entities[i].key,
+            ...entities[i].data,
+          });
+
+          // Get the generated IDs from the save response (it returns the generated IDs on save)
+          if (entities[i].generated) {
+            cacheEntities[i][Core.Instance.dsModule.KEY].path.push(saveResponse.generatedIds[i]);
+
+            if (this.idType === "int") {
+              cacheEntities[i][Core.Instance.dsModule.KEY].id = saveResponse.generatedIds[i];
+            } else {
+              cacheEntities[i][Core.Instance.dsModule.KEY].name = saveResponse.generatedIds[i];
+            }
+          }
+        }
+
+        if (cacheEntities.length > 0) {
+          Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
+        }
+      }
+
+      return saveResponse;
     });
   }
 }

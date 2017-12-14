@@ -13,7 +13,6 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async getEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    // return this.redis.get
     console.log(`Trying to get entities from cache using keys:`);
     console.log(util.inspect(keys, true, 3));
 
@@ -22,8 +21,8 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     if (keyStrings.length >= 1) {
       const redisResult = await this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
 
-      console.log(`Got result from redis:`);
-      console.log(util.inspect(redisResult));
+      // console.log(`Got result from redis:`);
+      // console.log(util.inspect(redisResult));
 
       let containsNulls = false;
       const results = redisResult.map((result) => {
@@ -44,8 +43,8 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async setEntitiesAfterLoadOrSave(entities, secondsToCache) {
-    console.log(`Trying to set entities in cache after load or save:`);
-    console.log(util.inspect(entities, true, 4));
+    // console.log(`Trying to set entities in cache after load or save:`, util.inspect(entities, true, 4));
+    // console.log();
 
     if (entities.length > 0) {
       const pipeline = this.redis.pipeline();
@@ -58,11 +57,13 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
 
       console.log(result);
     }
+  }
 
-    /*const keyValues = entities.map((entity) => `${entity[Core.Instance.dsModule.KEY].path.join(":")} ${JSON.stringify(entity)}`);
+  async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
+    const keyStrings = keys.map((key) => key.path.join(":"));
 
-    if (keyValues.length >= 1) {
-      await this.redis.mset()
-    }*/
+    if (keyStrings.length >= 1) {
+      await this.redis.del(keyStrings[0], ...keyStrings.slice(1));
+    }
   }
 }

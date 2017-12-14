@@ -6,8 +6,8 @@
     "noImplicitAny": false,
     "allowJs": false,
     "experimentalDecorators": true,
-    "sourceMap": false,
-    "inlineSourceMap": true,
+    "sourceMap": true,
+    "inlineSourceMap": false,
     "declaration": true,
     "sourceRoot": "src",
     "outDir": "dist"

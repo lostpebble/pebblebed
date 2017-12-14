@@ -82,7 +82,11 @@ export default class DatastoreLoad extends DatastoreOperation {
             return entity;
           });
 
-          return augmentEntitiesWithIdProperties(cachedEntities, this.idProperty, this.idType, this.kind);
+          if (this.hasIdProperty) {
+            augmentEntitiesWithIdProperties(cachedEntities, this.idProperty, this.idType, this.kind);
+          }
+
+          return cachedEntities;
         }
 
         resp = await Core.Instance.ds.get(loadKeys);

@@ -98,8 +98,8 @@ export async function runAllOperations(prefix: string = "") {
   );
   performance.mark("LOAD:MIXED_GENERATED_SET_INT_IDS");
 
-  console.log("\nWaiting 3 seconds\n");
-  await waitSeconds(3);
+  console.log("\nWaiting 2 seconds\n");
+  await waitSeconds(2);
   performance.mark("WAITED_AFTER_LOAD");
 
   console.log(
@@ -125,8 +125,18 @@ export async function runAllOperations(prefix: string = "") {
   console.log(`\nDELETE: (By Objects) Queried Int Entities`, inspect(await TestEntityIntIdModel.delete(query.entities).run(), false, 6));
   performance.mark("DELETE:BY_OBJECTS:QUERIED_AMOUNT_INT_IDS");
 
-  console.log(`\nDELETE: (By Ids) String Entity`, inspect(await TestEntityStringIdModel.delete().ids(["abc123"]).run(), false, 6));
+  console.log("\nLOAD: Test Cache (before delete) String ID Entity\n", inspect(await TestEntityStringIdModel.load("abc123").run()));
+  performance.mark("TEST_CACHE_LOAD_BEFORE_DELETE:STRING_ID");
+
+  console.log(`\nDELETE: (By id) String Entity`, inspect(await TestEntityStringIdModel.delete().ids(["abc123"]).run(), false, 6));
   performance.mark("DELETE:BY_ID:STRING_ID");
+
+  console.log("\nWaiting 2 seconds\n");
+  await waitSeconds(2);
+  performance.mark("WAITED_AFTER_DELETE");
+
+  console.log("\nLOAD: Test Cache (after delete) String ID Entity\n", inspect(await TestEntityStringIdModel.load("abc123").run()));
+  performance.mark("TEST_CACHE_LOAD_AFTER_DELETE:STRING_ID");
 
   printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
 

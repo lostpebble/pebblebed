@@ -7,4 +7,5 @@ export declare class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore
     constructor(ioRedisClient: Redis);
     getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<any>;
     setEntitiesAfterLoadOrSave(entities: any, secondsToCache: any): Promise<void>;
+    flushEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<void>;
 }
