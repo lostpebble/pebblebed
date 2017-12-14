@@ -1,4 +1,4 @@
-import { DatastoreEntityKey, DatastoreQuery, SchemaDefinition } from "./types/PebblebedTypes";
+import { DatastoreEntityKey, DatastoreQuery, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
 import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
@@ -10,7 +10,9 @@ export default class PebblebedModel<T = any> {
     private idProperty;
     private idType;
     private hasIdProperty;
-    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>);
+    private defaultCachingSeconds;
+    private neverCache;
+    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache}?: IPebblebedModelOptions);
     save(data: object | object[]): DatastoreSave;
     load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreLoad;
     query(namespace?: string): DatastoreQuery;
@@ -23,4 +25,5 @@ export default class PebblebedModel<T = any> {
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
     readonly entityJoiSchema: PebblebedJoiSchema<T>;
+    readonly modelOptions: IPebblebedModelOptions;
 }

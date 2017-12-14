@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const PebblebedModel_1 = require("./PebblebedModel");
 const BasicUtils_1 = require("./utility/BasicUtils");
 const Core_1 = require("./Core");
 const Messaging_1 = require("./Messaging");
@@ -12,8 +13,11 @@ exports.Pebblebed = {
     transaction: () => {
         return Core_1.default.Instance.ds.transaction();
     },
-    createSchema: () => {
-        return new PebblebedValidation_1.PebblebedJoiSchema();
+    createSchema: (schema) => {
+        return new PebblebedValidation_1.PebblebedJoiSchema(schema);
+    },
+    createModel: (entityKind, entitySchema, options = {}) => {
+        return new PebblebedModel_1.default(entityKind, entitySchema, options);
     },
     setCacheStore: (cacheStore) => {
         Core_1.default.Instance.setCacheStore(cacheStore);

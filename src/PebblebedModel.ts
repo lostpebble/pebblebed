@@ -1,7 +1,7 @@
 import {
   DatastoreEntityKey,
   DatastoreQuery,
-  DatastoreQueryResponse,
+  DatastoreQueryResponse, IPebblebedModelOptions,
   SchemaDefinition, TFilterComparator, TFilterFunction,
 } from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
@@ -24,7 +24,13 @@ export default class PebblebedModel<T = any> {
   private idType: string;
   private hasIdProperty = false;
 
-  constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>) {
+  private defaultCachingSeconds = null;
+  private neverCache = false;
+
+  constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {
+    defaultCachingSeconds = null,
+    neverCache = false,
+  }: IPebblebedModelOptions = {}) {
     if ((entitySchema as PebblebedJoiSchema<T>).__isPebblebedJoiSchema) {
       this.schema = (entitySchema as PebblebedJoiSchema<T>).__generateBasicSchema();
       this.joiSchema = (entitySchema as PebblebedJoiSchema<T>);
@@ -34,6 +40,9 @@ export default class PebblebedModel<T = any> {
 
     this.kind = entityKind;
     this.idProperty = getIdPropertyFromSchema(this.schema);
+
+    this.defaultCachingSeconds = defaultCachingSeconds;
+    this.neverCache = neverCache;
 
     if (this.idProperty != null) {
       this.hasIdProperty = true;
@@ -159,5 +168,12 @@ export default class PebblebedModel<T = any> {
 
   public get entityJoiSchema() {
     return this.joiSchema;
+  }
+
+  public get modelOptions(): IPebblebedModelOptions {
+    return {
+      defaultCachingSeconds: this.defaultCachingSeconds,
+      neverCache: this.neverCache,
+    };
   }
 }

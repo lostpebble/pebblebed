@@ -1,10 +1,14 @@
-import { DatastoreEntityKey, DatastoreTransaction } from "./types/PebblebedTypes";
+import {
+  DatastoreEntityKey, DatastoreTransaction, IPebblebedModelOptions,
+  SchemaDefinition
+} from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
 import Core from "./Core";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
+import { TJoiValidObjectKeys } from "./utility/JoiUtils";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
@@ -17,8 +21,12 @@ export const Pebblebed = {
     return Core.Instance.ds.transaction();
   },
 
-  createSchema: <T = any>(): PebblebedJoiSchema<T> => {
-    return new PebblebedJoiSchema<T>();
+  createSchema: <T = any>(schema: TJoiValidObjectKeys<T>): PebblebedJoiSchema<T> => {
+    return new PebblebedJoiSchema<T>(schema);
+  },
+
+  createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options: IPebblebedModelOptions = {}) => {
+    return new PebblebedModel<T>(entityKind, entitySchema, options);
   },
 
   setCacheStore: (cacheStore: PebblebedCacheStore) => {

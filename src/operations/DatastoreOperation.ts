@@ -2,9 +2,11 @@ import { SchemaDefinition } from "../types/PebblebedTypes";
 import PebblebedModel from "../PebblebedModel";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import Core from "../Core";
+import { IPebblebedModelOptions } from "../";
 
 export default class DatastoreOperation {
   protected model: PebblebedModel;
+  protected modelOptions: IPebblebedModelOptions;
   protected kind: string;
   protected schema: SchemaDefinition<any>;
   protected idProperty: string;
@@ -19,14 +21,23 @@ export default class DatastoreOperation {
 
   constructor(model: PebblebedModel) {
     this.model = model;
+    this.modelOptions = model.modelOptions;
     this.kind = model.entityKind;
     this.schema = model.entitySchema;
     this.idProperty = model.entityIdProperty;
     this.idType = model.entityIdType;
     this.hasIdProperty = model.entityHasIdProperty;
     this.runValidation = Core.Instance.validations;
-    this.useCache = Core.Instance.caching;
-    this.cachingTimeSeconds = Core.Instance.defaultCachingSeconds;
+
+    this.useCache =
+      this.modelOptions.neverCache
+        ? false
+        : Core.Instance.caching;
+
+    this.cachingTimeSeconds =
+      this.modelOptions.defaultCachingSeconds != null
+        ? this.modelOptions.defaultCachingSeconds
+        : Core.Instance.defaultCachingSeconds;
   }
 
   public withAncestors(...args: any[]) {

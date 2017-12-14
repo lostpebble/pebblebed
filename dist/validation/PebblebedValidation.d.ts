@@ -6,9 +6,8 @@ export declare class PebblebedJoiSchema<T> {
     __isPebblebedJoiSchema: boolean;
     private schema;
     private defaultMeta;
-    constructor();
+    constructor(schema: TJoiValidObjectKeys<T>);
     setDefaultMeta(defaultMeta: IOJoiSchemaDefaultMetaInput): this;
-    setSchema(schema: TJoiValidObjectKeys<T>): this;
     __getJoiSchema(): Joi.Schema;
     __generateBasicSchema(): SchemaDefinition<T>;
 }

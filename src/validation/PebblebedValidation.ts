@@ -48,7 +48,9 @@ export class PebblebedJoiSchema<T> {
     nullValueIfUnset: true,
   };
 
-  constructor() {}
+  constructor(schema: TJoiValidObjectKeys<T>) {
+    this.schema = JoiUtils.createObjectValidator(schema);
+  }
 
   setDefaultMeta(defaultMeta: IOJoiSchemaDefaultMetaInput) {
     const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, { allowUnknown: false });
@@ -61,10 +63,12 @@ export class PebblebedJoiSchema<T> {
     return this;
   }
 
+  /*
   setSchema(schema: TJoiValidObjectKeys<T>) {
     this.schema = JoiUtils.createObjectValidator(schema);
     return this;
   }
+  */
 
   __getJoiSchema() {
     return this.schema;

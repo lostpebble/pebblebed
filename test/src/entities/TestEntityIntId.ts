@@ -13,15 +13,15 @@ export interface IDSTestEntityIntId {
   worthy?: boolean;
 }
 
-const schema = Pebblebed.createSchema<IDSTestEntityIntId>().setDefaultMeta({
-  nullValueIfUnset: false,
-}).setSchema({
+const schema = Pebblebed.createSchema<IDSTestEntityIntId>({
   idThing: PebbleIntegerId(),
   amount: PebbleDouble(),
   date: DefaultDateTimeNow,
   location: PebbleGeoPoint(),
   tags: PebbleArray(),
   worthy: PebbleBoolean(),
+}).setDefaultMeta({
+  nullValueIfUnset: false,
 });
 
-export const TestEntityIntIdModel = new PebblebedModel("TestEntityIntId", schema);
+export const TestEntityIntIdModel = Pebblebed.createModel("TestEntityIntId", schema);

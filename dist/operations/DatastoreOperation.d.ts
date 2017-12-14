@@ -1,7 +1,9 @@
 import { SchemaDefinition } from "../types/PebblebedTypes";
 import PebblebedModel from "../PebblebedModel";
+import { IPebblebedModelOptions } from "../";
 export default class DatastoreOperation {
     protected model: PebblebedModel;
+    protected modelOptions: IPebblebedModelOptions;
     protected kind: string;
     protected schema: SchemaDefinition<any>;
     protected idProperty: string;

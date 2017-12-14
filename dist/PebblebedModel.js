@@ -19,9 +19,11 @@ const augmentEntitiesWithIdProperties_1 = require("./utility/augmentEntitiesWith
 const Messaging_1 = require("./Messaging");
 const convertToType_1 = require("./utility/convertToType");
 class PebblebedModel {
-    constructor(entityKind, entitySchema) {
+    constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, } = {}) {
         this.joiSchema = null;
         this.hasIdProperty = false;
+        this.defaultCachingSeconds = null;
+        this.neverCache = false;
         if (entitySchema.__isPebblebedJoiSchema) {
             this.schema = entitySchema.__generateBasicSchema();
             this.joiSchema = entitySchema;
@@ -31,6 +33,8 @@ class PebblebedModel {
         }
         this.kind = entityKind;
         this.idProperty = getIdPropertyFromSchema_1.default(this.schema);
+        this.defaultCachingSeconds = defaultCachingSeconds;
+        this.neverCache = neverCache;
         if (this.idProperty != null) {
             this.hasIdProperty = true;
             this.idType = this.schema[this.idProperty].type;
@@ -126,6 +130,12 @@ class PebblebedModel {
     }
     get entityJoiSchema() {
         return this.joiSchema;
+    }
+    get modelOptions() {
+        return {
+            defaultCachingSeconds: this.defaultCachingSeconds,
+            neverCache: this.neverCache,
+        };
     }
 }
 exports.default = PebblebedModel;

@@ -5,6 +5,11 @@ export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
 export type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 
+export interface IPebblebedModelOptions {
+  neverCache?: boolean;
+  defaultCachingSeconds?: number;
+}
+
 export interface IOJoiSchemaPropertyMetaInput {
   role?: "id";
   indexed?: boolean;
