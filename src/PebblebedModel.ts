@@ -2,7 +2,7 @@ import {
   DatastoreEntityKey,
   DatastoreQuery,
   DatastoreQueryResponse,
-  SchemaDefinition,
+  SchemaDefinition, TFilterComparator, TFilterFunction,
 } from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
@@ -14,6 +14,7 @@ import extractAncestorPaths from "./utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "./utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "./Messaging";
 import {PebblebedJoiSchema} from "./validation/PebblebedValidation";
+import convertToType from "./utility/convertToType";
 
 export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
@@ -65,6 +66,7 @@ export default class PebblebedModel<T = any> {
     const kind = this.kind;
     const hasIdProp = this.hasIdProperty;
     const type = hasIdProp ? this.schema[this.idProperty].type : null;
+    const schema = this.schema;
 
     const ns = namespace != null ? namespace : Core.Instance.namespace;
 
@@ -72,8 +74,12 @@ export default class PebblebedModel<T = any> {
       ns != null ? Core.Instance.ds.createQuery(ns, this.kind) : Core.Instance.ds.createQuery(this.kind);
 
     const runQuery = dsQuery.run.bind(dsQuery);
+    const filterQuery = dsQuery.filter.bind(dsQuery);
 
     return Object.assign(dsQuery, {
+      filter(property: string, comparator: TFilterComparator, value: string | number | boolean | Date): DatastoreQuery {
+        return filterQuery(property, comparator, convertToType(value, schema[property].type));
+      },
       withAncestors(...args: any[]): DatastoreQuery {
         const ancestors = extractAncestorPaths(model, ...args);
 
@@ -102,7 +108,7 @@ export default class PebblebedModel<T = any> {
           info: data[1],
         };
       },
-    });
+    } as Partial<DatastoreQuery>);
   }
 
   public key(id: string | number): DatastoreEntityKey {

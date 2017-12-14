@@ -79,12 +79,16 @@ export interface DatastoreQueryResponse {
   };
 }
 
+export type TFilterComparator = "=" | "<" | ">" | "<=" | ">=";
+
+export type TFilterFunction = (
+  property: string,
+  comparator: TFilterComparator,
+  value: string | number | boolean | Date
+) => DatastoreQuery;
+
 export interface DatastoreQuery {
-  filter(
-    property: string,
-    comparator: "=" | "<" | ">" | "<=" | ">=",
-    value: string | number | boolean | Date
-  ): DatastoreQuery;
+  filter: TFilterFunction;
   order(property: string, options?: { descending: boolean }): DatastoreQuery;
   withAncestors(...args: any[]): DatastoreQuery;
   hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery;

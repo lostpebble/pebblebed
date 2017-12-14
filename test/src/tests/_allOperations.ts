@@ -4,6 +4,9 @@ import { inspect } from "util";
 import { Pebblebed } from "pebblebed";
 import { printMarkMeasurements, waitSeconds } from "../utility";
 const { performance } = require("perf_hooks");
+const datastore = require("@google-cloud/datastore");
+
+const doubleQueryValue = datastore.double(20);
 
 export async function runAllOperations() {
   const entityGenerated: IDSTestEntityIntId = {
@@ -94,7 +97,7 @@ export async function runAllOperations() {
 
   console.log(
     `\nQUERY: Amount INT ID Entities, limited -> 3`,
-    inspect(await TestEntityIntIdModel.query().filter("amount", "<", 20).limit(3).run())
+    inspect(await TestEntityIntIdModel.query().filter("amount", "<", 20.5).limit(3).run())
   );
   performance.mark("QUERY:AMOUNT_INT_ID");
 
