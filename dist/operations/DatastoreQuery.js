@@ -61,11 +61,9 @@ function createDatastoreQuery(model, namespace = null) {
                 let hash = null;
                 if (Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnQuery && this.useCache) {
                     hash = createHashFromQuery(this);
-                    console.log("Created HASH for QUERY", hash);
                     const queryResponse = yield Core_1.default.Instance.cacheStore.getQueryResponse(hash, this);
                     if (queryResponse != null) {
-                        console.log(queryResponse);
-                        augmentEntitiesWithIdProperties_1.default(queryResponse.entities, idProp, type, kind);
+                        cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
                         return queryResponse;
                     }
                 }
@@ -84,6 +82,7 @@ function createDatastoreQuery(model, namespace = null) {
                     if (hash == null) {
                         hash = createHashFromQuery(this);
                     }
+                    cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
                     Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
                 }
                 return queryResponse;
@@ -105,4 +104,16 @@ end:${query.endVal}`;
     return crypto.createHash("sha1").update(dataString).digest("base64");
 }
 exports.createHashFromQuery = createHashFromQuery;
+const serializableKeyName = "__pebblebed_serializable_key__";
+function cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse) {
+    for (const entity of queryResponse.entities) {
+        entity[serializableKeyName] = entity[Core_1.default.Instance.dsModule.KEY];
+    }
+}
+function cachingAugmentQueryEntitiesWithRealKeys(queryResponse) {
+    for (const entity of queryResponse.entities) {
+        entity[Core_1.default.Instance.dsModule.KEY] = entity[serializableKeyName];
+        delete entity[serializableKeyName];
+    }
+}
 //# sourceMappingURL=DatastoreQuery.js.map

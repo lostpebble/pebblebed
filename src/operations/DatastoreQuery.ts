@@ -73,16 +73,13 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
         if (Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnQuery && this.useCache) {
           hash = createHashFromQuery(this);
 
-          console.log("Created HASH for QUERY", hash);
           const queryResponse: DatastoreQueryResponse = await Core.Instance.cacheStore.getQueryResponse(
             hash,
             this
           );
 
           if (queryResponse != null) {
-            console.log(queryResponse);
-
-            augmentEntitiesWithIdProperties(queryResponse.entities, idProp, type, kind);
+            cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
             return queryResponse;
           }
         }
@@ -108,6 +105,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
             hash = createHashFromQuery(this);
           }
 
+          cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
           Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
         }
 

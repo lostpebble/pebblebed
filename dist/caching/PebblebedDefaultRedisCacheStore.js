@@ -48,14 +48,12 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     setQueryResponse(queryResponse, queryHash, secondsToCache) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Trying to set query (for ${secondsToCache}s) at hash: ${queryHash}`);
             yield this.redis.setex(queryHash, secondsToCache, JSON.stringify(queryResponse));
         });
     }
     getQueryResponse(queryHash) {
         return __awaiter(this, void 0, void 0, function* () {
             const redisResult = yield this.redis.get(queryHash);
-            console.log(`Got result for hash: ${queryHash}`, redisResult);
             if (redisResult != null) {
                 return JSON.parse(redisResult);
             }

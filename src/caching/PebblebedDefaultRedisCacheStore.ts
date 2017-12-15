@@ -50,15 +50,11 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number) {
-    console.log(`Trying to set query (for ${secondsToCache}s) at hash: ${queryHash}`);
-
     await this.redis.setex(queryHash, secondsToCache, JSON.stringify(queryResponse));
   }
 
   async getQueryResponse(queryHash: string) {
     const redisResult = await this.redis.get(queryHash);
-
-    console.log(`Got result for hash: ${queryHash}`, redisResult);
 
     if (redisResult != null) {
       return JSON.parse(redisResult);

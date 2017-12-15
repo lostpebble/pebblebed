@@ -21,7 +21,7 @@ async function runTests() {
 
   // await runAllOperations("BASIC_NO_CACHE");
 
-  await redis.flushall();
+  // await redis.flushall();
 
   Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
 
@@ -65,7 +65,7 @@ async function runTests() {
 
   console.log(queryResponseTwo);
 
-  console.log(await TestEntityIntIdModel.delete(queryResponse.entities.concat(queryResponseTwo.entities)).run());
+  await waitSeconds(1);
 
   queryResponseTwo = await TestEntityIntIdModel.query()
     .withAncestors(TestEntityStringIdModel, "abc")
@@ -74,6 +74,8 @@ async function runTests() {
     .run();
 
   console.log(queryResponseTwo);
+
+  console.log(await TestEntityIntIdModel.delete(queryResponseTwo.entities).run());
 
   // await runAllOperations("DEFAULT_REDIS_CACHE");
 
