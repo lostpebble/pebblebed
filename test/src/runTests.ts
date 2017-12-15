@@ -19,7 +19,7 @@ process.on("unhandledRejection", (reason, p) => {
 async function runTests() {
   console.log("Running allOperations");
 
-  const values = [12, 53, 542];
+  /*const values = [12, 53, 542];
   const createEntities: IDSTestEntityIntId[] = [];
 
   for (const value of values) {
@@ -44,9 +44,9 @@ async function runTests() {
     .run();
 
   await waitSeconds(2);
-
+*/
   // return;
-  /*
+
   await runAllOperations("BASIC_NO_CACHE");
 
   await redis.flushall();
@@ -56,7 +56,7 @@ async function runTests() {
   await runAllOperations("DEFAULT_REDIS_CACHE");
 
   console.log("Finished");
-*/
+
   /*const values = [12, 53, 542, 23, 90];
   const createEntities: IDSTestEntityIntId[] = [];
 

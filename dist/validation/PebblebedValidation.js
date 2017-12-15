@@ -79,7 +79,6 @@ class PebblebedJoiSchema {
                     }
                 }
                 if (currentProp.meta != null) {
-                    console.log(`META:`, currentProp.meta);
                     currentProp.meta.forEach(metaObject => {
                         if (metaObject.__typeDefinition) {
                             basicPropertyDefinition.type = metaObject.type;
@@ -93,7 +92,6 @@ class PebblebedJoiSchema {
                                 }
                             }
                             else {
-                                // moved up here
                                 const validate = Core_1.default.Joi.validate(metaObject.propertyMeta, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
                                 if (validate.error != null) {
                                     Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);

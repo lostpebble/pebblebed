@@ -132,8 +132,6 @@ export default class DatastoreSave extends DatastoreOperation {
       };
     });
 
-    console.log("Saving data entities", entities);
-
     if (this.transaction) {
       if (this.transAllocateIds) {
         const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(entities, this.transaction);
