@@ -14,33 +14,41 @@ exports.PebbleIntegerId = () => Core_1.default.Joi.number().integer().meta({
 exports.PebbleInteger = (meta = {}) => Core_1.default.Joi.number().integer().meta({
     __typeDefinition: true,
     type: "int",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleDouble = (meta = {}) => Core_1.default.Joi.number().meta({
     __typeDefinition: true,
     type: "double",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleGeoPoint = (meta = {}) => Core_1.default.Joi.any().meta({
     __typeDefinition: true,
     type: "geoPoint",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleString = (meta = {}) => Core_1.default.Joi.string().meta({
     __typeDefinition: true,
     type: "string",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleBoolean = (meta = {}) => Core_1.default.Joi.boolean().meta({
     __typeDefinition: true,
     type: "boolean",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleDateTime = (meta = {}) => Core_1.default.Joi.date().meta({
     __typeDefinition: true,
     type: "datetime",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleArray = (meta = {}) => Core_1.default.Joi.array().meta({
     __typeDefinition: true,
     type: "array",
-}).meta(meta);
+    propertyMeta: meta,
+});
 exports.PebbleObject = (meta = {}) => Core_1.default.Joi.object().meta({
     __typeDefinition: true,
     type: "object",
-}).meta(meta);
+    propertyMeta: meta,
+});
 //# sourceMappingURL=PebblebedDataTypes.js.map

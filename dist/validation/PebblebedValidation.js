@@ -79,6 +79,7 @@ class PebblebedJoiSchema {
                     }
                 }
                 if (currentProp.meta != null) {
+                    console.log(`META:`, currentProp.meta);
                     currentProp.meta.forEach(metaObject => {
                         if (metaObject.__typeDefinition) {
                             basicPropertyDefinition.type = metaObject.type;
@@ -91,26 +92,32 @@ class PebblebedJoiSchema {
                                     Messaging_1.throwError(`Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`);
                                 }
                             }
-                        }
-                        else {
-                            const validate = Core_1.default.Joi.validate(metaObject, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
-                            if (validate.error != null) {
-                                Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
-                            }
-                            const propertyMeta = Object.assign({}, this.defaultMeta, metaObject);
-                            if (!propertyMeta.nullValueIfUnset) {
-                                basicPropertyDefinition.optional = true;
-                            }
-                            if (!propertyMeta.indexed) {
-                                basicPropertyDefinition.excludeFromIndexes = true;
-                                propertyExcludeFromIndexes.push(property);
-                            }
-                            if (propertyMeta.onSave) {
-                                basicPropertyDefinition.onSave = propertyMeta.onSave;
-                            }
-                            if (currentProp.type === "object") {
-                                if (propertyMeta.serialize) {
-                                    basicPropertyDefinition.serialize = true;
+                            else {
+                                // moved up here
+                                const validate = Core_1.default.Joi.validate(metaObject.propertyMeta, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
+                                if (validate.error != null) {
+                                    Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
+                                }
+                                const propertyMeta = Object.assign({}, this.defaultMeta, metaObject.propertyMeta);
+                                if (!propertyMeta.nullValueIfUnset) {
+                                    basicPropertyDefinition.optional = true;
+                                }
+                                if (!propertyMeta.indexed) {
+                                    basicPropertyDefinition.excludeFromIndexes = true;
+                                    if (basicPropertyDefinition.type !== "array") {
+                                        propertyExcludeFromIndexes.push(property);
+                                    }
+                                    else {
+                                        Messaging_1.warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
+                                    }
+                                }
+                                if (propertyMeta.onSave) {
+                                    basicPropertyDefinition.onSave = propertyMeta.onSave;
+                                }
+                                if (currentProp.type === "object") {
+                                    if (propertyMeta.serialize) {
+                                        basicPropertyDefinition.serialize = true;
+                                    }
                                 }
                             }
                         }

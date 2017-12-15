@@ -1,7 +1,7 @@
 import * as Joi from "joi";
 import { JoiUtils, TJoiValidObjectKeys } from "../utility/JoiUtils";
 import { IOJoiSchemaDefaultMetaInput, IOJoiSchemaPropertyMetaInput } from "../types/PebblebedTypes";
-import { throwError } from "../Messaging";
+import { throwError, warn } from "../Messaging";
 import {
   IJoiDescribeObject,
   IJoiDescribeObjectProperty,
@@ -120,32 +120,37 @@ export class PebblebedJoiSchema<T> {
                     `Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`
                   );
                 }
-              }
-            } else {
-              const validate = Core.Joi.validate(metaObject, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
+              } else {
+                const validate = Core.Joi.validate(metaObject.propertyMeta, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
 
-              if (validate.error != null) {
-                throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
-              }
+                if (validate.error != null) {
+                  throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
+                }
 
-              const propertyMeta = Object.assign({}, this.defaultMeta, metaObject);
+                const propertyMeta = Object.assign({}, this.defaultMeta, metaObject.propertyMeta);
 
-              if (!propertyMeta.nullValueIfUnset) {
-                basicPropertyDefinition.optional = true;
-              }
+                if (!propertyMeta.nullValueIfUnset) {
+                  basicPropertyDefinition.optional = true;
+                }
 
-              if (!propertyMeta.indexed) {
-                basicPropertyDefinition.excludeFromIndexes = true;
-                propertyExcludeFromIndexes.push(property);
-              }
+                if (!propertyMeta.indexed) {
+                  basicPropertyDefinition.excludeFromIndexes = true;
 
-              if (propertyMeta.onSave) {
-                basicPropertyDefinition.onSave = propertyMeta.onSave;
-              }
+                  if (basicPropertyDefinition.type !== "array") {
+                    propertyExcludeFromIndexes.push(property);
+                  } else {
+                    warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
+                  }
+                }
 
-              if (currentProp.type === "object") {
-                if (propertyMeta.serialize) {
-                  basicPropertyDefinition.serialize = true;
+                if (propertyMeta.onSave) {
+                  basicPropertyDefinition.onSave = propertyMeta.onSave;
+                }
+
+                if (currentProp.type === "object") {
+                  if (propertyMeta.serialize) {
+                    basicPropertyDefinition.serialize = true;
+                  }
                 }
               }
             }
