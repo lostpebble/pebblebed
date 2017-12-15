@@ -73,7 +73,7 @@ export default class DatastoreLoad extends DatastoreOperation {
     if (this.transaction) {
       resp = await this.transaction.get(loadKeys);
     } else {
-      if (this.useCache && Core.Instance.cacheStore != null) {
+      if (this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnLoad) {
         let cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
 
         if (cachedEntities != null && cachedEntities.length > 0) {

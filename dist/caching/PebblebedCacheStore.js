@@ -13,6 +13,7 @@ class PebblebedCacheStore {
     constructor() {
         this.cacheOnSave = true;
         this.cacheOnLoad = true;
+        this.cacheOnQuery = true;
     }
     getEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,15 +27,15 @@ class PebblebedCacheStore {
             return null;
         });
     }
-    setEntitiesByQuery(query) {
+    setQueryResponse(queryResponse, queryHash, secondsToCache, queryObject) {
         return __awaiter(this, void 0, void 0, function* () {
-            Messaging_1.warn(`Pebblebed: Caching: Trying to cache entities after a query, but setEntitiesByQuery() hasn't been implemented in your cache store yet.`);
+            Messaging_1.warn(`Pebblebed: Caching: Trying to cache entities after a query, but setQueryResponse() hasn't been implemented in your cache store yet.`);
             return null;
         });
     }
-    getEntitiesByQuery(query) {
+    getQueryResponse(queryHash, queryObject) {
         return __awaiter(this, void 0, void 0, function* () {
-            Messaging_1.warn(`Pebblebed: Caching: Trying to get a query result from the cache, but getEntitiesByQuery() hasn't been implemented in your cache store yet.`);
+            Messaging_1.warn(`Pebblebed: Caching: Trying to get a query result from the cache, but getQueryResponse() hasn't been implemented in your cache store yet.`);
             return null;
         });
     }

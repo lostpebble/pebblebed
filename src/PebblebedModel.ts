@@ -1,7 +1,7 @@
 import {
   DatastoreEntityKey,
   DatastoreQuery,
-  DatastoreQueryResponse, IPebblebedModelOptions,
+  DatastoreQueryResponse, InternalDatastoreQuery, IPebblebedModelOptions,
   SchemaDefinition, TFilterComparator, TFilterFunction,
 } from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
@@ -15,6 +15,9 @@ import augmentEntitiesWithIdProperties from "./utility/augmentEntitiesWithIdProp
 import { CreateMessage, throwError } from "./Messaging";
 import {PebblebedJoiSchema} from "./validation/PebblebedValidation";
 import convertToType from "./utility/convertToType";
+import { createDatastoreQuery } from "./operations/DatastoreQuery";
+
+const crypto = require("crypto");
 
 export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
@@ -69,55 +72,7 @@ export default class PebblebedModel<T = any> {
 
   public query(namespace: string = null): DatastoreQuery {
     checkDatastore("QUERY");
-
-    const model = this;
-    const idProp = this.idProperty;
-    const kind = this.kind;
-    const hasIdProp = this.hasIdProperty;
-    const type = hasIdProp ? this.schema[this.idProperty].type : null;
-    const schema = this.schema;
-
-    const ns = namespace != null ? namespace : Core.Instance.namespace;
-
-    const dsQuery =
-      ns != null ? Core.Instance.ds.createQuery(ns, this.kind) : Core.Instance.ds.createQuery(this.kind);
-
-    const runQuery = dsQuery.run.bind(dsQuery);
-    const filterQuery = dsQuery.filter.bind(dsQuery);
-
-    return Object.assign(dsQuery, {
-      filter(property: string, comparator: TFilterComparator, value: string | number | boolean | Date): DatastoreQuery {
-        return filterQuery(property, comparator, convertToType(value, schema[property].type));
-      },
-      withAncestors(...args: any[]): DatastoreQuery {
-        const ancestors = extractAncestorPaths(model, ...args);
-
-        if (ns != null) {
-          this.hasAncestor(
-            Core.Instance.ds.key({
-              namespace: ns,
-              path: [].concat.apply([], ancestors),
-            })
-          );
-        } else {
-          this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
-        }
-
-        return this;
-      },
-      async run(): Promise<DatastoreQueryResponse> {
-        const data = await runQuery();
-
-        if (hasIdProp && data[0].length > 0) {
-          augmentEntitiesWithIdProperties(data[0], idProp, type, kind);
-        }
-
-        return {
-          entities: data[0],
-          info: data[1],
-        };
-      },
-    } as Partial<DatastoreQuery>);
+    return createDatastoreQuery(this, namespace);
   }
 
   public key(id: string | number): DatastoreEntityKey {

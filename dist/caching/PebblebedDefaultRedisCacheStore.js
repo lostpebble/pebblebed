@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const PebblebedCacheStore_1 = require("./PebblebedCacheStore");
-const util = require("util");
 const Core_1 = require("../Core");
 class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCacheStore {
     constructor(ioRedisClient) {
@@ -18,13 +17,9 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     getEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Trying to get entities from cache using keys:`);
-            console.log(util.inspect(keys, true, 3));
             const keyStrings = keys.map((key) => key.path.join(":"));
             if (keyStrings.length >= 1) {
                 const redisResult = yield this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
-                // console.log(`Got result from redis:`);
-                // console.log(util.inspect(redisResult));
                 let containsNulls = false;
                 const results = redisResult.map((result) => {
                     if (result != null) {
@@ -42,16 +37,29 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     setEntitiesAfterLoadOrSave(entities, secondsToCache) {
         return __awaiter(this, void 0, void 0, function* () {
-            // console.log(`Trying to set entities in cache after load or save:`, util.inspect(entities, true, 4));
-            // console.log();
             if (entities.length > 0) {
                 const pipeline = this.redis.pipeline();
                 entities.forEach((entity) => {
                     pipeline.setex(entity[Core_1.default.Instance.dsModule.KEY].path.join(":"), secondsToCache, JSON.stringify(entity));
                 });
-                const result = yield pipeline.exec();
-                console.log(result);
+                yield pipeline.exec();
             }
+        });
+    }
+    setQueryResponse(queryResponse, queryHash, secondsToCache) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(`Trying to set query (for ${secondsToCache}s) at hash: ${queryHash}`);
+            yield this.redis.setex(queryHash, secondsToCache, JSON.stringify(queryResponse));
+        });
+    }
+    getQueryResponse(queryHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const redisResult = yield this.redis.get(queryHash);
+            console.log(`Got result for hash: ${queryHash}`, redisResult);
+            if (redisResult != null) {
+                return JSON.parse(redisResult);
+            }
+            return Promise.resolve(null);
         });
     }
     flushEntitiesByKeys(keys) {

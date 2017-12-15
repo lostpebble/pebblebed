@@ -1,9 +1,10 @@
 import { warn } from "../Messaging";
-import { DatastoreEntityKey } from "../";
+import { DatastoreEntityKey, DatastoreQueryResponse, InternalDatastoreQuery } from "../";
 
 export class PebblebedCacheStore {
   cacheOnSave = true;
   cacheOnLoad = true;
+  cacheOnQuery = true;
 
   async getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<null | any[]> {
     warn(`Pebblebed: Caching: Trying to get cached entities before a load, but getEntitiesByKeys() hasn't been implemented in your cache store yet.`);
@@ -15,13 +16,13 @@ export class PebblebedCacheStore {
     return null;
   }
 
-  async setEntitiesByQuery(query: any) {
-    warn(`Pebblebed: Caching: Trying to cache entities after a query, but setEntitiesByQuery() hasn't been implemented in your cache store yet.`);
+  async setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number, queryObject?: InternalDatastoreQuery) {
+    warn(`Pebblebed: Caching: Trying to cache entities after a query, but setQueryResponse() hasn't been implemented in your cache store yet.`);
     return null;
   }
 
-  async getEntitiesByQuery(query: any) {
-    warn(`Pebblebed: Caching: Trying to get a query result from the cache, but getEntitiesByQuery() hasn't been implemented in your cache store yet.`);
+  async getQueryResponse(queryHash: string, queryObject?: InternalDatastoreQuery) {
+    warn(`Pebblebed: Caching: Trying to get a query result from the cache, but getQueryResponse() hasn't been implemented in your cache store yet.`);
     return null;
   }
 

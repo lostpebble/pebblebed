@@ -155,7 +155,7 @@ export default class DatastoreSave extends DatastoreOperation {
     return Core.Instance.ds.save(entities).then(data => {
       const saveResponse = extractSavedIds(data)[0];
 
-      if (this.useCache && Core.Instance.cacheStore != null && entities.length > 0) {
+      if (this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnSave && entities.length > 0) {
         const cacheEntities = [];
 
         for (let i = 0; i < entities.length; i += 1) {

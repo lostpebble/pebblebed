@@ -134,7 +134,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
             }
             return Core_1.default.Instance.ds.save(entities).then(data => {
                 const saveResponse = extractSavedIds_1.default(data)[0];
-                if (this.useCache && Core_1.default.Instance.cacheStore != null && entities.length > 0) {
+                if (this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnSave && entities.length > 0) {
                     const cacheEntities = [];
                     for (let i = 0; i < entities.length; i += 1) {
                         cacheEntities.push(Object.assign({ [Core_1.default.Instance.dsModule.KEY]: entities[i].key }, entities[i].data));

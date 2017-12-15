@@ -81,12 +81,36 @@ export interface DatastoreQuery {
     order(property: string, options?: {
         descending: boolean;
     }): DatastoreQuery;
+    enableCache(on: boolean): DatastoreQuery;
+    cachingSeconds(seconds: number): DatastoreQuery;
     withAncestors(...args: any[]): DatastoreQuery;
     hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery;
     end(cursorToken: string): DatastoreQuery;
     limit(amount: number): DatastoreQuery;
+    offset(number: number): DatastoreQuery;
     groupBy(properties: string[]): DatastoreQuery;
     start(nextPageCursor: any): DatastoreQuery;
     select(property: string | string[]): DatastoreQuery;
     run(): Promise<DatastoreQueryResponse>;
+}
+export interface InternalDatastoreQueryFilter {
+    name: string;
+    op: TFilterComparator;
+    val: string | number | boolean | Date | DatastoreEntityKey;
+}
+export interface InternalDatastoreQueryOrder {
+    name: string;
+    sign: "+" | "-";
+}
+export interface InternalDatastoreQuery extends DatastoreQuery {
+    filters: InternalDatastoreQueryFilter[];
+    groupByVal: string[];
+    kinds: string[];
+    limitVal: number;
+    namespace: string;
+    offsetVal: number;
+    orders: InternalDatastoreQueryOrder[];
+    selectVal: string[];
+    startVal: string;
+    endVal: string;
 }

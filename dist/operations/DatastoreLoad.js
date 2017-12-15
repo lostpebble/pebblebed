@@ -74,7 +74,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                 resp = yield this.transaction.get(loadKeys);
             }
             else {
-                if (this.useCache && Core_1.default.Instance.cacheStore != null) {
+                if (this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnLoad) {
                     let cachedEntities = yield Core_1.default.Instance.cacheStore.getEntitiesByKeys(loadKeys);
                     if (cachedEntities != null && cachedEntities.length > 0) {
                         cachedEntities = cachedEntities.map((entity, index) => {

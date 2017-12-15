@@ -15,9 +15,9 @@ const DatastoreSave_1 = require("./operations/DatastoreSave");
 const DatastoreLoad_1 = require("./operations/DatastoreLoad");
 const DatastoreDelete_1 = require("./operations/DatastoreDelete");
 const extractAncestorPaths_1 = require("./utility/extractAncestorPaths");
-const augmentEntitiesWithIdProperties_1 = require("./utility/augmentEntitiesWithIdProperties");
 const Messaging_1 = require("./Messaging");
-const convertToType_1 = require("./utility/convertToType");
+const DatastoreQuery_1 = require("./operations/DatastoreQuery");
+const crypto = require("crypto");
 class PebblebedModel {
     constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, } = {}) {
         this.joiSchema = null;
@@ -53,46 +53,7 @@ class PebblebedModel {
     }
     query(namespace = null) {
         checkDatastore_1.default("QUERY");
-        const model = this;
-        const idProp = this.idProperty;
-        const kind = this.kind;
-        const hasIdProp = this.hasIdProperty;
-        const type = hasIdProp ? this.schema[this.idProperty].type : null;
-        const schema = this.schema;
-        const ns = namespace != null ? namespace : Core_1.default.Instance.namespace;
-        const dsQuery = ns != null ? Core_1.default.Instance.ds.createQuery(ns, this.kind) : Core_1.default.Instance.ds.createQuery(this.kind);
-        const runQuery = dsQuery.run.bind(dsQuery);
-        const filterQuery = dsQuery.filter.bind(dsQuery);
-        return Object.assign(dsQuery, {
-            filter(property, comparator, value) {
-                return filterQuery(property, comparator, convertToType_1.default(value, schema[property].type));
-            },
-            withAncestors(...args) {
-                const ancestors = extractAncestorPaths_1.default(model, ...args);
-                if (ns != null) {
-                    this.hasAncestor(Core_1.default.Instance.ds.key({
-                        namespace: ns,
-                        path: [].concat.apply([], ancestors),
-                    }));
-                }
-                else {
-                    this.hasAncestor(Core_1.default.Instance.ds.key([].concat.apply([], ancestors)));
-                }
-                return this;
-            },
-            run() {
-                return __awaiter(this, void 0, void 0, function* () {
-                    const data = yield runQuery();
-                    if (hasIdProp && data[0].length > 0) {
-                        augmentEntitiesWithIdProperties_1.default(data[0], idProp, type, kind);
-                    }
-                    return {
-                        entities: data[0],
-                        info: data[1],
-                    };
-                });
-            },
-        });
+        return DatastoreQuery_1.createDatastoreQuery(this, namespace);
     }
     key(id) {
         checkDatastore_1.default("CREATE KEY");
