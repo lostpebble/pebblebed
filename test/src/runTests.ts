@@ -19,13 +19,45 @@ process.on("unhandledRejection", (reason, p) => {
 async function runTests() {
   console.log("Running allOperations");
 
-  // await runAllOperations("BASIC_NO_CACHE");
+  const values = [12, 53, 542];
+  const createEntities: IDSTestEntityIntId[] = [];
 
-  // await redis.flushall();
+  for (const value of values) {
+    createEntities.push({
+      tags: ["blue", "red"],
+      amount: value,
+      date: new Date(),
+      location: {
+        longitude: 1,
+        latitude: 0,
+      },
+      worthy: false,
+      object: {
+        something: 0,
+      },
+    });
+  }
+
+  await TestEntityIntIdModel.save(createEntities)
+    .withAncestors(TestEntityStringIdModel, "abc")
+    .generateUnsetIds()
+    .run();
+
+  await waitSeconds(2);
+
+  // return;
+  /*
+  await runAllOperations("BASIC_NO_CACHE");
+
+  await redis.flushall();
 
   Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
 
-  const values = [12, 53, 542, 23, 90];
+  await runAllOperations("DEFAULT_REDIS_CACHE");
+
+  console.log("Finished");
+*/
+  /*const values = [12, 53, 542, 23, 90];
   const createEntities: IDSTestEntityIntId[] = [];
 
   for (const value of values) {
@@ -75,11 +107,8 @@ async function runTests() {
 
   console.log(queryResponseTwo);
 
-  console.log(await TestEntityIntIdModel.delete(queryResponseTwo.entities).run());
+  console.log(await TestEntityIntIdModel.delete(queryResponseTwo.entities).run());*/
 
-  // await runAllOperations("DEFAULT_REDIS_CACHE");
-
-  console.log("Finished");
   // const entities = await TestEntityStringIdModel.load("123").run();
 
   // console.dir(entities);

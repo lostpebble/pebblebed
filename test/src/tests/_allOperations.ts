@@ -108,13 +108,32 @@ export async function runAllOperations(prefix: string = "") {
   );
   performance.mark("QUERY:TAGS_INT_ID");
 
-  const query = await TestEntityIntIdModel.query().filter("amount", "<", 20.5).limit(4).run();
+  let query = await TestEntityIntIdModel.query().filter("amount", "<", 20).limit(4).run();
 
   console.log(
     `\nQUERY: Amount INT ID Entities, limited -> 3`,
     inspect(query)
   );
   performance.mark("QUERY:AMOUNT_INT_ID");
+
+  query = await TestEntityIntIdModel.query().filter("amount", "<", 20).limit(4).run();
+
+  console.log(
+    `\nQUERY: (same) CACHE test amount INT ID Entities, limited -> 3`,
+    inspect(query)
+  );
+  performance.mark("TEST_CACHE_QUERY:AMOUNT_INT_ID");
+
+  const changeEntity: IDSTestEntityIntId = query.entities.pop();
+
+  changeEntity.worthy = true;
+  changeEntity.tags = ["new", "slang"];
+
+  console.log(
+    `\nCHANGE_AND_SAVE_QUERIED_ENTITY: Popped entity off last query from INT ID Entities`,
+    inspect(await TestEntityIntIdModel.save(changeEntity).run())
+  );
+  performance.mark("CHANGE_AND_SAVE_QUERIED_ENTITY:AMOUNT_INT_ID");
 
   console.log(
     `\nQUERY: Date, String ID Entities, limited -> 3`,
