@@ -1,19 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es6",
     "module": "commonjs",
     "noEmitOnError": true,
     "noImplicitAny": false,
     "allowJs": false,
     "experimentalDecorators": true,
-    "sourceMap": true,
-    "inlineSourceMap": false,
-    "declaration": true,
-    "sourceRoot": "src",
-    "outDir": "dist-next"
+    "sourceMap": false,
+    "inlineSourceMap": true
   },
   "exclude": [
-    "dist-next",
+    "dist",
     "test",
     "node_modules"
   ]
