@@ -1,0 +1,3 @@
+# Installation
+
+It's easy.

@@ -1,0 +1,30 @@
+{
+  "name": "pebblebed-docs",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "react-static start",
+    "build": "react-static build",
+    "serve": "serve dist -p 3000"
+  },
+  "dependencies": {
+    "html-loader": "^0.5.1",
+    "markdown": "^0.5.0",
+    "markdown-loader": "^2.0.1",
+    "marked": "^0.3.6",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router": "^4.2.0",
+    "react-static": "^4.7.0-beta.0",
+    "fela": "^6.1.1",
+    "fela-plugin-unit": "^5.0.15",
+    "fela-plugin-named-media-query": "^5.0.13",
+    "fela-plugin-fallback-value": "^5.0.16",
+    "fela-plugin-prefixer": "^5.0.16",
+    "fela-plugin-extend": "^6.0.3",
+    "react-fela": "^6.2.0",
+    "fela-dom": "^7.0.1"
+  },
+  "devDependencies": {
+    "serve": "^6.1.0"
+  }
+}
