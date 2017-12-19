@@ -2,11 +2,11 @@ import fs from "fs";
 import path from "path";
 import React, { Component } from "react";
 import { markdown } from "markdown";
-import { createDocsObject } from "./src/getDocs";
+import { createTree } from "./src/SitePebbles";
 
 const marked = require("marked");
 
-const docsObject = createDocsObject(path.join(__dirname, "./src/docs"));
+const siteTree = createTree(path.join(__dirname, "./src/structure"));
 
 export default {
   getSiteProps: () => ({
