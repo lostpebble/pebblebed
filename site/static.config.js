@@ -2,11 +2,19 @@ import fs from "fs";
 import path from "path";
 import React, { Component } from "react";
 import { markdown } from "markdown";
-import { createTree } from "./src/SitePebbles";
+import { PebbleTreeFactory } from "./src/PebbleTree";
 
+const util = require("util");
 const marked = require("marked");
 
-const siteTree = createTree(path.join(__dirname, "./src/structure"));
+// const pebbleTree = createTree(path.join(__dirname, "./src/structure"));
+const PebbleTree = new PebbleTreeFactory();
+const tree = PebbleTree.createTree(path.join(__dirname, "./src/structure"));
+
+console.log(util.inspect(tree, {
+  showHidden: false,
+  depth: 6,
+}));
 
 export default {
   getSiteProps: () => ({
@@ -20,7 +28,10 @@ export default {
       },
       {
         path: "/docs",
-        component: "src/containers/Blog",
+        component: "src/containers/Docs",
+        getProps: () => ({
+
+        })
         /*getProps: () => ({
           posts,
         }),

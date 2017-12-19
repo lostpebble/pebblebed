@@ -38,26 +38,60 @@ export const defaultFunctionsForFiletypes = {
   js: (filename) => ({ payload: require(filename).default, type: defaultTypes.REACT_COMPONENT }),
 }
 
-export class SitePebbles {
+export class PebbleTreeFactory {
   fileTypeFunctions = defaultFunctionsForFiletypes;
+  static debug = false;
+
+  static throwError(message, e) {
+    throw new Error(`PebbleTree: ${message} [${e.message}]`);
+  }
+
+  static error(message) {
+    console.error(`PebbleTree: ${message}`);
+  }
+
+  static warn(message) {
+    console.warn(`PebbleTree: ${message}`);
+  }
+
+  static log(message) {
+    if (PebbleTreeFactory.debug) {
+      console.log(`PebbleTree: ${message}`);
+    }
+  }
 
   constructor(options = {}) {
-    const { functionsForFileTypes = {} } = options;
+    const { functionsForFileTypes = {}, debug = false } = options;
+
     Object.assign(this.fileTypeFunctions, functionsForFileTypes);
+
+    PebbleTreeFactory.debug = debug;
   }
 
   createPayloadForFile(filename) {
     const extension = filename.split(".").pop();
 
+    if (extension === filename) {
+      PebbleTreeFactory.throwError(`Can't read a file without an extension. File found: ${filename}`);
+    }
+
     if (this.fileTypeFunctions[extension] != null) {
       if (typeof this.fileTypeFunctions[extension] === "function") {
-
+        return this.fileTypeFunctions[extension](filename);
       } else {
-        throw new Error("SitePebbles: ");
+        PebbleTreeFactory.throwError(`SitePebbles: fileTypeFunctions object must be an object containing on keys and functions (keys for filetypes, and functions for how to deal with those files)`);
       }
     } else {
+      try {
+        const type = `UNKNOWN_EXTENSION_${stringToConstantStyledString(extension)}`;
+        const payload = fs.readFileSync(filename, "utf-8");
+        PebbleTreeFactory.warn(`SitePebbles: Structure file [${filename}] with extension: .${extension} - but there is no function to process it - just returning as is`);
 
-      console.warn(`SitePebbles: Structure file [${filename}] with extension: ${extension} - but there is no function to process it - just returning as is`);
+        return { type, payload };
+      } catch (e) {
+        PebbleTreeFactory.error(`Tried reading file ${filename} in UTF-8, but it failed. If you know how to read / transform this file yourself - pass through a function for the extension [.${extension}]`)
+        return { type: null, payload: null };
+      }
     }
   }
 
@@ -67,44 +101,61 @@ export class SitePebbles {
     try {
       readFiles = fs.readdirSync(pathname);
     } catch (e) {
-      console.error(`Failed reading files / folders in [${pathname}], are you sure you passed the correct path?`, e.message);
+      PebbleTreeFactory.error(`Failed reading files / folders in [${pathname}], are you sure you passed the correct path?`, e.message);
     }
 
     readFiles.sort();
 
-    console.log(`Got files / folders in [${pathname}]:`, readFiles);
+    PebbleTreeFactory.log(`Got files / folders in [${pathname}]:`, readFiles);
 
     let pageArray = [];
 
     for (const file of readFiles) {
       const headingPathname = path.join(pathname, file);
-      const heading = file.replace(/\d*-/g, "");
-      const slug = convertToSlug(heading);
 
       const stat = fs.lstatSync(headingPathname);
 
       if (stat.isDirectory()) {
+        const heading = file.replace(/\d*-/g, "");
+        const slug = convertToSlug(heading);
+        const pathname = `${parentSlugs.join("/")}/${slug}`;
+
         pageArray.push({
           heading,
           parentSlugs,
           slug,
+          path: pathname,
           type: null,
           payload: null,
-          children: createTree(headingPathname, options, [...parentSlugs, slug]),
+          children: this.createTree(headingPathname, [...parentSlugs, slug]),
         });
+
+        if (!pageArray[pageArray.length - 1].children || pageArray[pageArray.length - 1].children.length < 1) {
+          PebbleTreeFactory.error(`Shouldn't have an empty directory! -> ${headingPathname}`);
+        }
+
       } else if (stat.isFile()) {
+        const heading = file.replace(/\d*-/g, "").split(".").shift();
+        const slug = convertToSlug(heading);
+        const pathname = `${parentSlugs.join("/")}/${slug}`;
         const { type, payload } = this.createPayloadForFile(headingPathname);
 
-        pageArray.push({
-          heading,
-          parentSlugs,
-          slug,
-          type,
-          payload,
-          children: null,
-        });
+        if (type == null || payload == null) {
+          PebbleTreeFactory.warn(`Skipped adding file to tree: ${headingPathname}`);
+        } else {
+          pageArray.push({
+            heading,
+            parentSlugs,
+            slug,
+            path: pathname,
+            type,
+            payload,
+            children: null,
+          });
+        }
       }
 
+      /*
       let docFiles = [];
 
       try {
@@ -132,10 +183,9 @@ export class SitePebbles {
           );
         }
       }
+      */
     }
 
     return pageArray;
   }
 }
-
-// export function
