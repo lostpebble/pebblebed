@@ -42,6 +42,8 @@ export class PebbleTreeFactory {
   fileTypeFunctions = defaultFunctionsForFiletypes;
   static debug = false;
 
+  currentTree = null;
+
   static throwError(message, e) {
     throw new Error(`PebbleTree: ${message} [${e.message}]`);
   }
@@ -66,6 +68,14 @@ export class PebbleTreeFactory {
     Object.assign(this.fileTypeFunctions, functionsForFileTypes);
 
     PebbleTreeFactory.debug = debug;
+  }
+
+  getRoutesFromTree() {
+
+  }
+
+  getTree() {
+    return this.currentTree;
   }
 
   createPayloadForFile(filename) {
@@ -135,7 +145,7 @@ export class PebbleTreeFactory {
         }
 
       } else if (stat.isFile()) {
-        const heading = file.replace(/\d*-/g, "").split(".").shift();
+        const heading = file.replace(/^\d*-/g, "").split(".").shift();
         const slug = convertToSlug(heading);
         const pathname = `${parentSlugs.join("/")}/${slug}`;
         const { type, payload } = this.createPayloadForFile(headingPathname);
@@ -185,6 +195,8 @@ export class PebbleTreeFactory {
       }
       */
     }
+
+    this.currentTree = pageArray;
 
     return pageArray;
   }

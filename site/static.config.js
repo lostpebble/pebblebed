@@ -9,7 +9,9 @@ const marked = require("marked");
 
 // const pebbleTree = createTree(path.join(__dirname, "./src/structure"));
 const PebbleTree = new PebbleTreeFactory();
-const tree = PebbleTree.createTree(path.join(__dirname, "./src/structure"));
+PebbleTree.createTree(path.join(__dirname, "./src/structure"));
+
+const tree = PebbleTree.getTree();
 
 console.log(util.inspect(tree, {
   showHidden: false,
