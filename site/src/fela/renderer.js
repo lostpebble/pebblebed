@@ -3,7 +3,8 @@ import { createRenderer } from "fela";
 import prefixer from "fela-plugin-prefixer";
 import unit from "fela-plugin-unit";
 import extend from "fela-plugin-extend";
-import namedMediaQuery from "fela-plugin-named-media-query";
+// import namedMediaQuery from "fela-plugin-named-media-query";
+import { Colors } from "./Colors";
 
 const EMediaDimensions = {
   BigScreenStart: 1024,
@@ -21,7 +22,7 @@ const mediaQueries = {
   tabletDownwards: `@media (max-width: ${EMediaDimensions.BigScreenStart - 1}px)`,
 };
 
-const namedMediaQueryPlugin = namedMediaQuery(mediaQueries);
+// const namedMediaQueryPlugin = namedMediaQuery(mediaQueries);
 
 const unitPlugin = unit("em", {
   width: "%",
@@ -30,7 +31,7 @@ const unitPlugin = unit("em", {
 
 export function getFelaRenderer() {
   return createRenderer({
-    plugins: [extend(), prefixer(), namedMediaQueryPlugin],
+    plugins: [extend(), prefixer(), unitPlugin],
   });
 }
 

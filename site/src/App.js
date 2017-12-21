@@ -3,9 +3,14 @@ import { Router, Link } from "react-static";
 import { createComponent } from "react-fela";
 
 import Routes from "react-static-routes";
+import { Colors } from "./fela/Colors";
 
 const AppStyles = createComponent(() => ({
-  background: red,
+  background: Colors.BrightRed,
+  "& img": {
+    width: 100,
+    maxWidth: "100%",
+  }
 }), "div");
 
 export default () =>

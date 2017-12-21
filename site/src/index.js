@@ -2,8 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 
+import { Provider } from "react-fela";
+
 // Your top level component
 import App from './App'
+import { getFelaRenderer } from "./fela/renderer";
 
 // Export your top level component (for static rendering)
 export default App
@@ -11,9 +14,13 @@ export default App
 // Render your app
 if (typeof document !== 'undefined') {
   const render = Comp => {
+    const renderer = getFelaRenderer();
+
     ReactDOM.hydrate(
       <AppContainer>
-        <Comp />
+        <Provider renderer={renderer}>
+          <Comp />
+        </Provider>
       </AppContainer>,
       document.getElementById('root'),
     )

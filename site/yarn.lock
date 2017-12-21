@@ -1174,6 +1174,10 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+bowser@^1.7.3:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/bowser/-/bowser-1.9.0.tgz#c5015128dcf155b4e3d11d1ab46b7a4b6ee695b8"
+
 boxen@1.3.0, boxen@^1.2.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/boxen/-/boxen-1.3.0.tgz#55c6c39a8ba58d9c61ad22cd877532deb665a20b"
@@ -2419,6 +2423,40 @@ fela-dom@^7.0.1:
     fast-loops "^1.0.0"
     fela-utils "^8.0.1"
 
+fela-plugin-extend@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/fela-plugin-extend/-/fela-plugin-extend-6.0.3.tgz#9b963cf353323bbea4f87f4e224c44d086098031"
+  dependencies:
+    css-in-js-utils "2.0.0"
+    fast-loops "^1.0.0"
+
+fela-plugin-fallback-value@^5.0.16:
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/fela-plugin-fallback-value/-/fela-plugin-fallback-value-5.0.16.tgz#4814118fadacae3e6367e1877b2bdb37d04fe7dc"
+  dependencies:
+    css-in-js-utils "2.0.0"
+
+fela-plugin-named-media-query@^5.0.13:
+  version "5.0.13"
+  resolved "https://registry.yarnpkg.com/fela-plugin-named-media-query/-/fela-plugin-named-media-query-5.0.13.tgz#a597017dffe489455383dcfb054ee93bcbfdec81"
+  dependencies:
+    fela-utils "^7.0.5"
+
+fela-plugin-prefixer@^5.0.16:
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/fela-plugin-prefixer/-/fela-plugin-prefixer-5.0.16.tgz#2138770edc79d8e1c21b5530bc496e6a7bd74268"
+  dependencies:
+    css-in-js-utils "^2.0.0"
+    fast-loops "^1.0.0"
+    fela-plugin-fallback-value "^5.0.16"
+    inline-style-prefixer "^3.0.8"
+
+fela-plugin-unit@^5.0.15:
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/fela-plugin-unit/-/fela-plugin-unit-5.0.15.tgz#f3193fb0b924a97892135ef2b9933667453e8dc4"
+  dependencies:
+    css-in-js-utils "^2.0.0"
+
 fela-tools@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/fela-tools/-/fela-tools-5.1.0.tgz#8049c56cfe03ab0f0147e45cc3bd06a481ed0a4d"
@@ -2427,6 +2465,12 @@ fela-tools@^5.1.0:
     fast-loops "^1.0.0"
     fela "^6.1.1"
     fela-utils "^8.0.1"
+
+fela-utils@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/fela-utils/-/fela-utils-7.0.5.tgz#62397db8abf8294bb160ba7575b31d68495283b2"
+  dependencies:
+    css-in-js-utils "2.0.0"
 
 fela-utils@^8.0.1:
   version "8.0.1"
@@ -3028,6 +3072,13 @@ inherits@2.0.1:
 ini@^1.3.4, ini@~1.3.0:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
+
+inline-style-prefixer@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/inline-style-prefixer/-/inline-style-prefixer-3.0.8.tgz#8551b8e5b4d573244e66a34b04f7d32076a2b534"
+  dependencies:
+    bowser "^1.7.3"
+    css-in-js-utils "^2.0.0"
 
 inquirer-autocomplete-prompt@^0.11.1:
   version "0.11.1"

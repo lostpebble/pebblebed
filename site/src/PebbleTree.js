@@ -42,10 +42,12 @@ export class PebbleTreeFactory {
   fileTypeFunctions = defaultFunctionsForFiletypes;
   static debug = false;
 
+  rootFolder = null;
   currentTree = null;
+  componentMap = {};
 
-  static throwError(message, e) {
-    throw new Error(`PebbleTree: ${message} [${e.message}]`);
+  static throwError(mes, { message = null } = {}) {
+    throw new Error(`PebbleTree: ${mes} ${message != null ? `[${message}]` : ""}`);
   }
 
   static error(message) {
@@ -87,15 +89,21 @@ export class PebbleTreeFactory {
 
     if (this.fileTypeFunctions[extension] != null) {
       if (typeof this.fileTypeFunctions[extension] === "function") {
-        return this.fileTypeFunctions[extension](filename);
+        const { payload, type } = this.fileTypeFunctions[extension](filename);
+
+        if (payload == null) {
+          PebbleTreeFactory.throwError(`Found file [${filename}] with extension [.${extension}], tried to create type [${type}] but the payload returned undefined. Is the file created properly (default export etc.)?`);
+        }
+
+        return { payload, type };
       } else {
-        PebbleTreeFactory.throwError(`SitePebbles: fileTypeFunctions object must be an object containing on keys and functions (keys for filetypes, and functions for how to deal with those files)`);
+        PebbleTreeFactory.throwError(`fileTypeFunctions object must be an object containing on keys and functions (keys for filetypes, and functions for how to deal with those files)`);
       }
     } else {
       try {
-        const type = `UNKNOWN_EXTENSION_${stringToConstantStyledString(extension)}`;
+        const type = `FILE_EXTENSION_${stringToConstantStyledString(extension)}`;
         const payload = fs.readFileSync(filename, "utf-8");
-        PebbleTreeFactory.warn(`SitePebbles: Structure file [${filename}] with extension: .${extension} - but there is no function to process it - just returning as is`);
+        PebbleTreeFactory.warn(`Structure file [${filename}] with extension: .${extension} - but there is no function to process it - just returning as is`);
 
         return { type, payload };
       } catch (e) {
@@ -107,6 +115,10 @@ export class PebbleTreeFactory {
 
   createTree(pathname, parentSlugs = []) {
     let readFiles = [];
+
+    if (this.rootFolder == null) {
+      this.rootFolder = pathname;
+    }
 
     try {
       readFiles = fs.readdirSync(pathname);
@@ -143,57 +155,33 @@ export class PebbleTreeFactory {
         if (!pageArray[pageArray.length - 1].children || pageArray[pageArray.length - 1].children.length < 1) {
           PebbleTreeFactory.error(`Shouldn't have an empty directory! -> ${headingPathname}`);
         }
-
       } else if (stat.isFile()) {
         const heading = file.replace(/^\d*-/g, "").split(".").shift();
         const slug = convertToSlug(heading);
-        const pathname = `${parentSlugs.join("/")}/${slug}`;
-        const { type, payload } = this.createPayloadForFile(headingPathname);
+        const parentPath = parentSlugs.join("/");
+        const pathname = `${parentPath}/${slug}`;
 
-        if (type == null || payload == null) {
-          PebbleTreeFactory.warn(`Skipped adding file to tree: ${headingPathname}`);
+        if (heading === `Child` || heading === "Parent") {
+          PebbleTreeFactory.log(`Found ${heading} Component for path: ${parentPath}`);
+          this.componentMap[parentPath] = require(headingPathname).default;
         } else {
-          pageArray.push({
-            heading,
-            parentSlugs,
-            slug,
-            path: pathname,
-            type,
-            payload,
-            children: null,
-          });
+          const { type, payload } = this.createPayloadForFile(headingPathname);
+
+          if (type == null || payload == null) {
+            PebbleTreeFactory.warn(`Skipped adding file to tree: ${headingPathname}`);
+          } else {
+            pageArray.push({
+              heading,
+              parentSlugs,
+              slug,
+              path: pathname,
+              type,
+              payload,
+              children: null,
+            });
+          }
         }
       }
-
-      /*
-      let docFiles = [];
-
-      try {
-        docFiles = fs.readdirSync(headingPathname);
-      } catch (e) {
-        console.error(
-          `Tried reading heading directory for "${file}" at ${headingPathname}, are you sure the folder is setup correctly?`,
-          e.message
-        );
-      }
-
-      docFiles.sort();
-
-      console.log(`Got documents in heading folder [${file}] :`, docFiles);
-
-      for (const docFile of docFiles) {
-        const docFilename = path.join(headingPathname, docFile);
-
-        try {
-          const docFile = markdown.toHTML(fs.readFileSync(docFilename, "utf-8"));
-        } catch (e) {
-          console.error(
-            `Tried reading document file "${docFile}" at ${docFilename}, are you sure the folder is setup correctly?`,
-            e.message
-          );
-        }
-      }
-      */
     }
 
     this.currentTree = pageArray;

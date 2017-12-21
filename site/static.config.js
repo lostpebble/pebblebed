@@ -8,7 +8,9 @@ const util = require("util");
 const marked = require("marked");
 
 // const pebbleTree = createTree(path.join(__dirname, "./src/structure"));
-const PebbleTree = new PebbleTreeFactory();
+const PebbleTree = new PebbleTreeFactory({
+  debug: true,
+});
 PebbleTree.createTree(path.join(__dirname, "./src/structure"));
 
 const tree = PebbleTree.getTree();
@@ -53,6 +55,7 @@ export default {
   },
   renderToHtml: (render, Comp, meta) => {
     // const sheet = new ServerStyleSheet()
+
     const html = render(<Comp />);
     // const html = render(sheet.collectStyles(<Comp />))
     // meta.styleTags = sheet.getStyleElement()
@@ -79,6 +82,8 @@ export default {
   },
   webpack: config => {
     const renderer = new marked.Renderer();
+
+    config.devtool = "cheap-module-source-map";
 
     config.module.rules[0].oneOf.unshift({
       test: /\.md$/,
