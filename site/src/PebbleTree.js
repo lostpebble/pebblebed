@@ -1,6 +1,7 @@
 import { markdown } from "markdown";
 const fs = require("fs");
 const path = require("path");
+const _ = require("lodash");
 
 const convertToSlug = (text) => {
   if (!text || text.length === 0) {
@@ -74,6 +75,10 @@ export class PebbleTreeFactory {
 
   getRoutesFromTree() {
 
+  }
+
+  getComponentMap() {
+    return this.componentMap;
   }
 
   getTree() {
@@ -163,7 +168,8 @@ export class PebbleTreeFactory {
 
         if (heading === `Child` || heading === "Parent") {
           PebbleTreeFactory.log(`Found ${heading} Component for path: ${parentPath}`);
-          this.componentMap[parentPath] = require(headingPathname).default;
+          _.set(this.componentMap, [parentPath, heading], require(headingPathname).default);
+          // this.componentMap[parentPath] = require(headingPathname).default;
         } else {
           const { type, payload } = this.createPayloadForFile(headingPathname);
 

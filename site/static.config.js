@@ -14,8 +14,14 @@ const PebbleTree = new PebbleTreeFactory({
 PebbleTree.createTree(path.join(__dirname, "./src/structure"));
 
 const tree = PebbleTree.getTree();
+const components = PebbleTree.getComponentMap();
 
 console.log(util.inspect(tree, {
+  showHidden: false,
+  depth: 6,
+}));
+
+console.log(util.inspect(components, {
   showHidden: false,
   depth: 6,
 }));

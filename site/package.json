@@ -16,6 +16,7 @@
     "react-router": "^4.2.0",
     "react-static": "^4.7.0-beta.0",
     "fela": "^6.1.1",
+    "lodash": "^4.17.4",
     "fela-plugin-unit": "^5.0.15",
     "fela-plugin-named-media-query": "^5.0.13",
     "fela-plugin-fallback-value": "^5.0.16",
