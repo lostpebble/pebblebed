@@ -39,6 +39,8 @@ export const defaultFunctionsForFiletypes = {
   js: (filename) => ({ payload: require(filename).default, type: defaultTypes.REACT_COMPONENT }),
 }
 
+const numberMatchRegex = /^\d+/;
+
 export class PebbleTreeFactory {
   fileTypeFunctions = defaultFunctionsForFiletypes;
   static debug = false;
@@ -118,7 +120,7 @@ export class PebbleTreeFactory {
     }
   }
 
-  createTree(pathname, parentSlugs = []) {
+  createTree(pathname, parentSlugs = [], parentNode = null) {
     let readFiles = [];
 
     if (this.rootFolder == null) {
@@ -139,32 +141,66 @@ export class PebbleTreeFactory {
 
     for (const file of readFiles) {
       const headingPathname = path.join(pathname, file);
+      const heading = file.replace(/^\d*-/g, "").split(".").shift();
 
       const stat = fs.lstatSync(headingPathname);
 
-      if (stat.isDirectory()) {
-        const heading = file.replace(/\d*-/g, "");
-        const slug = convertToSlug(heading);
-        const pathname = `${parentSlugs.join("/")}/${slug}`;
+      const matches = file.match(numberMatchRegex);
+      // console.dir(matches);
 
-        pageArray.push({
+      const isIndex = matches != null ?
+        matches[0] === "0" :
+        false;
+
+      const slug = convertToSlug(heading);
+
+      let pagePath;
+
+      if (isIndex) {
+        pagePath = `/${parentSlugs.join("/")}`;
+      } else {
+        pagePath = `/${[...parentSlugs, slug].join("/")}`;
+      }
+
+      if (stat.isDirectory()) {
+        // const heading = file.replace(/\d*-/g, "");
+        // const slug = convertToSlug(heading);
+
+        // const pathname = isIndex ? `/${parentSlugs.join("/")}` : `/${parentSlugs.push(slug).join("/")}`;
+
+        const node = {
+          heading: (isIndex && parentNode != null) ? parentNode.heading : heading,
+          parentSlugs,
+          slug: (isIndex && parentNode != null) ? parentNode.slug : slug,
+          path: pagePath,
+          isIndex,
+          type: null,
+          payload: null,
+        };
+
+        node.children = this.createTree(headingPathname, [...parentSlugs, slug], node);
+
+        /*
+        * {
           heading,
           parentSlugs,
           slug,
-          path: pathname,
+          path: pagePath,
+          isIndex,
           type: null,
           payload: null,
           children: this.createTree(headingPathname, [...parentSlugs, slug]),
-        });
+        }
+        * */
+
+        pageArray.push(node);
 
         if (!pageArray[pageArray.length - 1].children || pageArray[pageArray.length - 1].children.length < 1) {
           PebbleTreeFactory.error(`Shouldn't have an empty directory! -> ${headingPathname}`);
         }
       } else if (stat.isFile()) {
-        const heading = file.replace(/^\d*-/g, "").split(".").shift();
-        const slug = convertToSlug(heading);
         const parentPath = parentSlugs.join("/");
-        const pathname = `${parentPath}/${slug}`;
+        // const pathname = `${parentPath}/${slug}`;
 
         if (heading === `Child` || heading === "Parent") {
           PebbleTreeFactory.log(`Found ${heading} Component for path: ${parentPath}`);
@@ -177,10 +213,11 @@ export class PebbleTreeFactory {
             PebbleTreeFactory.warn(`Skipped adding file to tree: ${headingPathname}`);
           } else {
             pageArray.push({
-              heading,
+              heading: (isIndex && parentNode != null) ? parentNode.heading : heading,
               parentSlugs,
-              slug,
-              path: pathname,
+              slug: (isIndex && parentNode != null) ? parentNode.slug : slug,
+              path: pagePath,
+              isIndex,
               type,
               payload,
               children: null,
