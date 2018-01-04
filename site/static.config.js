@@ -2,16 +2,17 @@ import fs from "fs";
 import path from "path";
 import React, { Component } from "react";
 import { markdown } from "markdown";
-import { PebbleTreeFactory } from "./src/PebbleTree";
+import { PebbleTree } from "./src/PebbleTree";
+// import { PebbleTreeFactory } from "./src/PebbleTree";
 
 const util = require("util");
 const marked = require("marked");
 
 // const pebbleTree = createTree(path.join(__dirname, "./src/structure"));
-const PebbleTree = new PebbleTreeFactory({
+/*const PebbleTree = new PebbleTreeFactory({
   debug: true,
 });
-PebbleTree.createTree(path.join(__dirname, "./src/structure"));
+PebbleTree.createTree(path.join(__dirname, "./src/structure"));*/
 
 const tree = PebbleTree.getTree();
 const components = PebbleTree.getComponentMap();
@@ -90,6 +91,10 @@ export default {
     const renderer = new marked.Renderer();
 
     config.devtool = "cheap-module-source-map";
+
+    config.node = {
+      fs: "empty",
+    };
 
     config.module.rules[0].oneOf.unshift({
       test: /\.md$/,

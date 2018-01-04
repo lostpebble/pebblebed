@@ -5,11 +5,15 @@ import { AppContainer } from 'react-hot-loader'
 import { Provider } from "react-fela";
 
 // Your top level component
-import App from './App'
-import { getFelaRenderer } from "./fela/renderer";
+// import App from './App'
+// import { getFelaRenderer } from "./fela/renderer";
+
+import { PebbleTree } from "./PebbleTree";
 
 // Export your top level component (for static rendering)
-export default App
+export default PebbleTree.getParentAppComponent();
+
+/*
 
 // Render your app
 if (typeof document !== 'undefined') {
@@ -36,3 +40,4 @@ if (typeof document !== 'undefined') {
     })
   }
 }
+*/
