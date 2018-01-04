@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "gatsby": "^1.9.145",
-    "gatsby-link": "^1.6.32"
+    "gatsby-link": "^1.6.32",
+    "gatsby-plugin-typography": "^1.7.10"
   },
   "devDependencies": {
     "gh-pages": "^1.1.0"
