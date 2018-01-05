@@ -2,6 +2,7 @@ import React from "react";
 
 import baseStyles from "../styles/base-styles.module.scss";
 import DocsSidebarItem from "../components/DocsSidebarItem";
+import styles from "./docs.module.scss";
 
 export default function Template({
   data, // this prop will be injected by the GraphQL query below.
@@ -13,15 +14,13 @@ export default function Template({
 
   const sidebarItems = edges.slice(1).map(edge => <DocsSidebarItem key={edge.node.id} edge={edge}/>);
 
-  console.log(allMarkdownRemark);
-
   return (
     <div className={baseStyles.pageWithSidebar}>
       <div className={baseStyles.sidebar}>
         {sidebarItems}
       </div>
       <div className={baseStyles.basicContent}>
-        <div className="blog-post-content" dangerouslySetInnerHTML={{ __html: html }} />
+        <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: html }} />
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 @import "../styles/base-variables";
 
 .titleBlock {
-
   h1 {
     font-family: "Indie Flower", sans-serif;
     font-size: 4em;
@@ -46,7 +45,7 @@
 .imageBlockOuter {
   display: block;
   width: 100%;
-  max-width: 22em;
+  max-width: 385px;
   position: relative;
   margin: 1em;
 }
@@ -64,5 +63,22 @@
     left: 0;
     width: 100%;
     object-fit: cover;
+  }
+}
+
+.simpleExample {
+  width: 100%;
+  margin-top: 1em;
+  text-align: center;
+
+  h3 {
+    display: inline-block;
+    margin: 0.5em auto;
+    padding: 0.25em 0;
+    font-weight: 100;
+    border-bottom: 1px solid rgba(grey, 0.3);
+    font-size: 2.5em;
+    text-align: center;
+    text-transform: uppercase;
   }
 }
