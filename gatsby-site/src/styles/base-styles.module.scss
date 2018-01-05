@@ -16,6 +16,10 @@ a {
   }
 }
 
+html {
+  min-height: 100vh;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
@@ -26,7 +30,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
   margin-top: 5em;
 }
 
@@ -57,12 +60,35 @@ body {
   }
 }
 
+.pageWithSidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-grow: 1;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-items: flex-start;
+}
+
 .content {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   max-width: 800px;
+}
+
+.basicContent {
+  flex-grow: 1;
+  max-width: 800px;
+  width: 100%;
 }
 
 .icon {

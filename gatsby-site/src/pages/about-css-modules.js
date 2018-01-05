@@ -1,7 +1,7 @@
 import React from "react";
 
 import styles from "./about-css-modules.module.scss";
-import Container from "../components/container";
+import Container from "../components/DocsSidebarItem";
 
 console.log(styles);
 
