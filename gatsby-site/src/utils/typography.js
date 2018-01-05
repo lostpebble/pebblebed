@@ -1,5 +1,5 @@
 import Typography from "typography";
-import lincolnTheme from "typography-theme-lincoln";
+import lincolnTheme from "typography-theme-github";
 
 const typography = new Typography(lincolnTheme);
 

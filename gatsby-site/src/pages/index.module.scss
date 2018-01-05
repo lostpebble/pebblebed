@@ -1,0 +1,68 @@
+@import "../styles/base-variables";
+
+.titleBlock {
+
+  h1 {
+    font-family: "Indie Flower", sans-serif;
+    font-size: 4em;
+    font-weight: 300;
+    color: $primary-color;
+  }
+
+  h2 {
+    margin-top: 1em;
+    margin-bottom: 1.5em;
+  }
+
+  h3 {
+    background-image: linear-gradient(to left, #de5044, #de5044, #4f93f4, #1ea666, #1ea666); /* Standard syntax; must be last */
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+.blurbBlock {
+  padding: 1em;
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+.googleCloud {
+  background-image: linear-gradient(to right, #de5044, #de5044, #f5bc2b, #1ea666, #1ea666); /* Standard syntax; must be last */
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  white-space: pre;
+}
+
+.subtext {
+  font-weight: 300;
+  color: #687f86;
+  margin-bottom: 1em;
+  font-size: 0.8em;
+}
+
+.imageBlockOuter {
+  display: block;
+  width: 100%;
+  max-width: 22em;
+  position: relative;
+  margin: 1em;
+}
+
+.imageBlock {
+  height: 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding-bottom: 66%;
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+  }
+}
