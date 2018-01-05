@@ -2,5 +2,5 @@ import React from "react";
 import Link from "gatsby-link";
 
 export default ({ edge }) => (
-  <Link to={edge.node.frontmatter.path}>{edge.node.frontmatter.title}</Link>
+  <Link className={"sidebarItem"} to={edge.node.frontmatter.path}>{edge.node.frontmatter.title}</Link>
 );

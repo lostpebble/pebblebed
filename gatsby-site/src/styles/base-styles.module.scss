@@ -17,8 +17,6 @@ a {
 }
 
 html {
-  min-height: 100vh;
-
   * {
     box-sizing: border-box;
   }
@@ -35,6 +33,7 @@ body {
   flex-direction: column;
   align-items: center;
   margin-top: 5em;
+  min-height: 100vh;
 }
 
 .topBar {
@@ -80,6 +79,20 @@ body {
   flex-direction: column;
   align-items: flex-start;
   justify-items: flex-start;
+  padding-top: 1em;
+  background: $light-blue-grey;
+
+  :global(.sidebarItem) {
+    padding: 0.5em 1em;
+    color: white;
+    width: 100%;
+
+    transition: background 0.3s ease-out;
+
+    &:hover {
+      background: darken($light-blue-grey, 10);
+    }
+  }
 }
 
 .content {
