@@ -63,6 +63,9 @@ body {
   }
 
   :global(.title) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     font-weight: 700;
   }
 }

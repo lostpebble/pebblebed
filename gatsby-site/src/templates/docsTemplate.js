@@ -9,12 +9,9 @@ export default class Template extends React.Component {
     const { data, location: { pathname } } = this.props;
 
     const { markdownRemark, allMarkdownRemark } = data; // data.markdownRemark holds our post data
-    const { frontmatter, html } = markdownRemark;
+    const { html } = markdownRemark;
 
     const { edges } = allMarkdownRemark;
-
-    // console.log(pathname);
-    // console.log(frontmatter.pathname);
 
     const sidebarItems = edges.map(edge => {
       console.log(edge);

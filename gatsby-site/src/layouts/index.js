@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "gatsby-link";
 
-import logo from "../images/smaller-pebble-tilted.png";
+import logo from "../images/pebble-only.png";
 import baseStyles from "../styles/base-styles.module.scss";
 import styles from "./index.module.scss";
 import { multi } from "../utils/css-utils";
@@ -17,13 +17,15 @@ export default ({ children }) => (
   <div className={baseStyles.app}>
     <div className={baseStyles.topBarSpacer}/>
     <div className={baseStyles.topBar}>
-      <div className={styles.imageBlockOuter}>
-        <div className={styles.imageBlock}>
-          <img src={logo} alt="Pebblebed" />
+      <Link to={"/"} className={"title"}>
+        <div className={styles.imageBlockOuter}>
+          <div className={styles.imageBlock}>
+            <img src={logo} alt="Pebblebed" />
+          </div>
         </div>
-      </div>
-      <Link to={"/"} className={"title"}>Pebblebed</Link>
-      <Link to="/docs/getting-started" className={baseStyles.button}>
+        <span>Pebblebed</span>
+      </Link>
+      <Link to="/docs" className={baseStyles.button}>
         Docs
       </Link>
       <span className={baseStyles.flexGrowGap} />

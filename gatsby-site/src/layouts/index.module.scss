@@ -2,7 +2,9 @@
   display: block;
   width: 100%;
   max-width: 50px;
+  min-width: 50px;
   position: relative;
+  margin-right: 1em;
 }
 
 .imageBlock {
