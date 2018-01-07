@@ -1,5 +1,5 @@
 ---
-path: "/docs/getting-started"
+path: "/docs"
 title: "Getting Started"
 order: 1
 ---

@@ -1,0 +1,22 @@
+.imageBlockOuter {
+  display: block;
+  width: 100%;
+  max-width: 50px;
+  position: relative;
+}
+
+.imageBlock {
+  height: 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding-bottom: 66%;
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+  }
+}

@@ -1,11 +1,15 @@
 @import "../styles/base-variables";
 
 .titleBlock {
+  margin-top: 4em;
+  margin-bottom: 4em;
+
   h1 {
     font-family: "Indie Flower", sans-serif;
-    font-size: 4em;
+    font-size: 3.5em;
     font-weight: 300;
-    color: $primary-color;
+    margin: 0.5em 0;
+    color: lighten($primary-color, 7);
   }
 
   h2 {
@@ -45,9 +49,9 @@
 .imageBlockOuter {
   display: block;
   width: 100%;
-  max-width: 385px;
+  max-width: 234px;
   position: relative;
-  margin: 1em;
+  margin: 0.5em;
 }
 
 .imageBlock {
@@ -76,7 +80,7 @@
     margin: 0.5em auto;
     padding: 0.25em 0;
     font-weight: 100;
-    border-bottom: 1px solid rgba(grey, 0.3);
+    border-bottom: 1px solid rgba(grey, 0.6);
     font-size: 2.5em;
     text-align: center;
     text-transform: uppercase;

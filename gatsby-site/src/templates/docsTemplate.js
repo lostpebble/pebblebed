@@ -4,27 +4,46 @@ import baseStyles from "../styles/base-styles.module.scss";
 import DocsSidebarItem from "../components/DocsSidebarItem";
 import styles from "./docs.module.scss";
 
-export default function Template({
-  data, // this prop will be injected by the GraphQL query below.
-}) {
-  const { markdownRemark, allMarkdownRemark } = data; // data.markdownRemark holds our post data
-  const { frontmatter, html } = markdownRemark;
+export default class Template extends React.Component {
+  render() {
+    const { data, location: { pathname } } = this.props;
 
-  const { edges } = allMarkdownRemark;
+    const { markdownRemark, allMarkdownRemark } = data; // data.markdownRemark holds our post data
+    const { frontmatter, html } = markdownRemark;
 
-  const sidebarItems = edges.slice(1).map(edge => <DocsSidebarItem key={edge.node.id} edge={edge}/>);
+    const { edges } = allMarkdownRemark;
 
-  return (
-    <div className={baseStyles.pageWithSidebar}>
-      <div className={baseStyles.sidebar}>
-        {sidebarItems}
+    // console.log(pathname);
+    // console.log(frontmatter.pathname);
+
+    const sidebarItems = edges.map(edge => {
+      console.log(edge);
+      const selected = edge.node.frontmatter.path === pathname;
+
+      return <DocsSidebarItem key={edge.node.id} selected={selected} edge={edge}/>
+    });
+
+    return (
+      <div className={baseStyles.pageWithSidebar}>
+        <div className={baseStyles.sidebar}>
+          {sidebarItems}
+        </div>
+        <div className={baseStyles.basicContent}>
+          <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
       </div>
-      <div className={baseStyles.basicContent}>
-        <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: html }} />
-      </div>
-    </div>
-  );
+    );
+  }
 }
+
+/*
+* ({
+  data, // this prop will be injected by the GraphQL query below.
+  context
+}) {
+
+}
+* */
 
 export const pageQuery = graphql`
     query DocumentationByPath($path: String!) {

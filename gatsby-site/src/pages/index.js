@@ -5,14 +5,14 @@ import baseStyles from "../styles/base-styles.module.scss";
 import docStyles from "../templates/docs.module.scss";
 import styles from "./index.module.scss";
 
-import logo from "../images/pebblebed-tilted.png";
+import logo from "../images/smaller-pebble-tilted.png";
 import { multi } from "../utils/css-utils";
 
 export default ({ data }) => {
   const { markdownRemark } = data;
 
   return (
-    <div className={baseStyles.app}>
+    <div>
       <div className={multi(baseStyles.content, styles.titleBlock)}>
         <div className={styles.imageBlockOuter}>
           <div className={styles.imageBlock}>

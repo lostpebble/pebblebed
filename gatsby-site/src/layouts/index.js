@@ -1,7 +1,9 @@
 import React from "react";
 import Link from "gatsby-link";
 
+import logo from "../images/smaller-pebble-tilted.png";
 import baseStyles from "../styles/base-styles.module.scss";
+import styles from "./index.module.scss";
 import { multi } from "../utils/css-utils";
 
 require("prismjs/themes/prism-solarizedlight.css");
@@ -13,9 +15,15 @@ const GithubIcon = () =>
 
 export default ({ children }) => (
   <div className={baseStyles.app}>
+    <div className={baseStyles.topBarSpacer}/>
     <div className={baseStyles.topBar}>
+      <div className={styles.imageBlockOuter}>
+        <div className={styles.imageBlock}>
+          <img src={logo} alt="Pebblebed" />
+        </div>
+      </div>
       <Link to={"/"} className={"title"}>Pebblebed</Link>
-      <Link to="/docs" className={baseStyles.button}>
+      <Link to="/docs/getting-started" className={baseStyles.button}>
         Docs
       </Link>
       <span className={baseStyles.flexGrowGap} />
