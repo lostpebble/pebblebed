@@ -83,7 +83,8 @@ function createDatastoreQuery(model, namespace = null) {
                         hash = createHashFromQuery(this);
                     }
                     cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
-                    Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
+                    yield Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
+                    removeSerializableKeysFromEntities(queryResponse);
                 }
                 return queryResponse;
             });
@@ -108,6 +109,11 @@ const serializableKeyName = "__pebblebed_serializable_key__";
 function cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse) {
     for (const entity of queryResponse.entities) {
         entity[serializableKeyName] = entity[Core_1.default.Instance.dsModule.KEY];
+    }
+}
+function removeSerializableKeysFromEntities(queryResponse) {
+    for (const entity of queryResponse.entities) {
+        delete entity[serializableKeyName];
     }
 }
 function cachingAugmentQueryEntitiesWithRealKeys(queryResponse) {

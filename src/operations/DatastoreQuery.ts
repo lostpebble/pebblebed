@@ -106,7 +106,8 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
           }
 
           cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
-          Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
+          await Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
+          removeSerializableKeysFromEntities(queryResponse);
         }
 
         return queryResponse;
@@ -134,6 +135,12 @@ const serializableKeyName = "__pebblebed_serializable_key__";
 function cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse: DatastoreQueryResponse) {
   for (const entity of queryResponse.entities) {
     entity[serializableKeyName] = entity[Core.Instance.dsModule.KEY];
+  }
+}
+
+function removeSerializableKeysFromEntities(queryResponse: DatastoreQueryResponse) {
+  for (const entity of queryResponse.entities) {
+    delete entity[serializableKeyName];
   }
 }
 

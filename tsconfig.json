@@ -15,6 +15,8 @@
   "exclude": [
     "dist",
     "test",
+    "gatsby-site",
+    "site",
     "node_modules"
   ]
 }

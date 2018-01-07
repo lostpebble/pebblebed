@@ -1,9 +1,8 @@
 import { PebblebedCacheStore } from "./PebblebedCacheStore";
 import { Redis } from "ioredis";
 import { DatastoreEntityKey } from "../";
-import * as util from "util";
 import Core from "../Core";
-import { DatastoreQueryResponse, InternalDatastoreQuery } from "../index";
+import { DatastoreQueryResponse } from "../index";
 
 export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   redis: Redis;

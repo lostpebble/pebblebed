@@ -54,6 +54,7 @@ async function runTests() {
   Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
 
   await runAllOperations("DEFAULT_REDIS_CACHE");
+  await runAllOperations("SECOND_RUN_DEFAULT_REDIS_CACHE");
 
   console.log("Finished");
 
