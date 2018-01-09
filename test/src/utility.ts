@@ -1,9 +1,21 @@
+import * as _ from "lodash";
+
 const { performance } = require("perf_hooks");
 
 export async function waitSeconds(seconds: number) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(true), seconds * 1000);
   });
+}
+
+export function assertEqual(message: string, objectOne: any, objectTwo: any) {
+  if (_.isEqual(objectOne, objectTwo)) {
+    console.log(`ASSERT EQUAL PASSED: ${message}`);
+  } else {
+    console.error(`ASSERT EQUAL FAILED: ${message}`);
+    console.log(`objectOne`, objectOne);
+    console.log(`objectTwo`, objectTwo);
+  }
 }
 
 export function printMarkMeasurements(markEntries: PerformanceEntry[], prefix: string = "") {

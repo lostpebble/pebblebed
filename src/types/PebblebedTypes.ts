@@ -78,8 +78,8 @@ export interface DatastoreEntityKey {
   path: string[];
 }
 
-export interface DatastoreQueryResponse {
-  entities: any[];
+export interface DatastoreQueryResponse<T = any> {
+  entities: T[];
   info?: {
     endCursor?: string;
     moreResults?: string;
@@ -109,7 +109,10 @@ export interface DatastoreQuery {
   groupBy(properties: string[]): DatastoreQuery;
   start(nextPageCursor: any): DatastoreQuery;
   select(property: string | string[]): DatastoreQuery;
-  run(): Promise<DatastoreQueryResponse>;
+  first(): DatastoreQuery;
+  last(): DatastoreQuery;
+  randomOne(): DatastoreQuery;
+  run(): Promise<any>;
 }
 
 export interface InternalDatastoreQueryFilter {

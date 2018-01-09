@@ -81,6 +81,9 @@ function createDatastoreQuery(model, namespace = null) {
                     const queryResponse = yield Core_1.default.Instance.cacheStore.getQueryResponse(hash, this);
                     if (queryResponse != null) {
                         cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
+                        if (this.returnOnlyEntity != null) {
+                            return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
+                        }
                         return queryResponse;
                     }
                 }
@@ -105,18 +108,6 @@ function createDatastoreQuery(model, namespace = null) {
                 }
                 if (this.returnOnlyEntity != null) {
                     return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
-                    /*if (queryResponse.entities.length > 0) {
-                      if (this.returnOnlyEntity === "FIRST") {
-                        return queryResponse.entities[0];
-                      } else if (this.returnOnlyEntity === "LAST") {
-                        return queryResponse.entities[queryResponse.entities.length - 1];
-                      } else {
-                        const randomIndex = Math.floor(Math.random() * queryResponse.entities.length);
-                        return queryResponse.entities[randomIndex];
-                      }
-                    } else {
-                      return null;
-                    }*/
                 }
                 return queryResponse;
             });

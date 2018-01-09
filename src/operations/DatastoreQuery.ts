@@ -99,6 +99,11 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
 
           if (queryResponse != null) {
             cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
+
+            if (this.returnOnlyEntity != null) {
+              return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;
+            }
+
             return queryResponse;
           }
         }
@@ -130,19 +135,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
         }
 
         if (this.returnOnlyEntity != null) {
-          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity);
-          /*if (queryResponse.entities.length > 0) {
-            if (this.returnOnlyEntity === "FIRST") {
-              return queryResponse.entities[0];
-            } else if (this.returnOnlyEntity === "LAST") {
-              return queryResponse.entities[queryResponse.entities.length - 1];
-            } else {
-              const randomIndex = Math.floor(Math.random() * queryResponse.entities.length);
-              return queryResponse.entities[randomIndex];
-            }
-          } else {
-            return null;
-          }*/
+          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;
         }
 
         return queryResponse;

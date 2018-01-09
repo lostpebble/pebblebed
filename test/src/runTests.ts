@@ -8,6 +8,7 @@ import { Pebblebed, PebblebedDefaultRedisCacheStore } from "pebblebed";
 import * as IoRedisLib from "ioredis";
 import { IDSTestEntityIntId, TestEntityIntIdModel } from "./entities/TestEntityIntId";
 import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
+import { testPickingOut } from "./tests/_testPickingOut";
 
 const redis = new IoRedisLib();
 
@@ -19,60 +20,16 @@ process.on("unhandledRejection", (reason, p) => {
 async function runTests() {
   console.log("Running allOperations");
 
-  /*const values = [12, 53, 542];
-  const createEntities: IDSTestEntityIntId[] = [];
-
-  for (const value of values) {
-    createEntities.push({
-      tags: ["blue", "red"],
-      amount: value,
-      date: new Date(),
-      location: {
-        longitude: 1,
-        latitude: 0,
-      },
-      worthy: false,
-      object: {
-        something: 0,
-      },
-    });
-  }
-
-  await TestEntityIntIdModel.save(createEntities)
-    .withAncestors(TestEntityStringIdModel, "abc")
-    .generateUnsetIds()
-    .run();
-
-  await waitSeconds(2);
-*/
-  // return;
-
-  Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
-
-  const ids = ["123", "5704093720903680", "5707532110659584", "5711129414205440"];
-
-  const result = await TestEntityIntIdModel.load(ids).run();
-  console.log("all");
-  console.log(result);
-
-  const resultOne = await TestEntityIntIdModel.load(ids).first().run();
-  console.log("first");
-  console.log(resultOne);
-
-  const resultLast = await TestEntityIntIdModel.load(ids).last().run();
-  console.log("last");
-  console.log(resultLast);
-
-  const resultRandom = await TestEntityIntIdModel.load(ids).randomOne().run();
-  console.log("random");
-  console.log(resultRandom);
-
-  // await runAllOperations("BASIC_NO_CACHE");
+  await runAllOperations("BASIC_NO_CACHE");
 
   await redis.flushall();
 
-  // await runAllOperations("DEFAULT_REDIS_CACHE");
-  // await runAllOperations("SECOND_RUN_DEFAULT_REDIS_CACHE");
+  Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
+
+  await runAllOperations("DEFAULT_REDIS_CACHE");
+  await runAllOperations("SECOND_RUN_DEFAULT_REDIS_CACHE");
+
+  await testPickingOut();
 
   console.log("Finished");
 
