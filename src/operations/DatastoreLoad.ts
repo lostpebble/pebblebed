@@ -6,6 +6,7 @@ import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "../Messaging";
 import { TReturnOnly } from "../";
+import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 
 export default class DatastoreLoad extends DatastoreOperation {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
@@ -89,6 +90,8 @@ export default class DatastoreLoad extends DatastoreOperation {
 
     let resp;
 
+    console.log(loadKeys);
+
     if (this.transaction) {
       resp = await this.transaction.get(loadKeys);
     } else {
@@ -121,12 +124,15 @@ export default class DatastoreLoad extends DatastoreOperation {
       }
     }
 
+    // console.log(JSON.stringify(resp));
+
     if (this.hasIdProperty && resp[0].length > 0) {
       augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.idType, this.kind);
     }
 
     if (this.returnOnlyEntity != null) {
-      if (resp[0].length > 0) {
+      return pickOutEntityFromResults(resp[0], this.returnOnlyEntity);
+      /*if (resp[0].length > 0) {
         if (this.returnOnlyEntity === "FIRST") {
           return resp[0][0];
         } else if (this.returnOnlyEntity === "LAST") {
@@ -137,7 +143,7 @@ export default class DatastoreLoad extends DatastoreOperation {
         }
       } else {
         return null;
-      }
+      }*/
     }
 
     return resp[0];

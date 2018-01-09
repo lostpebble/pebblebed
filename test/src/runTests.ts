@@ -46,20 +46,25 @@ async function runTests() {
   await waitSeconds(2);
 */
   // return;
+
   Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
 
   const ids = ["123", "5704093720903680", "5707532110659584", "5711129414205440"];
 
   const result = await TestEntityIntIdModel.load(ids).run();
+  console.log("all");
   console.log(result);
 
   const resultOne = await TestEntityIntIdModel.load(ids).first().run();
+  console.log("first");
   console.log(resultOne);
 
   const resultLast = await TestEntityIntIdModel.load(ids).last().run();
+  console.log("last");
   console.log(resultLast);
 
   const resultRandom = await TestEntityIntIdModel.load(ids).randomOne().run();
+  console.log("random");
   console.log(resultRandom);
 
   // await runAllOperations("BASIC_NO_CACHE");

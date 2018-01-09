@@ -86,6 +86,8 @@ export interface DatastoreQueryResponse {
   };
 }
 
+export type TDatastoreQueryResponse = DatastoreQueryResponse | object;
+
 export type TFilterComparator = "=" | "<" | ">" | "<=" | ">=";
 
 export type TFilterFunction = (

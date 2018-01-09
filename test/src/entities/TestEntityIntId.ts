@@ -32,6 +32,4 @@ const schema = Pebblebed.createSchema<IDSTestEntityIntId>({
   nullValueIfUnset: false,
 });
 
-export const TestEntityIntIdModel = Pebblebed.createModel("TestEntityIntId", schema, {
-  neverCache: true,
-});
+export const TestEntityIntIdModel = Pebblebed.createModel("TestEntityIntId", schema);

@@ -13,6 +13,7 @@ const Core_1 = require("../Core");
 const BasicUtils_1 = require("../utility/BasicUtils");
 const augmentEntitiesWithIdProperties_1 = require("../utility/augmentEntitiesWithIdProperties");
 const Messaging_1 = require("../Messaging");
+const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
 class DatastoreLoad extends DatastoreOperation_1.default {
     constructor(model, idsOrKeys) {
         super(model);
@@ -84,6 +85,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                 });
             }
             let resp;
+            console.log(loadKeys);
             if (this.transaction) {
                 resp = yield this.transaction.get(loadKeys);
             }
@@ -114,25 +116,24 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                     resp = yield Core_1.default.Instance.ds.get(loadKeys);
                 }
             }
+            // console.log(JSON.stringify(resp));
             if (this.hasIdProperty && resp[0].length > 0) {
                 augmentEntitiesWithIdProperties_1.default(resp[0], this.idProperty, this.idType, this.kind);
             }
             if (this.returnOnlyEntity != null) {
-                if (resp[0].length > 0) {
-                    if (this.returnOnlyEntity === "FIRST") {
-                        return resp[0][0];
-                    }
-                    else if (this.returnOnlyEntity === "LAST") {
-                        return resp[0][resp[0].length - 1];
-                    }
-                    else {
-                        const randomIndex = Math.floor(Math.random() * resp[0].length);
-                        return resp[0][randomIndex];
-                    }
-                }
-                else {
-                    return null;
-                }
+                return pickOutEntityFromResults_1.default(resp[0], this.returnOnlyEntity);
+                /*if (resp[0].length > 0) {
+                  if (this.returnOnlyEntity === "FIRST") {
+                    return resp[0][0];
+                  } else if (this.returnOnlyEntity === "LAST") {
+                    return resp[0][resp[0].length - 1];
+                  } else {
+                    const randomIndex = Math.floor(Math.random() * resp[0].length);
+                    return resp[0][randomIndex];
+                  }
+                } else {
+                  return null;
+                }*/
             }
             return resp[0];
         });

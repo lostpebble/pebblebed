@@ -1,10 +1,11 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey, DatastoreQuery, TReturnOnly } from "../";
+import { DatastoreEntityKey, DatastoreQuery, TDatastoreQueryResponse, TReturnOnly } from "../";
 import { DatastoreQueryResponse, InternalDatastoreQuery, TFilterComparator } from "../types/PebblebedTypes";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import convertToType from "../utility/convertToType";
 import Core from "../Core";
+import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 
 const crypto = require("crypto");
 
@@ -29,7 +30,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
     ? false
     : Core.Instance.cacheEnabledOnQueryDefault;
 
-  const returnOnly: TReturnOnly = null;
+  const returnOnlyEntity: TReturnOnly = null;
 
   const cachingTimeSeconds =
     model.modelOptions.defaultCachingSeconds != null
@@ -39,7 +40,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
   return Object.assign(
     dsQuery,
     {
-      returnOnly,
+      returnOnlyEntity,
       useCache,
       cachingTimeSeconds,
       enableCache(on: boolean) {
@@ -51,15 +52,15 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
         return this;
       },
       first() {
-        this.returnOnly = "FIRST";
+        this.returnOnlyEntity = "FIRST";
         return this;
       },
       last() {
-        this.returnOnly = "LAST";
+        this.returnOnlyEntity = "LAST";
         return this;
       },
       randomOne() {
-        this.returnOnly = "RANDOM";
+        this.returnOnlyEntity = "RANDOM";
         return this;
       },
       filter(
@@ -85,7 +86,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
 
         return this;
       },
-      async run(): Promise<DatastoreQueryResponse> {
+      async run(): Promise<TDatastoreQueryResponse> {
         let hash = null;
 
         if (Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnQuery && this.useCache) {
@@ -126,6 +127,22 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
           cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
           await Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
           removeSerializableKeysFromEntities(queryResponse);
+        }
+
+        if (this.returnOnlyEntity != null) {
+          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity);
+          /*if (queryResponse.entities.length > 0) {
+            if (this.returnOnlyEntity === "FIRST") {
+              return queryResponse.entities[0];
+            } else if (this.returnOnlyEntity === "LAST") {
+              return queryResponse.entities[queryResponse.entities.length - 1];
+            } else {
+              const randomIndex = Math.floor(Math.random() * queryResponse.entities.length);
+              return queryResponse.entities[randomIndex];
+            }
+          } else {
+            return null;
+          }*/
         }
 
         return queryResponse;

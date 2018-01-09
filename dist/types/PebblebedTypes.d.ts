@@ -75,6 +75,7 @@ export interface DatastoreQueryResponse {
         moreResults?: string;
     };
 }
+export declare type TDatastoreQueryResponse = DatastoreQueryResponse | object;
 export declare type TFilterComparator = "=" | "<" | ">" | "<=" | ">=";
 export declare type TFilterFunction = (property: string, comparator: TFilterComparator, value: string | number | boolean | Date) => DatastoreQuery;
 export interface DatastoreQuery {

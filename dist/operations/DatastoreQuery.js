@@ -12,6 +12,7 @@ const extractAncestorPaths_1 = require("../utility/extractAncestorPaths");
 const augmentEntitiesWithIdProperties_1 = require("../utility/augmentEntitiesWithIdProperties");
 const convertToType_1 = require("../utility/convertToType");
 const Core_1 = require("../Core");
+const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
 const crypto = require("crypto");
 function createDatastoreQuery(model, namespace = null) {
     const idProp = model.entityIdProperty;
@@ -28,12 +29,12 @@ function createDatastoreQuery(model, namespace = null) {
     const useCache = (model.modelOptions.neverCache || !Core_1.default.Instance.caching)
         ? false
         : Core_1.default.Instance.cacheEnabledOnQueryDefault;
-    const returnOnly = null;
+    const returnOnlyEntity = null;
     const cachingTimeSeconds = model.modelOptions.defaultCachingSeconds != null
         ? model.modelOptions.defaultCachingSeconds
         : Core_1.default.Instance.defaultCachingSeconds;
     return Object.assign(dsQuery, {
-        returnOnly,
+        returnOnlyEntity,
         useCache,
         cachingTimeSeconds,
         enableCache(on) {
@@ -45,15 +46,15 @@ function createDatastoreQuery(model, namespace = null) {
             return this;
         },
         first() {
-            this.returnOnly = "FIRST";
+            this.returnOnlyEntity = "FIRST";
             return this;
         },
         last() {
-            this.returnOnly = "LAST";
+            this.returnOnlyEntity = "LAST";
             return this;
         },
         randomOne() {
-            this.returnOnly = "RANDOM";
+            this.returnOnlyEntity = "RANDOM";
             return this;
         },
         filter(property, comparator, value) {
@@ -101,6 +102,21 @@ function createDatastoreQuery(model, namespace = null) {
                     cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
                     yield Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
                     removeSerializableKeysFromEntities(queryResponse);
+                }
+                if (this.returnOnlyEntity != null) {
+                    return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
+                    /*if (queryResponse.entities.length > 0) {
+                      if (this.returnOnlyEntity === "FIRST") {
+                        return queryResponse.entities[0];
+                      } else if (this.returnOnlyEntity === "LAST") {
+                        return queryResponse.entities[queryResponse.entities.length - 1];
+                      } else {
+                        const randomIndex = Math.floor(Math.random() * queryResponse.entities.length);
+                        return queryResponse.entities[randomIndex];
+                      }
+                    } else {
+                      return null;
+                    }*/
                 }
                 return queryResponse;
             });
