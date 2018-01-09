@@ -6,6 +6,7 @@ import { DatastoreQueryResponse } from "../index";
 
 export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   redis: Redis;
+  namespace = "PEBBLEBED";
 
   constructor(ioRedisClient: Redis) {
     super();
@@ -13,7 +14,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async getEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    const keyStrings = keys.map((key) => key.path.join(":"));
+    const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
 
     if (keyStrings.length >= 1) {
       const redisResult = await this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
@@ -41,7 +42,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
       const pipeline = this.redis.pipeline();
 
       entities.forEach((entity) => {
-        pipeline.setex(entity[Core.Instance.dsModule.KEY].path.join(":"), secondsToCache, JSON.stringify(entity));
+        pipeline.setex(`${this.namespace}:${entity[Core.Instance.dsModule.KEY].path.join(":")}`, secondsToCache, JSON.stringify(entity));
       });
 
       await pipeline.exec();
@@ -49,11 +50,11 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number) {
-    await this.redis.setex(queryHash, secondsToCache, JSON.stringify(queryResponse));
+    await this.redis.setex(`${this.namespace}:${queryHash}`, secondsToCache, JSON.stringify(queryResponse));
   }
 
   async getQueryResponse(queryHash: string) {
-    const redisResult = await this.redis.get(queryHash);
+    const redisResult = await this.redis.get(`${this.namespace}:${queryHash}`);
 
     if (redisResult != null) {
       return JSON.parse(redisResult);
@@ -63,7 +64,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    const keyStrings = keys.map((key) => key.path.join(":"));
+    const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
 
     if (keyStrings.length >= 1) {
       await this.redis.del(keyStrings[0], ...keyStrings.slice(1));

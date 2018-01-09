@@ -13,11 +13,12 @@ const Core_1 = require("../Core");
 class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCacheStore {
     constructor(ioRedisClient) {
         super();
+        this.namespace = "PEBBLEBED";
         this.redis = ioRedisClient;
     }
     getEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
-            const keyStrings = keys.map((key) => key.path.join(":"));
+            const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
             if (keyStrings.length >= 1) {
                 const redisResult = yield this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
                 let containsNulls = false;
@@ -40,7 +41,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
             if (entities.length > 0) {
                 const pipeline = this.redis.pipeline();
                 entities.forEach((entity) => {
-                    pipeline.setex(entity[Core_1.default.Instance.dsModule.KEY].path.join(":"), secondsToCache, JSON.stringify(entity));
+                    pipeline.setex(`${this.namespace}:${entity[Core_1.default.Instance.dsModule.KEY].path.join(":")}`, secondsToCache, JSON.stringify(entity));
                 });
                 yield pipeline.exec();
             }
@@ -48,12 +49,12 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     setQueryResponse(queryResponse, queryHash, secondsToCache) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.redis.setex(queryHash, secondsToCache, JSON.stringify(queryResponse));
+            yield this.redis.setex(`${this.namespace}:${queryHash}`, secondsToCache, JSON.stringify(queryResponse));
         });
     }
     getQueryResponse(queryHash) {
         return __awaiter(this, void 0, void 0, function* () {
-            const redisResult = yield this.redis.get(queryHash);
+            const redisResult = yield this.redis.get(`${this.namespace}:${queryHash}`);
             if (redisResult != null) {
                 return JSON.parse(redisResult);
             }
@@ -62,7 +63,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     flushEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
-            const keyStrings = keys.map((key) => key.path.join(":"));
+            const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
             if (keyStrings.length >= 1) {
                 yield this.redis.del(keyStrings[0], ...keyStrings.slice(1));
             }
