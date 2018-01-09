@@ -6,7 +6,6 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import * as util from "util";
 
 export default class DatastoreSave extends DatastoreOperation {
   private dataObjects: any[];
@@ -16,6 +15,8 @@ export default class DatastoreSave extends DatastoreOperation {
 
   constructor(model: PebblebedModel, data: object | object[]) {
     super(model);
+
+    this.useCache = this.useCache ? Core.Instance.cacheEnabledOnSaveDefault : false;
 
     if (Array.isArray(data)) {
       this.dataObjects = data;
@@ -114,7 +115,7 @@ export default class DatastoreSave extends DatastoreOperation {
         const validation = Core.Joi.validate(data, this.model.entityJoiSchema.__getJoiSchema());
 
         if (validation.error !== null) {
-          throwError(`Pebblebed: Entity ( ${this.model.entityKind} ): ${validation.error}`);
+          throwError(`Pebblebed: On save entity of kind -> ${this.model.entityKind} : ${validation.error}`);
         }
       }
 

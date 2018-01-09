@@ -10,9 +10,12 @@ export declare const Pebblebed: {
     createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options?: IPebblebedModelOptions) => PebblebedModel<T>;
     setCacheStore: (cacheStore: PebblebedCacheStore) => void;
     setDefaultNamespace: (namespace: string) => void;
-    setDefaultCachingSeconds: (seconds: number) => void;
     enableValidations(on?: boolean): void;
     enableCaching(on?: boolean): void;
+    setDefaultCachingSeconds: (seconds: number) => void;
+    setCacheEnabledOnSaveDefault(on: boolean): void;
+    setCacheEnabledOnLoadDefault(on: boolean): void;
+    setCacheEnabledOnQueryDefault(on: boolean): void;
     key(...args: any[]): any;
     keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];
     uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];

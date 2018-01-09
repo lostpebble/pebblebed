@@ -5,6 +5,8 @@ export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
 
 export type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
 
+export type TReturnOnly = "FIRST" | "LAST" | "RANDOM";
+
 export interface IPebblebedModelOptions {
   neverCache?: boolean;
   defaultCachingSeconds?: number;

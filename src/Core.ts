@@ -14,6 +14,10 @@ export default class Core {
   public caching = true;
   public cacheStore: PebblebedCacheStore = null;
 
+  public cacheEnabledOnSaveDefault = true;
+  public cacheEnabledOnLoadDefault = true;
+  public cacheEnabledOnQueryDefault = false;
+
   private constructor() {
     try {
       this.dsModule = require("@google-cloud/datastore");

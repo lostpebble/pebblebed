@@ -139,7 +139,8 @@ export class PebblebedJoiSchema<T> {
                   if (basicPropertyDefinition.type !== "array") {
                     propertyExcludeFromIndexes.push(property);
                   } else {
-                    warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
+                    propertyExcludeFromIndexes.push(`${property}[]`);
+                    // warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
                   }
                 }
 

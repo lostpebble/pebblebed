@@ -15,7 +15,9 @@ export interface IDSTestEntityStringId {
 
 const schema = Pebblebed.createSchema<IDSTestEntityStringId>({
   idThing: PebbleStringId(),
-  amount: PebbleDouble(),
+  amount: PebbleDouble({
+    indexed: false,
+  }),
   date: DefaultDateTimeNow,
   location: PebbleGeoPoint(),
   tags: PebbleArray().required(),

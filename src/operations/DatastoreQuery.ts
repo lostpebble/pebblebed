@@ -1,5 +1,5 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey, DatastoreQuery } from "../";
+import { DatastoreEntityKey, DatastoreQuery, TReturnOnly } from "../";
 import { DatastoreQueryResponse, InternalDatastoreQuery, TFilterComparator } from "../types/PebblebedTypes";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
@@ -25,7 +25,12 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
   const runQuery = dsQuery.run.bind(dsQuery);
   const filterQuery = dsQuery.filter.bind(dsQuery);
 
-  const useCache = model.modelOptions.neverCache ? false : Core.Instance.caching;
+  const useCache = (model.modelOptions.neverCache || !Core.Instance.caching)
+    ? false
+    : Core.Instance.cacheEnabledOnQueryDefault;
+
+  const returnOnly: TReturnOnly = null;
+
   const cachingTimeSeconds =
     model.modelOptions.defaultCachingSeconds != null
       ? model.modelOptions.defaultCachingSeconds
@@ -34,6 +39,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
   return Object.assign(
     dsQuery,
     {
+      returnOnly,
       useCache,
       cachingTimeSeconds,
       enableCache(on: boolean) {
@@ -42,6 +48,18 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
       },
       cachingSeconds(seconds: number) {
         this.cachingTimeSeconds = seconds;
+        return this;
+      },
+      first() {
+        this.returnOnly = "FIRST";
+        return this;
+      },
+      last() {
+        this.returnOnly = "LAST";
+        return this;
+      },
+      randomOne() {
+        this.returnOnly = "RANDOM";
         return this;
       },
       filter(

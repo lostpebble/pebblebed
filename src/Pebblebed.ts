@@ -1,6 +1,8 @@
 import {
-  DatastoreEntityKey, DatastoreTransaction, IPebblebedModelOptions,
-  SchemaDefinition
+  DatastoreEntityKey,
+  DatastoreTransaction,
+  IPebblebedModelOptions,
+  SchemaDefinition,
 } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
@@ -25,7 +27,11 @@ export const Pebblebed = {
     return new PebblebedJoiSchema<T>(schema);
   },
 
-  createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options: IPebblebedModelOptions = {}) => {
+  createModel: <T = any>(
+    entityKind: string,
+    entitySchema: PebblebedJoiSchema<T>,
+    options: IPebblebedModelOptions = {}
+  ) => {
     return new PebblebedModel<T>(entityKind, entitySchema, options);
   },
 
@@ -49,16 +55,28 @@ export const Pebblebed = {
     }
   },
 
-  setDefaultCachingSeconds: (seconds: number) => {
-    Core.Instance.defaultCachingSeconds = seconds;
-  },
-
   enableValidations(on: boolean = true) {
     Core.Instance.enableValidations(on);
   },
 
   enableCaching(on: boolean = true) {
     Core.Instance.enableCaching(on);
+  },
+
+  setDefaultCachingSeconds: (seconds: number) => {
+    Core.Instance.defaultCachingSeconds = seconds;
+  },
+
+  setCacheEnabledOnSaveDefault(on: boolean) {
+    Core.Instance.cacheEnabledOnSaveDefault = on;
+  },
+
+  setCacheEnabledOnLoadDefault(on: boolean) {
+    Core.Instance.cacheEnabledOnLoadDefault = on;
+  },
+
+  setCacheEnabledOnQueryDefault(on: boolean) {
+    Core.Instance.cacheEnabledOnQueryDefault = on;
   },
 
   key(...args: any[]) {

@@ -6,6 +6,7 @@ export declare type SchemaDefinitionOptions = {
     __excludeFromIndexes?: string[];
 };
 export declare type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & SchemaDefinitionOptions;
+export declare type TReturnOnly = "FIRST" | "LAST" | "RANDOM";
 export interface IPebblebedModelOptions {
     neverCache?: boolean;
     defaultCachingSeconds?: number;

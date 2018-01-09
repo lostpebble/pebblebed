@@ -10,6 +10,9 @@ export default class Core {
     validations: boolean;
     caching: boolean;
     cacheStore: PebblebedCacheStore;
+    cacheEnabledOnSaveDefault: boolean;
+    cacheEnabledOnLoadDefault: boolean;
+    cacheEnabledOnQueryDefault: boolean;
     private constructor();
     static readonly Instance: Core;
     static readonly Joi: any;

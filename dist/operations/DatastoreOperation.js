@@ -34,12 +34,15 @@ class DatastoreOperation {
     }
     enableValidations(on) {
         this.runValidation = on;
+        return this;
     }
     enableCaching(on) {
         this.useCache = on;
+        return this;
     }
     cachingSeconds(seconds) {
         this.cachingTimeSeconds = seconds;
+        return this;
     }
     useTransaction(transaction) {
         this.transaction = transaction;

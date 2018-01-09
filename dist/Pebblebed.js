@@ -40,14 +40,23 @@ exports.Pebblebed = {
             Core_1.default.Instance.setNamespace(null);
         }
     },
-    setDefaultCachingSeconds: (seconds) => {
-        Core_1.default.Instance.defaultCachingSeconds = seconds;
-    },
     enableValidations(on = true) {
         Core_1.default.Instance.enableValidations(on);
     },
     enableCaching(on = true) {
         Core_1.default.Instance.enableCaching(on);
+    },
+    setDefaultCachingSeconds: (seconds) => {
+        Core_1.default.Instance.defaultCachingSeconds = seconds;
+    },
+    setCacheEnabledOnSaveDefault(on) {
+        Core_1.default.Instance.cacheEnabledOnSaveDefault = on;
+    },
+    setCacheEnabledOnLoadDefault(on) {
+        Core_1.default.Instance.cacheEnabledOnLoadDefault = on;
+    },
+    setCacheEnabledOnQueryDefault(on) {
+        Core_1.default.Instance.cacheEnabledOnQueryDefault = on;
     },
     key(...args) {
         const keyPath = [];

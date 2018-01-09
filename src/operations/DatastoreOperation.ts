@@ -47,14 +47,17 @@ export default class DatastoreOperation {
 
   public enableValidations(on: boolean) {
     this.runValidation = on;
+    return this;
   }
 
   public enableCaching(on: boolean) {
     this.useCache = on;
+    return this;
   }
 
   public cachingSeconds(seconds: number) {
     this.cachingTimeSeconds = seconds;
+    return this;
   }
 
   public useTransaction(transaction: any) {

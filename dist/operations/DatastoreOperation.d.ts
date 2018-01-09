@@ -17,9 +17,9 @@ export default class DatastoreOperation {
     protected cachingTimeSeconds: number;
     constructor(model: PebblebedModel);
     withAncestors(...args: any[]): this;
-    enableValidations(on: boolean): void;
-    enableCaching(on: boolean): void;
-    cachingSeconds(seconds: number): void;
+    enableValidations(on: boolean): this;
+    enableCaching(on: boolean): this;
+    cachingSeconds(seconds: number): this;
     useTransaction(transaction: any): this;
     useNamespace(namespace: string): this;
     protected createFullKey(fullPath: any): any;

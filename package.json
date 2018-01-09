@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
   "peerDependencies": {
-    "@google-cloud/datastore": "^1.1.0",
+    "@google-cloud/datastore": "^1.3.3",
     "joi": "^11.0.0",
     "ioredis": "^3.2.1"
   },

@@ -9,6 +9,9 @@ class Core {
         this.validations = true;
         this.caching = true;
         this.cacheStore = null;
+        this.cacheEnabledOnSaveDefault = true;
+        this.cacheEnabledOnLoadDefault = true;
+        this.cacheEnabledOnQueryDefault = false;
         try {
             this.dsModule = require("@google-cloud/datastore");
         }

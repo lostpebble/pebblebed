@@ -5,16 +5,20 @@ import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "../Messaging";
+import { TReturnOnly } from "../";
 
 export default class DatastoreLoad extends DatastoreOperation {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
+  private returnOnlyEntity: TReturnOnly = null;
 
   constructor(
     model: PebblebedModel,
     idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
   ) {
     super(model);
+
+    this.useCache = this.useCache ? Core.Instance.cacheEnabledOnLoadDefault : false;
 
     if (idsOrKeys != null) {
       if (Array.isArray(idsOrKeys)) {
@@ -47,6 +51,21 @@ export default class DatastoreLoad extends DatastoreOperation {
     }
   }
 
+  public first() {
+    this.returnOnlyEntity = "FIRST";
+    return this;
+  }
+
+  public last() {
+    this.returnOnlyEntity = "LAST";
+    return this;
+  }
+
+  public randomOne() {
+    this.returnOnlyEntity = "RANDOM";
+    return this;
+  }
+
   public async run() {
     let loadKeys;
 
@@ -77,22 +96,25 @@ export default class DatastoreLoad extends DatastoreOperation {
         let cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
 
         if (cachedEntities != null && cachedEntities.length > 0) {
-          cachedEntities = cachedEntities.map((entity, index) => {
+          resp = [];
+          resp.push(cachedEntities.map((entity, index) => {
             entity[Core.Instance.dsModule.KEY] = loadKeys[index];
             return entity;
-          });
+          }));
 
+          /*
           if (this.hasIdProperty) {
             augmentEntitiesWithIdProperties(cachedEntities, this.idProperty, this.idType, this.kind);
           }
+          */
 
-          return cachedEntities;
-        }
+          // resp = cachedEntities;
+        } else {
+          resp = await Core.Instance.ds.get(loadKeys);
 
-        resp = await Core.Instance.ds.get(loadKeys);
-
-        if (resp[0].length > 0) {
-          Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(resp[0], this.cachingTimeSeconds);
+          if (resp[0].length > 0) {
+            Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(resp[0], this.cachingTimeSeconds);
+          }
         }
       } else {
         resp = await Core.Instance.ds.get(loadKeys);
@@ -101,6 +123,21 @@ export default class DatastoreLoad extends DatastoreOperation {
 
     if (this.hasIdProperty && resp[0].length > 0) {
       augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.idType, this.kind);
+    }
+
+    if (this.returnOnlyEntity != null) {
+      if (resp[0].length > 0) {
+        if (this.returnOnlyEntity === "FIRST") {
+          return resp[0][0];
+        } else if (this.returnOnlyEntity === "LAST") {
+          return resp[0][resp[0].length - 1];
+        } else {
+          const randomIndex = Math.floor(Math.random() * resp[0].length);
+          return resp[0][randomIndex];
+        }
+      } else {
+        return null;
+      }
     }
 
     return resp[0];

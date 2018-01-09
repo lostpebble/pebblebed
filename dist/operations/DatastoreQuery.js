@@ -25,11 +25,15 @@ function createDatastoreQuery(model, namespace = null) {
         : Core_1.default.Instance.ds.createQuery(model.entityKind);
     const runQuery = dsQuery.run.bind(dsQuery);
     const filterQuery = dsQuery.filter.bind(dsQuery);
-    const useCache = model.modelOptions.neverCache ? false : Core_1.default.Instance.caching;
+    const useCache = (model.modelOptions.neverCache || !Core_1.default.Instance.caching)
+        ? false
+        : Core_1.default.Instance.cacheEnabledOnQueryDefault;
+    const returnOnly = null;
     const cachingTimeSeconds = model.modelOptions.defaultCachingSeconds != null
         ? model.modelOptions.defaultCachingSeconds
         : Core_1.default.Instance.defaultCachingSeconds;
     return Object.assign(dsQuery, {
+        returnOnly,
         useCache,
         cachingTimeSeconds,
         enableCache(on) {
@@ -38,6 +42,18 @@ function createDatastoreQuery(model, namespace = null) {
         },
         cachingSeconds(seconds) {
             this.cachingTimeSeconds = seconds;
+            return this;
+        },
+        first() {
+            this.returnOnly = "FIRST";
+            return this;
+        },
+        last() {
+            this.returnOnly = "LAST";
+            return this;
+        },
+        randomOne() {
+            this.returnOnly = "RANDOM";
             return this;
         },
         filter(property, comparator, value) {
