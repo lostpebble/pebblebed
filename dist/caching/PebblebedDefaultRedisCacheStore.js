@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const PebblebedCacheStore_1 = require("./PebblebedCacheStore");
 const Core_1 = require("../Core");
+const serialization_1 = require("../utility/serialization");
 class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCacheStore {
     constructor(ioRedisClient) {
         super();
@@ -24,7 +25,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
                 let containsNulls = false;
                 const results = redisResult.map((result) => {
                     if (result != null) {
-                        return JSON.parse(result);
+                        return JSON.parse(result, serialization_1.reviveDateObjects);
                     }
                     containsNulls = true;
                     return null;
@@ -56,7 +57,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
         return __awaiter(this, void 0, void 0, function* () {
             const redisResult = yield this.redis.get(`${this.namespace}:${queryHash}`);
             if (redisResult != null) {
-                return JSON.parse(redisResult);
+                return JSON.parse(redisResult, serialization_1.reviveDateObjects);
             }
             return Promise.resolve(null);
         });

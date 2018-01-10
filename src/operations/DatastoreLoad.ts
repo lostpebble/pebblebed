@@ -90,8 +90,6 @@ export default class DatastoreLoad extends DatastoreOperation {
 
     let resp;
 
-    console.log(loadKeys);
-
     if (this.transaction) {
       resp = await this.transaction.get(loadKeys);
     } else {

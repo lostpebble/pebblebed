@@ -3,6 +3,7 @@ import { Redis } from "ioredis";
 import { DatastoreEntityKey } from "../";
 import Core from "../Core";
 import { DatastoreQueryResponse } from "../index";
+import { reviveDateObjects } from "../utility/serialization";
 
 export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   redis: Redis;
@@ -22,7 +23,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
       let containsNulls = false;
       const results = redisResult.map((result) => {
         if (result != null) {
-          return JSON.parse(result);
+          return JSON.parse(result, reviveDateObjects);
         }
 
         containsNulls = true;
@@ -57,7 +58,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     const redisResult = await this.redis.get(`${this.namespace}:${queryHash}`);
 
     if (redisResult != null) {
-      return JSON.parse(redisResult);
+      return JSON.parse(redisResult, reviveDateObjects);
     }
 
     return Promise.resolve(null);

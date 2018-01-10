@@ -8,14 +8,15 @@ export async function testPickingOut() {
   console.log(result);
 
   const resultOne = await TestEntityIntIdModel.load(ids).first().run();
+  console.log("PICK first");
   console.log(resultOne);
 
   const resultLast = await TestEntityIntIdModel.load(ids).last().run();
-  console.log("last");
+  console.log("PICK last");
   console.log(resultLast);
 
   const resultRandom = await TestEntityIntIdModel.load(ids).randomOne().run();
-  console.log("random");
+  console.log("PICK random");
   console.log(resultRandom);
 
   const baseQuery = TestEntityIntIdModel.query().filter("tags", "=", "red").enableCache(true);

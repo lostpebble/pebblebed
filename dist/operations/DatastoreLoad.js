@@ -85,7 +85,6 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                 });
             }
             let resp;
-            console.log(loadKeys);
             if (this.transaction) {
                 resp = yield this.transaction.get(loadKeys);
             }

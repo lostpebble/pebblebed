@@ -81,8 +81,6 @@ export class PebblebedJoiSchema<T> {
 
     const entityProperties = this.schema.describe().children;
 
-    // console.log(util.inspect(entityProperties, { depth: 4 }));
-
     let roleIdSet = false;
 
     const basicSchema: Partial<SchemaDefinition> = {
@@ -164,8 +162,6 @@ export class PebblebedJoiSchema<T> {
         basicSchema[property] = basicPropertyDefinition;
       }
     }
-
-    console.log(util.inspect(basicSchema, { depth: 4 }));
 
     return basicSchema;
   }

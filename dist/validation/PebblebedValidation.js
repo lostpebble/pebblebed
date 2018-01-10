@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const JoiUtils_1 = require("../utility/JoiUtils");
 const Messaging_1 = require("../Messaging");
-const util = require("util");
 const Core_1 = require("../Core");
 class PebblebedValidations {
     static get AVJoiSchemaPropertyMetaInput() {
@@ -60,7 +59,6 @@ class PebblebedJoiSchema {
             Messaging_1.throwError(`Pebblebed: Can't create a model without a schema defined`);
         }
         const entityProperties = this.schema.describe().children;
-        // console.log(util.inspect(entityProperties, { depth: 4 }));
         let roleIdSet = false;
         const basicSchema = {
             __excludeFromIndexes: [],
@@ -126,7 +124,6 @@ class PebblebedJoiSchema {
                 basicSchema[property] = basicPropertyDefinition;
             }
         }
-        console.log(util.inspect(basicSchema, { depth: 4 }));
         return basicSchema;
     }
 }
