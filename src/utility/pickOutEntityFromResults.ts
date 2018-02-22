@@ -1,8 +1,6 @@
 import { TReturnOnly } from "../";
 
 export default function(resultArray: any[], pickType: TReturnOnly) {
-  console.log(`Got ${pickType}`);
-
   if (resultArray.length > 0) {
     if (pickType === "FIRST") {
       return resultArray[0];
