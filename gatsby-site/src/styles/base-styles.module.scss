@@ -28,6 +28,22 @@ body {
   color: rgba(25, 25, 29, 0.93);
 }
 
+blockquote {
+  margin: 0 0 0 0.6em;
+  font-size: 1.2em;
+  text-transform: capitalize;
+  font-style: italic;
+  border-left: 0.2em solid rgba(0, 10, 50, 0.3);
+  color: rgba(0, 10, 50, 0.6);
+  padding-left: 0.6em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+
+  p {
+    margin: 0;
+  }
+}
+
 .app {
   display: flex;
   flex-direction: column;

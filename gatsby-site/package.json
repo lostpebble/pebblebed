@@ -10,14 +10,15 @@
     "serve": "gatsby serve"
   },
   "dependencies": {
-    "gatsby": "^1.9.145",
-    "gatsby-link": "^1.6.32",
-    "gatsby-plugin-sass": "^1.0.15",
-    "gatsby-plugin-typography": "^1.7.10",
-    "gatsby-remark-prismjs": "^1.2.11",
-    "gatsby-source-filesystem": "^1.5.11",
-    "gatsby-transformer-remark": "^1.7.26",
-    "prismjs": "^1.9.0",
+    "gatsby": "^1.9.209",
+    "gatsby-link": "^1.6.37",
+    "gatsby-plugin-sass": "^1.0.17",
+    "gatsby-plugin-typography": "^1.7.14",
+    "gatsby-remark-prismjs": "^1.2.15",
+    "gatsby-remark-images": "^1.5.49",
+    "gatsby-source-filesystem": "^1.5.22",
+    "gatsby-transformer-remark": "^1.7.33",
+    "prismjs": "^1.11.0",
     "typography-theme-github": "^0.15.10",
     "typography-theme-lincoln": "^0.15.11"
   },
