@@ -1,47 +1,43 @@
 {
   "assetsByChunkName": {
     "component---src-templates-docs-template-js": [
-      "component---src-templates-docs-template-js-ad1a199a54e873ab6261.js",
-      "component---src-templates-docs-template-js-ad1a199a54e873ab6261.js.map"
+      "component---src-templates-docs-template-js-46cb336a7cb424643d95.js",
+      "component---src-templates-docs-template-js-46cb336a7cb424643d95.js.map"
     ],
     "path---docs-simplest-example": [
-      "path---docs-simplest-example-c8161a4d810d4f40a093.js",
-      "path---docs-simplest-example-c8161a4d810d4f40a093.js.map"
+      "path---docs-simplest-example-925c5bd31e2eaeaa59fb.js",
+      "path---docs-simplest-example-925c5bd31e2eaeaa59fb.js.map"
     ],
     "component---src-pages-index-js": [
-      "component---src-pages-index-js-b3f09be80fc2548273fd.js",
-      "component---src-pages-index-js-b3f09be80fc2548273fd.js.map"
+      "component---src-pages-index-js-102f58d0ddeb7e4fc4b4.js",
+      "component---src-pages-index-js-102f58d0ddeb7e4fc4b4.js.map"
     ],
     "path---": [
       "path----557518bd178906f8d58a.js",
       "path----557518bd178906f8d58a.js.map"
     ],
-    "path---docs-getting-started": [
-      "path---docs-getting-started-db8c4807651eea205173.js",
-      "path---docs-getting-started-db8c4807651eea205173.js.map"
-    ],
     "component---src-layouts-index-js": [
-      "component---src-layouts-index-js-0f4b68f49731b738015e.js",
-      "component---src-layouts-index-js-0f4b68f49731b738015e.js.map"
+      "component---src-layouts-index-js-1e4250217e8c1f07c581.js",
+      "component---src-layouts-index-js-1e4250217e8c1f07c581.js.map"
     ],
     "path---docs": [
-      "path---docs-366c08e8cb77b5c3a556.js",
-      "path---docs-366c08e8cb77b5c3a556.js.map"
+      "path---docs-27a3d4687dca17af133f.js",
+      "path---docs-27a3d4687dca17af133f.js.map"
     ],
     "path---index": [
-      "path---index-59530ac7d7290dbef4f9.js",
-      "path---index-59530ac7d7290dbef4f9.js.map"
+      "path---index-c451488186fd766dfa65.js",
+      "path---index-c451488186fd766dfa65.js.map"
     ],
     "commons": [
-      "commons-d41d8cd98f00b204e980.js",
+      "commons-a06f236cb84f613b47ae.js",
       "build-js-styles.css",
-      "commons-d41d8cd98f00b204e980.js.map",
+      "commons-a06f236cb84f613b47ae.js.map",
       "build-js-styles.css.map"
     ],
     "app": [
-      "app-de14b124d34cac8174ee.js",
+      "app-55aafb545ad37843d5fd.js",
       "build-js-styles.css",
-      "app-de14b124d34cac8174ee.js.map",
+      "app-55aafb545ad37843d5fd.js.map",
       "build-js-styles.css.map"
     ]
   }
