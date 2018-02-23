@@ -38,7 +38,7 @@ export default ({ data }) => {
         </Link>
       </div>
       <div className={styles.simpleExample}>
-        <h3>A little taste</h3>
+        <h2 className={"special-header"}>A little taste</h2>
         <div className={docStyles.markdown} dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
       </div>
     </div>

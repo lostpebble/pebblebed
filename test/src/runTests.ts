@@ -9,6 +9,7 @@ import * as IoRedisLib from "ioredis";
 import { IDSTestEntityIntId, TestEntityIntIdModel } from "./entities/TestEntityIntId";
 import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
 import { testPickingOut } from "./tests/_testPickingOut";
+import { runExample } from "./tests/candyExample";
 
 const redis = new IoRedisLib();
 
@@ -90,4 +91,6 @@ async function runTests() {
   // console.dir(entities);
 }
 
-runTests();
+// runTests();
+
+runExample();

@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js test
 
 PATH: 
-  C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\bin\apache-maven-3.0.5\bin;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files\Calibre2\;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files (x86)\Yarn\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Skype\Phone\;C:\Users\Paul\AppData\Local\Microsoft\WindowsApps;C:\Users\Paul\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Microsoft VS Code\bin;C:\Users\Paul\AppData\Local\Yarn\bin
+  C:\Users\Paul\AppData\Local\Google\Chrome SxS\Application;C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\bin\apache-maven-3.0.5\bin;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files\Calibre2\;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files (x86)\Yarn\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Skype\Phone\;C:\bin\apache-maven-3.0.5\bin;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Paul\AppData\Local\Microsoft\WindowsApps;C:\Users\Paul\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Microsoft VS Code\bin;C:\Users\Paul\AppData\Local\Yarn\bin;
 
 Yarn version: 
   1.4.0
@@ -389,7 +389,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: C:\WINDOWS\system32\cmd.exe
-  Arguments: /d /s /c in-publish && npm run build
+  Arguments: /d /s /c echo "Error: no test specified" && exit 1
   Directory: D:\Dev\_PROJECTS\github\pebblebed
   Output:
   
