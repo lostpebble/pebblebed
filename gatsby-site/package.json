@@ -3,9 +3,11 @@
   "description": "Documentation site for Pebblebed",
   "license": "MIT",
   "scripts": {
-    "develop": "gatsby develop",
-    "build": "gatsby build --prefix-paths",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
+    "clear-cache": "rimraf ./.cache",
+    "develop": "npm run clear-cache && gatsby develop",
+    "build-for-local": "npm run clear-cache && gatsby build",
+    "build": "npm run clear-cache && gatsby build --prefix-paths",
+    "deploy": "npm run clear-cache && gatsby build --prefix-paths && gh-pages -d public",
     "gh-pages": "gh-pages -d public",
     "serve": "gatsby serve"
   },
@@ -23,6 +25,7 @@
     "typography-theme-lincoln": "^0.15.11"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0"
+    "gh-pages": "^1.1.0",
+    "rimraf": "^2.6.2"
   }
 }
