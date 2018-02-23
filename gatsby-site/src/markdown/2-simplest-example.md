@@ -32,7 +32,9 @@ const schema = Pebblebed.createSchema({
   const CandyModel = new PebblebedModel("Candy", schema);
 ```
 
-Here we've created a model for our entity kind of `"Candy"` with some basic properties. It uses Joi behind the scenes (so we can validate our data before saving), with some custom Pebblebed helpers to cut out verbosity.
+Here we've created a model for our entity kind of `"Candy"` with some basic properties.
+It uses Joi behind the scenes (so we can validate our data before saving),
+with some custom Pebblebed helpers to cut out verbosity and target the Datastore data types.
 
 #### Some things to note:
 * `candyName` is a **String Id** - which is to say this property will form the unique key for any Candy entity saved to the database - therefore it should always be unique to each candy.
