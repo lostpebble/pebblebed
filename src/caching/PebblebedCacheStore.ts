@@ -26,6 +26,11 @@ export class PebblebedCacheStore {
     return null;
   }
 
+  async flushQueryResponse(queryHash: string, queryObject?: InternalDatastoreQuery) {
+    warn(`Pebblebed: Caching: Trying to flush a query result out of the cache, but flushQueryResponse() hasn't been implemented in your cache store yet.`);
+    return null;
+  }
+
   async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
     warn(`Pebblebed: Caching: Trying to flush entities by keys, but flushEntitiesByKeys() hasn't been implemented in your cache store yet.`);
     return null;

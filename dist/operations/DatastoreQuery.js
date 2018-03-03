@@ -13,6 +13,7 @@ const augmentEntitiesWithIdProperties_1 = require("../utility/augmentEntitiesWit
 const convertToType_1 = require("../utility/convertToType");
 const Core_1 = require("../Core");
 const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
+const Messaging_1 = require("../Messaging");
 const crypto = require("crypto");
 function createDatastoreQuery(model, namespace = null) {
     const idProp = model.entityIdProperty;
@@ -72,6 +73,17 @@ function createDatastoreQuery(model, namespace = null) {
                 this.hasAncestor(Core_1.default.Instance.ds.key([].concat.apply([], ancestors)));
             }
             return this;
+        },
+        flushQueryInCache() {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (Core_1.default.Instance.cacheStore != null) {
+                    const hash = createHashFromQuery(this);
+                    Core_1.default.Instance.cacheStore.flushQueryResponse(hash, this);
+                }
+                else {
+                    Messaging_1.warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
+                }
+            });
         },
         run() {
             return __awaiter(this, void 0, void 0, function* () {

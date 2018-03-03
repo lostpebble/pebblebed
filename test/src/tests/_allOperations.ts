@@ -108,7 +108,9 @@ export async function runAllOperations(prefix: string = "") {
   );
   performance.mark("QUERY:TAGS_INT_ID");
 
-  let query = await TestEntityIntIdModel.query().filter("amount", "<", 20).limit(4).run();
+  const testQuery = TestEntityIntIdModel.query().filter("amount", "<", 20).enableCache(true).limit(4);
+
+  let query = await testQuery.run();
 
   console.log(
     `\nQUERY: Amount INT ID Entities, limited -> 3`,
@@ -116,13 +118,22 @@ export async function runAllOperations(prefix: string = "") {
   );
   performance.mark("QUERY:AMOUNT_INT_ID");
 
-  query = await TestEntityIntIdModel.query().filter("amount", "<", 20).limit(4).run();
+  query = await testQuery.run();
 
   console.log(
     `\nQUERY: (same) CACHE test amount INT ID Entities, limited -> 3`,
     inspect(query)
   );
   performance.mark("TEST_CACHE_QUERY:AMOUNT_INT_ID");
+
+  await testQuery.flushQueryInCache();
+  query = await testQuery.run();
+
+  console.log(
+    `\nQUERY: (flush and then same again) CACHE test amount INT ID Entities, limited -> 3`,
+    inspect(query)
+  );
+  performance.mark("TEST_FLUSH_CACHE_QUERY:AMOUNT_INT_ID");
 
   const changeEntity: IDSTestEntityIntId = query.entities.pop();
 

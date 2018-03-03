@@ -39,6 +39,12 @@ class PebblebedCacheStore {
             return null;
         });
     }
+    flushQueryResponse(queryHash, queryObject) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Messaging_1.warn(`Pebblebed: Caching: Trying to flush a query result out of the cache, but flushQueryResponse() hasn't been implemented in your cache store yet.`);
+            return null;
+        });
+    }
     flushEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to flush entities by keys, but flushEntitiesByKeys() hasn't been implemented in your cache store yet.`);

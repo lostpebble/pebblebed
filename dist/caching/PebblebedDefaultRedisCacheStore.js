@@ -62,6 +62,11 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
             return Promise.resolve(null);
         });
     }
+    flushQueryResponse(queryHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.redis.del(`${this.namespace}:${queryHash}`);
+        });
+    }
     flushEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
             const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);

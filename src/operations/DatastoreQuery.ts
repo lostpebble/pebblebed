@@ -6,6 +6,7 @@ import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdPro
 import convertToType from "../utility/convertToType";
 import Core from "../Core";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
+import { warn } from "../Messaging";
 
 const crypto = require("crypto");
 
@@ -85,6 +86,14 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
         }
 
         return this;
+      },
+      async flushQueryInCache(): Promise<any> {
+        if (Core.Instance.cacheStore != null) {
+          const hash = createHashFromQuery(this);
+          Core.Instance.cacheStore.flushQueryResponse(hash, this);
+        } else {
+          warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
+        }
       },
       async run(): Promise<TDatastoreQueryResponse> {
         let hash = null;

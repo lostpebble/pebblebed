@@ -64,6 +64,10 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     return Promise.resolve(null);
   }
 
+  async flushQueryResponse(queryHash: string) {
+    await this.redis.del(`${this.namespace}:${queryHash}`);
+  }
+
   async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
     const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
 

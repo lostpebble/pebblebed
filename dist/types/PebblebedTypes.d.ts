@@ -96,6 +96,7 @@ export interface DatastoreQuery {
     first(): DatastoreQuery;
     last(): DatastoreQuery;
     randomOne(): DatastoreQuery;
+    flushQueryInCache(): Promise<any>;
     run(): Promise<any>;
 }
 export interface InternalDatastoreQueryFilter {

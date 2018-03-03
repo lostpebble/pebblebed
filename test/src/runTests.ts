@@ -91,6 +91,6 @@ async function runTests() {
   // console.dir(entities);
 }
 
-// runTests();
-
-runExample();
+runTests();
+//
+// runExample();
