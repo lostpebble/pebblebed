@@ -1,11 +1,11 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js test
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js
 
 PATH: 
-  C:\Users\Paul\AppData\Local\Google\Chrome SxS\Application;C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\bin\apache-maven-3.0.5\bin;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files\Calibre2\;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files (x86)\Yarn\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Skype\Phone\;C:\bin\apache-maven-3.0.5\bin;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Paul\AppData\Local\Microsoft\WindowsApps;C:\Users\Paul\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Microsoft VS Code\bin;C:\Users\Paul\AppData\Local\Yarn\bin;
+  C:\Users\Paul\AppData\Local\Yarn\config\global\node_modules\.bin;C:\Users\Paul\AppData\Local\Yarn\bin;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\bin;C:\Python34\Scripts;C:\Users\Paul\AppData\Local\Android\sdk\platform-tools;C:\Program Files (x86)\Calibre2\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\FileBot\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\Paul\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\TortoiseSVN\bin;C:\Program Files (x86)\Microsoft Emulator Manager\1.0\;C:\Program Files (x86)\Subversion\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\Yarn\bin;C:\Go\bin;C:\Ruby24-x64\bin;C:\Users\Paul\.cargo\bin;C:\Users\Paul\scoop\shims;C:\OpenSSL-Win32\bin;C:\Users\Paul\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Users\Paul\AppData\Roaming\npm;C:\Users\Paul\AppData\Local\Microsoft\WindowsApps;D:\dev\_utilities\curl-7.51.0\src;D:\Dev\_utilities\minikube;C:\Users\Paul\AppData\Local\Programs\Python\Python36;C:\Users\Paul\AppData\Local\Programs\Python\Python36\Scripts;C:\Python27;C:\siege-windows;D:\Dev\_utilities\watchman;C:\Program Files\Microsoft VS Code\bin;D:\Dev\go\binaries;C:\Users\Paul\AppData\Local\Microsoft\WindowsApps
 
 Yarn version: 
-  1.4.0
+  1.5.1
 
 Node version: 
   9.4.0
@@ -389,13 +389,13 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: C:\WINDOWS\system32\cmd.exe
-  Arguments: /d /s /c echo "Error: no test specified" && exit 1
-  Directory: D:\Dev\_PROJECTS\github\pebblebed
+  Arguments: /d /s /c in-publish && npm run build
+  Directory: D:\Dev\_Projects\Github\pebblebed
   Output:
   
       at ProcessTermError.MessageError (C:\Program Files (x86)\Yarn\lib\cli.js:186:110)
       at new ProcessTermError (C:\Program Files (x86)\Yarn\lib\cli.js:226:113)
-      at ChildProcess.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:30822:17)
+      at ChildProcess.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:30281:17)
       at ChildProcess.emit (events.js:160:13)
       at maybeClose (internal/child_process.js:943:16)
       at Process.ChildProcess._handle.onexit (internal/child_process.js:220:5)

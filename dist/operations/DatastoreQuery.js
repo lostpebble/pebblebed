@@ -78,7 +78,7 @@ function createDatastoreQuery(model, namespace = null) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (Core_1.default.Instance.cacheStore != null) {
                     const hash = createHashFromQuery(this);
-                    Core_1.default.Instance.cacheStore.flushQueryResponse(hash, this);
+                    yield Core_1.default.Instance.cacheStore.flushQueryResponse(hash, this);
                 }
                 else {
                     Messaging_1.warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
