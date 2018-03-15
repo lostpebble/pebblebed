@@ -24,6 +24,21 @@ class PebblebedModel {
         this.hasIdProperty = false;
         this.defaultCachingSeconds = null;
         this.neverCache = false;
+        this.validate = (data) => {
+            const validation = Core_1.default.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
+                abortEarly: false,
+            });
+            if (validation.error !== null) {
+                return {
+                    positive: false,
+                    message: `[Validation] ${this.entityKind} - ${validation.error}`,
+                };
+            }
+            return {
+                positive: true,
+                message: `[Validation] ${this.entityKind} - Entity data is valid`,
+            };
+        };
         if (entitySchema.__isPebblebedJoiSchema) {
             this.schema = entitySchema.__generateBasicSchema();
             this.joiSchema = entitySchema;

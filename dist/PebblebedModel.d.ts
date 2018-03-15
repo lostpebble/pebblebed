@@ -13,6 +13,10 @@ export default class PebblebedModel<T = any> {
     private defaultCachingSeconds;
     private neverCache;
     constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache}?: IPebblebedModelOptions);
+    validate: (data: object | object[]) => {
+        positive: boolean;
+        message: string;
+    };
     save(data: object | object[]): DatastoreSave;
     load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreLoad;
     query(namespace?: string): DatastoreQuery;

@@ -13,6 +13,10 @@ exports.Pebblebed = {
     transaction: () => {
         return Core_1.default.Instance.ds.transaction();
     },
+    combineSchemas: (...schemas) => {
+        const combinedSchemas = schemas.reduce((accum, current) => Object.assign(accum, current.__getBasicSchemaObject()), {});
+        return new PebblebedValidation_1.PebblebedJoiSchema(combinedSchemas);
+    },
     createSchema: (schema) => {
         return new PebblebedValidation_1.PebblebedJoiSchema(schema);
     },

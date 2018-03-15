@@ -7,6 +7,7 @@ const PebblebedModel_1 = require("./PebblebedModel");
 exports.PebblebedModel = PebblebedModel_1.default;
 __export(require("./Pebblebed"));
 __export(require("./validation/PebblebedDataTypes"));
+__export(require("./validation/PebblebedValidation"));
 __export(require("./caching/PebblebedCacheStore"));
 __export(require("./caching/PebblebedDefaultRedisCacheStore"));
 //# sourceMappingURL=index.js.map

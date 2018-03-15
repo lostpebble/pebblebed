@@ -12,11 +12,12 @@ export interface IPebblebedModelOptions {
   defaultCachingSeconds?: number;
 }
 
-export interface IOJoiSchemaPropertyMetaInput {
+export interface IOJoiSchemaPropertyMetaInput<T> {
   role?: "id";
   indexed?: boolean;
+  required?: boolean;
   nullValueIfUnset?: boolean;
-  onSave?: (value: any) => any;
+  onSave?: (value: any) => T;
 }
 
 export interface IOJoiSchemaObjectPropertyMetaInput {

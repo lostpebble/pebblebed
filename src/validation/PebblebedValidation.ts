@@ -1,10 +1,10 @@
 import * as Joi from "joi";
-import { JoiUtils, TJoiValidObjectKeys } from "../utility/JoiUtils";
+import { JoiUtils, TPebblebedJoiSchemaObject } from "../utility/JoiUtils";
 import { IOJoiSchemaDefaultMetaInput, IOJoiSchemaPropertyMetaInput } from "../types/PebblebedTypes";
 import { throwError, warn } from "../Messaging";
 import {
   IJoiDescribeObject,
-  IJoiDescribeObjectProperty,
+  IJoiDescribeObjectProperty, IPebblebedJoiSchema,
   SchemaDefinition,
   SchemaPropertyDefinition,
 } from "../";
@@ -17,7 +17,8 @@ class PebblebedValidations {
 
   static get AVJoiSchemaPropertyMetaInput() {
     if (this._AVJoiSchemaPropertyMetaInput == null) {
-      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput>({
+      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput<any>>({
+        required: Core.Joi.bool().default(false),
         indexed: Core.Joi.bool().default(true),
         role: Core.Joi.string().valid(["id"]),
         onSave: Core.Joi.func(),
@@ -43,12 +44,14 @@ class PebblebedValidations {
 export class PebblebedJoiSchema<T> {
   public __isPebblebedJoiSchema = true;
   private schema: Joi.Schema = null;
+  private basicSchemaObject: TPebblebedJoiSchemaObject<T> = null;
   private defaultMeta: IOJoiSchemaDefaultMetaInput = {
     indexed: true,
     nullValueIfUnset: true,
   };
 
-  constructor(schema: TJoiValidObjectKeys<T>) {
+  constructor(schema: TPebblebedJoiSchemaObject<T>) {
+    this.basicSchemaObject = schema;
     this.schema = JoiUtils.createObjectValidator(schema);
   }
 
@@ -63,12 +66,9 @@ export class PebblebedJoiSchema<T> {
     return this;
   }
 
-  /*
-  setSchema(schema: TJoiValidObjectKeys<T>) {
-    this.schema = JoiUtils.createObjectValidator(schema);
-    return this;
+  __getBasicSchemaObject() {
+    return this.basicSchemaObject;
   }
-  */
 
   __getJoiSchema() {
     return this.schema;
@@ -95,7 +95,7 @@ export class PebblebedJoiSchema<T> {
         const basicPropertyDefinition: Partial<SchemaPropertyDefinition> = {};
 
         if (currentProp.flags) {
-          if (currentProp.flags.default) {
+          if (currentProp.flags.hasOwnProperty("default")) {
             basicPropertyDefinition.default = currentProp.flags.default;
           }
 

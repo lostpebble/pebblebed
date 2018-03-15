@@ -32,12 +32,14 @@ export default function buildDataFromSchema(
           value = schemaProp.onSave(value);
         }
 
-        if (!(value == null) || (data.hasOwnProperty(property) && !(data[property] == null))) {
+        if (!(value === null || value === undefined)) {
           dataObject[property] = convertToType(value, schemaProp.type);
         } else if (schemaProp.required) {
           throwError(CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
-        } else if (!schemaProp.optional) {
-          dataObject[property] = schemaProp.default ? schemaProp.default : null;
+        } else if (!(value === undefined)) {
+          dataObject[property] = value;
+        } else if (!schemaProp.optional || schemaProp.hasOwnProperty("default")) {
+          dataObject[property] = schemaProp.default != null ? schemaProp.default : null;
         }
       }
     }

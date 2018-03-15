@@ -7,6 +7,7 @@ class PebblebedValidations {
     static get AVJoiSchemaPropertyMetaInput() {
         if (this._AVJoiSchemaPropertyMetaInput == null) {
             this._AVJoiSchemaPropertyMetaInput = JoiUtils_1.JoiUtils.createObjectValidator({
+                required: Core_1.default.Joi.bool().default(false),
                 indexed: Core_1.default.Joi.bool().default(true),
                 role: Core_1.default.Joi.string().valid(["id"]),
                 onSave: Core_1.default.Joi.func(),
@@ -31,10 +32,12 @@ class PebblebedJoiSchema {
     constructor(schema) {
         this.__isPebblebedJoiSchema = true;
         this.schema = null;
+        this.basicSchemaObject = null;
         this.defaultMeta = {
             indexed: true,
             nullValueIfUnset: true,
         };
+        this.basicSchemaObject = schema;
         this.schema = JoiUtils_1.JoiUtils.createObjectValidator(schema);
     }
     setDefaultMeta(defaultMeta) {
@@ -45,12 +48,9 @@ class PebblebedJoiSchema {
         Object.assign(this.defaultMeta, defaultMeta);
         return this;
     }
-    /*
-    setSchema(schema: TJoiValidObjectKeys<T>) {
-      this.schema = JoiUtils.createObjectValidator(schema);
-      return this;
+    __getBasicSchemaObject() {
+        return this.basicSchemaObject;
     }
-    */
     __getJoiSchema() {
         return this.schema;
     }
@@ -69,7 +69,7 @@ class PebblebedJoiSchema {
                 const propertyExcludeFromIndexes = [];
                 const basicPropertyDefinition = {};
                 if (currentProp.flags) {
-                    if (currentProp.flags.default) {
+                    if (currentProp.flags.hasOwnProperty("default")) {
                         basicPropertyDefinition.default = currentProp.flags.default;
                     }
                     if (currentProp.flags.presence === "required") {

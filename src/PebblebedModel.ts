@@ -58,6 +58,27 @@ export default class PebblebedModel<T = any> {
     }
   }
 
+  public validate = (data: object | object[]): {
+    positive: boolean;
+    message: string;
+  } => {
+    const validation = Core.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
+      abortEarly: false,
+    });
+
+    if (validation.error !== null) {
+      return {
+        positive: false,
+        message: `[Validation] ${this.entityKind} - ${validation.error}`,
+      };
+    }
+
+    return {
+      positive: true,
+      message: `[Validation] ${this.entityKind} - Entity data is valid`,
+    };
+  };
+
   public save(data: object | object[]) {
     checkDatastore("SAVE");
 

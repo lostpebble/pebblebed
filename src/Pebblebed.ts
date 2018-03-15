@@ -10,7 +10,7 @@ import Core from "./Core";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
-import { TJoiValidObjectKeys } from "./utility/JoiUtils";
+import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
@@ -23,7 +23,16 @@ export const Pebblebed = {
     return Core.Instance.ds.transaction();
   },
 
-  createSchema: <T = any>(schema: TJoiValidObjectKeys<T>): PebblebedJoiSchema<T> => {
+  combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => {
+    const combinedSchemas: TPebblebedJoiSchemaObject<T> = schemas.reduce(
+      (accum, current: PebblebedJoiSchema<Partial<T>>) => Object.assign(accum, current.__getBasicSchemaObject()),
+      {} as TPebblebedJoiSchemaObject<Partial<T>>
+    );
+
+    return new PebblebedJoiSchema<T>(combinedSchemas);
+  },
+
+  createSchema: <T = any>(schema: TPebblebedJoiSchemaObject<T>): PebblebedJoiSchema<T> => {
     return new PebblebedJoiSchema<T>(schema);
   },
 
