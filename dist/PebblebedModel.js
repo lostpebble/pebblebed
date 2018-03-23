@@ -17,7 +17,7 @@ const DatastoreDelete_1 = require("./operations/DatastoreDelete");
 const extractAncestorPaths_1 = require("./utility/extractAncestorPaths");
 const Messaging_1 = require("./Messaging");
 const DatastoreQuery_1 = require("./operations/DatastoreQuery");
-const crypto = require("crypto");
+const DatastoreFlush_1 = require("./operations/DatastoreFlush");
 class PebblebedModel {
     constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, } = {}) {
         this.joiSchema = null;
@@ -80,6 +80,10 @@ class PebblebedModel {
     delete(data) {
         checkDatastore_1.default("DELETE");
         return new DatastoreDelete_1.default(this, data);
+    }
+    flush(idsOrKeys) {
+        checkDatastore_1.default("FLUSH IN CACHE");
+        return new DatastoreFlush_1.default(this, idsOrKeys);
     }
     allocateIds(amount, withAncestors = null) {
         return __awaiter(this, void 0, void 0, function* () {

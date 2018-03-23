@@ -168,6 +168,17 @@ export async function runAllOperations(prefix: string = "") {
   console.log("\nLOAD: Test Cache (after delete) String ID Entity\n", inspect(await TestEntityStringIdModel.load("abc123").run()));
   performance.mark("TEST_CACHE_LOAD_AFTER_DELETE:STRING_ID");
 
+  await waitSeconds(1);
+  performance.mark("WAITED_AFTER_TEST_LOAD_AFTER_DELETE");
+
+  console.log("\nLOAD: Test Cache (before flush) String ID Entity\n", inspect(await TestEntityStringIdModel.load("123abc").run()));
+  performance.mark("TEST_CACHE_LOAD_BEFORE_FLUSH:STRING_ID");
+
+  await TestEntityStringIdModel.flush("123abc").run();
+
+  console.log(`\nFLUSH: Test loading then flushing then loading again\n`, inspect(await TestEntityStringIdModel.load("123abc").run()));
+  performance.mark("TEST_CACHE_LOAD_AFTER_FLUSH:STRING_ID");
+
   printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
 
   performance.clearMarks();

@@ -17,9 +17,12 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
         this.namespace = "PEBBLEBED";
         this.redis = ioRedisClient;
     }
+    createEntityCacheKey(dsKey) {
+        return `${this.namespace}:${dsKey.namespace}:${dsKey.path.join(":")}`;
+    }
     getEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
-            const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
+            const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
             if (keyStrings.length >= 1) {
                 const redisResult = yield this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
                 let containsNulls = false;
@@ -42,7 +45,10 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
             if (entities.length > 0) {
                 const pipeline = this.redis.pipeline();
                 entities.forEach((entity) => {
-                    pipeline.setex(`${this.namespace}:${entity[Core_1.default.Instance.dsModule.KEY].path.join(":")}`, secondsToCache, JSON.stringify(entity));
+                    // const dsKey: DatastoreEntityKey = entity[Core.Instance.dsModule.KEY];
+                    const cacheKey = this.createEntityCacheKey(entity[Core_1.default.Instance.dsModule.KEY]);
+                    console.warn(`Caching entity with key: ${cacheKey} for ${secondsToCache}s`);
+                    pipeline.setex(cacheKey, secondsToCache, JSON.stringify(entity));
                 });
                 yield pipeline.exec();
             }
@@ -69,7 +75,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     }
     flushEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
-            const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
+            const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
             if (keyStrings.length >= 1) {
                 yield this.redis.del(keyStrings[0], ...keyStrings.slice(1));
             }

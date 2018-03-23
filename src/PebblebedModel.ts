@@ -1,9 +1,4 @@
-import {
-  DatastoreEntityKey,
-  DatastoreQuery,
-  DatastoreQueryResponse, InternalDatastoreQuery, IPebblebedModelOptions,
-  SchemaDefinition, TFilterComparator, TFilterFunction,
-} from "./types/PebblebedTypes";
+import { DatastoreEntityKey, DatastoreQuery, IPebblebedModelOptions, SchemaDefinition, } from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
 import Core from "./Core";
@@ -11,15 +6,11 @@ import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import extractAncestorPaths from "./utility/extractAncestorPaths";
-import augmentEntitiesWithIdProperties from "./utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "./Messaging";
-import {PebblebedJoiSchema} from "./validation/PebblebedValidation";
-import convertToType from "./utility/convertToType";
+import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { createDatastoreQuery } from "./operations/DatastoreQuery";
 import * as Joi from "joi";
-import { isNumber } from "./utility/BasicUtils";
-
-const crypto = require("crypto");
+import DatastoreFlush from "./operations/DatastoreFlush";
 
 export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
@@ -87,13 +78,11 @@ export default class PebblebedModel<T = any> {
 
   public save(data: object | object[]) {
     checkDatastore("SAVE");
-
     return new DatastoreSave(this, data);
   }
 
   public load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
     checkDatastore("LOAD");
-
     return new DatastoreLoad(this, idsOrKeys);
   }
 
@@ -104,14 +93,17 @@ export default class PebblebedModel<T = any> {
 
   public key(id: string | number): DatastoreEntityKey {
     checkDatastore("CREATE KEY");
-
     return Core.Instance.ds.key([this.kind, id]);
   }
 
   public delete(data?: object | object[]) {
     checkDatastore("DELETE");
-
     return new DatastoreDelete(this, data);
+  }
+
+  public flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
+    checkDatastore("FLUSH IN CACHE");
+    return new DatastoreFlush(this, idsOrKeys);
   }
 
   public async allocateIds(amount: number, withAncestors: any[] = null): Promise<Array<DatastoreEntityKey>> {
@@ -126,61 +118,6 @@ export default class PebblebedModel<T = any> {
     const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);
 
     return allocateIds[0];
-  }
-
-  public async flushInCache(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
-    let flushIds;
-    let usingKeys = false;
-
-    if (idsOrKeys != null) {
-      if (Array.isArray(idsOrKeys)) {
-        flushIds = idsOrKeys;
-      } else {
-        flushIds = [idsOrKeys];
-      }
-
-      if (typeof flushIds[0] === "object") {
-        if ((flushIds[0] as DatastoreEntityKey).kind === this.kind) {
-          usingKeys = true;
-        } else {
-          throwError(CreateMessage.OPERATION_KEYS_WRONG(this, "FLUSH IN CACHE"));
-        }
-      } else {
-        flushIds = flushIds.map(id => {
-          if (this.idType === "int" && isNumber(id)) {
-            return Core.Instance.dsModule.int(id);
-          } else if (this.idType === "string" && typeof id === "string") {
-            if (id.length === 0) {
-              throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this, "FLUSH IN CACHE"));
-            }
-
-            return id;
-          }
-
-          throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this, "FLUSH IN CACHE", id));
-        });
-      }
-    }
-
-    let flushKeys;
-
-    if (usingKeys) {
-      flushKeys = flushIds.map((key: DatastoreEntityKey) => {
-        if (this.namespace != null) {
-          key.namespace = this.namespace;
-        } else if (Core.Instance.namespace != null) {
-          key.namespace = Core.Instance.namespace;
-        }
-
-        return key;
-      });
-    } else {
-      const baseKey = this.getBaseKey();
-
-      flushKeys = this.loadIds.map(id => {
-        return this.createFullKey(baseKey.concat(this.kind, id));
-      });
-    }
   }
 
   public get entityKind() {

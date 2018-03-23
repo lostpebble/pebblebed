@@ -14,8 +14,12 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     this.redis = ioRedisClient;
   }
 
+  private createEntityCacheKey(dsKey: DatastoreEntityKey) {
+    return `${this.namespace}:${dsKey.namespace}:${dsKey.path.join(":")}`;
+  }
+
   async getEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
+    const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {
       const redisResult = await this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
@@ -43,7 +47,11 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
       const pipeline = this.redis.pipeline();
 
       entities.forEach((entity) => {
-        pipeline.setex(`${this.namespace}:${entity[Core.Instance.dsModule.KEY].path.join(":")}`, secondsToCache, JSON.stringify(entity));
+        // const dsKey: DatastoreEntityKey = entity[Core.Instance.dsModule.KEY];
+        const cacheKey = this.createEntityCacheKey(entity[Core.Instance.dsModule.KEY]);
+        console.warn(`Caching entity with key: ${cacheKey} for ${secondsToCache}s`);
+
+        pipeline.setex(cacheKey, secondsToCache, JSON.stringify(entity));
       });
 
       await pipeline.exec();
@@ -69,7 +77,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   }
 
   async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
-    const keyStrings = keys.map((key) => `${this.namespace}:${key.path.join(":")}`);
+    const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {
       await this.redis.del(keyStrings[0], ...keyStrings.slice(1));

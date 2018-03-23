@@ -128,7 +128,8 @@ function createDatastoreQuery(model, namespace = null) {
 }
 exports.createDatastoreQuery = createDatastoreQuery;
 function createHashFromQuery(query) {
-    const dataString = `kinds:${query.kinds.join("-KIND_JOIN-")}
+    const dataString = `namespace:${query.namespace != null ? query.namespace : ""}
+kinds:${query.kinds.join("-KIND_JOIN-")}
 filters:${JSON.stringify(query.filters)}
 limit:${query.limitVal}
 offset:${query.offsetVal}
@@ -137,6 +138,7 @@ select:${query.selectVal.join("-SELECT_JOIN-")}
 groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
 start:${query.startVal}
 end:${query.endVal}`;
+    console.log(`Making hash from query: \n${dataString}`);
     return crypto.createHash("sha1").update(dataString).digest("base64");
 }
 exports.createHashFromQuery = createHashFromQuery;

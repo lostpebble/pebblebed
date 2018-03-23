@@ -4,6 +4,7 @@ import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import * as Joi from "joi";
+import DatastoreFlush from "./operations/DatastoreFlush";
 export default class PebblebedModel<T = any> {
     private schema;
     private joiSchema;
@@ -24,6 +25,7 @@ export default class PebblebedModel<T = any> {
     query(namespace?: string): DatastoreQuery;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: object | object[]): DatastoreDelete;
+    flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush;
     allocateIds(amount: number, withAncestors?: any[]): Promise<Array<DatastoreEntityKey>>;
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition<T>;

@@ -1,11 +1,11 @@
 import { DatastoreEntityKey } from "../types/PebblebedTypes";
-import DatastoreOperation from "./DatastoreOperation";
+import { DatastoreBaseOperation } from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
 
-export default class DatastoreFlush extends DatastoreOperation {
+export default class DatastoreFlush extends DatastoreBaseOperation {
   private flushIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
 
@@ -70,7 +70,7 @@ export default class DatastoreFlush extends DatastoreOperation {
     if (Core.Instance.cacheStore != null) {
       await Core.Instance.cacheStore.flushEntitiesByKeys(flushKeys);
     } else {
-      warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
+      warn(`Trying to flush some ids / keys of [${this.kind}] - but no Cache Store has been set on Pebblebed instance!`);
     }
   }
 }

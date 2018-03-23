@@ -1,11 +1,10 @@
-import { DatastoreEntityKey } from "../types/PebblebedTypes";
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, throwError } from "../Messaging";
-import { TReturnOnly } from "../";
+import { TReturnOnly, DatastoreEntityKey } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 
 export default class DatastoreLoad extends DatastoreOperation {

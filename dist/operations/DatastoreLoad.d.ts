@@ -1,6 +1,6 @@
-import { DatastoreEntityKey } from "../types/PebblebedTypes";
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
+import { DatastoreEntityKey } from "../";
 export default class DatastoreLoad extends DatastoreOperation {
     private loadIds;
     private usingKeys;
