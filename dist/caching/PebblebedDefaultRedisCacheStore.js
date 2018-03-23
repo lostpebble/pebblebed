@@ -45,10 +45,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
             if (entities.length > 0) {
                 const pipeline = this.redis.pipeline();
                 entities.forEach((entity) => {
-                    // const dsKey: DatastoreEntityKey = entity[Core.Instance.dsModule.KEY];
-                    const cacheKey = this.createEntityCacheKey(entity[Core_1.default.Instance.dsModule.KEY]);
-                    console.warn(`Caching entity with key: ${cacheKey} for ${secondsToCache}s`);
-                    pipeline.setex(cacheKey, secondsToCache, JSON.stringify(entity));
+                    pipeline.setex(this.createEntityCacheKey(entity[Core_1.default.Instance.dsModule.KEY]), secondsToCache, JSON.stringify(entity));
                 });
                 yield pipeline.exec();
             }

@@ -165,8 +165,6 @@ groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
 start:${query.startVal}
 end:${query.endVal}`;
 
-  console.log(`Making hash from query: \n${dataString}`);
-
   return crypto.createHash("sha1").update(dataString).digest("base64");
 }
 

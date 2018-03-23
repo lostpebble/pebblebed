@@ -12,9 +12,9 @@
   dependencies:
     "@types/node" "*"
 
-"@types/joi@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@types/joi/-/joi-13.0.0.tgz#63c066d901e87f464fa075d02bf2f390344241fc"
+"@types/joi@^13.0.7":
+  version "13.0.7"
+  resolved "https://registry.yarnpkg.com/@types/joi/-/joi-13.0.7.tgz#89cd7092fc24160b9d59597270cd0d3620e709d8"
 
 "@types/lodash@^4.14.71":
   version "4.14.71"
