@@ -100,8 +100,8 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         }
                     }
                 }
-                if (this.runValidation && this.model.entityJoiSchema !== null) {
-                    const validation = Core_1.default.Joi.validate(data, this.model.entityJoiSchema.__getJoiSchema());
+                if (this.runValidation && this.model.entityPebbleSchema !== null) {
+                    const validation = Core_1.default.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
                     if (validation.error !== null) {
                         Messaging_1.throwError(`Pebblebed: On save entity of kind -> ${this.model.entityKind} : ${validation.error}`);
                     }

@@ -3,6 +3,7 @@ import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
+import * as Joi from "joi";
 export default class PebblebedModel<T = any> {
     private schema;
     private joiSchema;
@@ -13,6 +14,7 @@ export default class PebblebedModel<T = any> {
     private defaultCachingSeconds;
     private neverCache;
     constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache}?: IPebblebedModelOptions);
+    getJoiSchema: () => Joi.Schema;
     validate: (data: object | object[]) => {
         positive: boolean;
         message: string;
@@ -28,6 +30,6 @@ export default class PebblebedModel<T = any> {
     readonly entityIdProperty: string;
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
-    readonly entityJoiSchema: PebblebedJoiSchema<T>;
+    readonly entityPebbleSchema: PebblebedJoiSchema<T>;
     readonly modelOptions: IPebblebedModelOptions;
 }

@@ -20,7 +20,6 @@ function buildDataFromSchema(data, schema, entityKind) {
                 if (schemaProp.onSave && typeof schemaProp.onSave === "function") {
                     value = schemaProp.onSave(value);
                 }
-                console.log(`${property}: ${value}`);
                 if (!(value === null || value === undefined)) {
                     dataObject[property] = convertToType_1.default(value, schemaProp.type);
                 }

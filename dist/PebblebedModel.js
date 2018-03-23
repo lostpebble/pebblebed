@@ -24,6 +24,9 @@ class PebblebedModel {
         this.hasIdProperty = false;
         this.defaultCachingSeconds = null;
         this.neverCache = false;
+        this.getJoiSchema = () => {
+            return this.joiSchema.__getJoiSchema();
+        };
         this.validate = (data) => {
             const validation = Core_1.default.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
                 abortEarly: false,
@@ -104,7 +107,7 @@ class PebblebedModel {
     get entityHasIdProperty() {
         return this.hasIdProperty;
     }
-    get entityJoiSchema() {
+    get entityPebbleSchema() {
         return this.joiSchema;
     }
     get modelOptions() {
