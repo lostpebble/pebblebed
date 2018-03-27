@@ -22,7 +22,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {
-      const redisResult = await this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
+      const redisResult = await this.redis.mget(...keyStrings);
 
       let containsNulls = false;
       const results = redisResult.map((result) => {
@@ -76,7 +76,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {
-      await this.redis.del(keyStrings[0], ...keyStrings.slice(1));
+      await this.redis.del(...keyStrings);
     }
   }
 }

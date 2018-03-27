@@ -9,15 +9,17 @@ const datastore = require("@google-cloud/datastore");
 const doubleQueryValue = datastore.double(20);
 
 export async function runAllOperations(prefix: string = "") {
+  console.warn(`RUNNING ------> ${prefix} <------ OPERATIONS`);
+
   const entityGenerated: IDSTestEntityIntId = {
     amount: 10,
-    tags: ["what"],
+    tags: ["what", "red"],
   };
 
   const entityIntegerId: IDSTestEntityIntId = {
     idThing: 123,
     amount: 20,
-    tags: ["what", "blue"],
+    tags: ["what", "blue", "red"],
   };
 
   const entityString: IDSTestEntityStringId = {
@@ -58,7 +60,7 @@ export async function runAllOperations(prefix: string = "") {
   // Mixed Generated Int ID and deliberate Int ID
   console.log(
     "\nSAVE: Mixed Generated / Set Int ID Entities\n",
-    inspect(await TestEntityIntIdModel.save([entityGenerated, entityIntegerId]).generateUnsetIds().run())
+    inspect(await TestEntityIntIdModel.save([entityGenerated, entityGenerated, entityIntegerId]).generateUnsetIds().run())
   );
   performance.mark("SAVE:MIXED_GENERATED_SET_INT_IDS");
 
@@ -108,7 +110,7 @@ export async function runAllOperations(prefix: string = "") {
   );
   performance.mark("QUERY:TAGS_INT_ID");
 
-  const testQuery = TestEntityIntIdModel.query().filter("amount", "<", 20).enableCache(true).limit(4);
+  const testQuery = TestEntityIntIdModel.query().filter("amount", "<", 20).enableCache(true).limit(2);
 
   let query = await testQuery.run();
 

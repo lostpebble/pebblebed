@@ -32,6 +32,8 @@ async function runTests() {
 
   await testPickingOut();
 
+  await TestEntityIntIdModel.delete((await TestEntityIntIdModel.query().run()).entities).run();
+
   console.log("Finished");
 
   /*const values = [12, 53, 542, 23, 90];

@@ -19,9 +19,7 @@ const schema = Pebblebed.createSchema<IDSTestEntityIntId>({
   amount: PebbleDouble(),
   date: DefaultDateTimeNow,
   location: PebbleGeoPoint(),
-  tags: PebbleArray({
-    indexed: false,
-  }),
+  tags: PebbleArray(),
   worthy: PebbleBoolean({
     indexed: false,
   }),

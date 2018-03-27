@@ -24,7 +24,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
         return __awaiter(this, void 0, void 0, function* () {
             const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
             if (keyStrings.length >= 1) {
-                const redisResult = yield this.redis.mget(keyStrings[0], ...keyStrings.slice(1));
+                const redisResult = yield this.redis.mget(...keyStrings);
                 let containsNulls = false;
                 const results = redisResult.map((result) => {
                     if (result != null) {
@@ -74,7 +74,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
         return __awaiter(this, void 0, void 0, function* () {
             const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
             if (keyStrings.length >= 1) {
-                yield this.redis.del(keyStrings[0], ...keyStrings.slice(1));
+                yield this.redis.del(...keyStrings);
             }
         });
     }
