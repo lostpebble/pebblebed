@@ -83,9 +83,9 @@ export class PebblebedJoiSchema<T> {
 
     let roleIdSet = false;
 
-    const basicSchema: Partial<SchemaDefinition> = {
+    const basicSchema = {
       __excludeFromIndexes: [],
-    };
+    } as SchemaDefinition<T>;
 
     for (const property in entityProperties as IJoiDescribeObject) {
       if (entityProperties.hasOwnProperty(property)) {

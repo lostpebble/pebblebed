@@ -18,6 +18,6 @@ export declare const Pebblebed: {
     setCacheEnabledOnLoadDefault(on: boolean): void;
     setCacheEnabledOnQueryDefault(on: boolean): void;
     key(...args: any[]): any;
-    keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];
-    uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | (keyof T))[]): DatastoreEntityKey[];
+    keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];
+    uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];
 };

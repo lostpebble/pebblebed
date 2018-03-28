@@ -7,6 +7,15 @@ class DatastoreBaseOperation {
         this.hasIdProperty = false;
         this.namespace = null;
         this.ancestors = [];
+        this.augmentKey = (key) => {
+            if (this.namespace != null) {
+                key.namespace = this.namespace;
+            }
+            else if (Core_1.default.Instance.namespace != null) {
+                key.namespace = Core_1.default.Instance.namespace;
+            }
+            return key;
+        };
         this.model = model;
         this.modelOptions = model.modelOptions;
         this.kind = model.entityKind;

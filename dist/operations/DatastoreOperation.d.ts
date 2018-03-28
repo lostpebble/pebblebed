@@ -1,5 +1,5 @@
 import PebblebedModel from "../PebblebedModel";
-import { IPebblebedModelOptions, SchemaDefinition } from "../";
+import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
 export declare class DatastoreBaseOperation {
     protected model: PebblebedModel;
     protected modelOptions: IPebblebedModelOptions;
@@ -13,7 +13,8 @@ export declare class DatastoreBaseOperation {
     constructor(model: PebblebedModel);
     withAncestors(...args: any[]): this;
     useNamespace(namespace: string): this;
-    protected createFullKey(fullPath: any): any;
+    protected augmentKey: (key: DatastoreEntityKey) => DatastoreEntityKey;
+    protected createFullKey(fullPath: any): DatastoreEntityKey;
     protected getBaseKey(): any[];
 }
 export default class DatastoreOperation extends DatastoreBaseOperation {

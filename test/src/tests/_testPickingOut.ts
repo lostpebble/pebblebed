@@ -27,11 +27,20 @@ export async function testPickingOut() {
 
   const queryResultFirst = await baseQuery.first().limit(5).run();
   console.log(queryResultFirst);
-  assertEqual("Compare query using first() with first entity from same query returning all entities", queryResultFirst.idThing, queryResult.entities[0].idThing);
+  if (queryResultFirst) {
+    assertEqual("Compare query using first() with first entity from same query returning all entities", queryResultFirst.idThing, queryResult.entities[0].idThing);
+  } else {
+    console.error("Compare query using first() with first entity from same query returning all entities - but result was null");
+  }
 
   const queryResultLast = await baseQuery.last().limit(5).run();
   console.log(queryResultLast);
-  assertEqual("Compare query using last() with last entity from same query returning all entities", queryResultLast.idThing, queryResult.entities[queryResult.entities.length - 1].idThing);
+
+  if (queryResultLast) {
+    assertEqual("Compare query using last() with last entity from same query returning all entities", queryResultLast.idThing, queryResult.entities[queryResult.entities.length - 1].idThing);
+  } else {
+    console.error("Compare query using last() with last entity from same query returning all entities - but result was null");
+  }
 
   const queryResultRandom = await baseQuery.randomOne().limit(5).run();
   console.log("query random");

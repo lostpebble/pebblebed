@@ -68,21 +68,11 @@ class DatastoreLoad extends DatastoreOperation_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             let loadKeys;
             if (this.usingKeys) {
-                loadKeys = this.loadIds.map((key) => {
-                    if (this.namespace != null) {
-                        key.namespace = this.namespace;
-                    }
-                    else if (Core_1.default.Instance.namespace != null) {
-                        key.namespace = Core_1.default.Instance.namespace;
-                    }
-                    return key;
-                });
+                loadKeys = this.loadIds.map(this.augmentKey);
             }
             else {
                 const baseKey = this.getBaseKey();
-                loadKeys = this.loadIds.map(id => {
-                    return this.createFullKey(baseKey.concat(this.kind, id));
-                });
+                loadKeys = this.loadIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
             }
             let resp;
             if (this.transaction) {

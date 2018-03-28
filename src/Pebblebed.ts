@@ -24,10 +24,10 @@ export const Pebblebed = {
   },
 
   combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => {
-    const combinedSchemas: TPebblebedJoiSchemaObject<T> = schemas.reduce(
+    const combinedSchemas = schemas.reduce(
       (accum, current: PebblebedJoiSchema<Partial<T>>) => Object.assign(accum, current.__getBasicSchemaObject()),
       {} as TPebblebedJoiSchemaObject<Partial<T>>
-    );
+    ) as TPebblebedJoiSchemaObject<T>;
 
     return new PebblebedJoiSchema<T>(combinedSchemas);
   },

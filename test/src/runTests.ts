@@ -21,6 +21,7 @@ process.on("unhandledRejection", (reason, p) => {
 async function runTests() {
   console.log("Running allOperations");
 
+  await testPickingOut();
   await runAllOperations("BASIC_NO_CACHE");
 
   await redis.flushall();

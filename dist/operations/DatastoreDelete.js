@@ -18,6 +18,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
         this.deleteIds = [];
         this.useIds = false;
         this.ignoreAnc = false;
+        this.usingKeys = false;
         if (data) {
             if (Array.isArray(data)) {
                 this.dataObjects = data;
@@ -30,12 +31,44 @@ class DatastoreDelete extends DatastoreOperation_1.default {
             this.useIds = true;
         }
     }
-    id(id) {
-        this.deleteIds = [id];
-        return this;
+    /*public id(id: string | number) {
+      this.deleteIds = [id];
+      return this;
     }
-    ids(ids) {
-        this.deleteIds = ids;
+  
+    public ids(ids: Array<string | number>) {
+      this.deleteIds = ids;
+      return this;
+    }*/
+    idsOrKeys(idsOrKeys) {
+        if (Array.isArray(idsOrKeys)) {
+            this.deleteIds = idsOrKeys;
+        }
+        else {
+            this.deleteIds = [idsOrKeys];
+        }
+        if (typeof this.deleteIds[0] === "object") {
+            if (this.deleteIds[0].kind === this.kind) {
+                this.usingKeys = true;
+            }
+            else {
+                Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_KEYS_WRONG(this.model, "DELETE"));
+            }
+        }
+        else {
+            this.deleteIds = this.deleteIds.map(id => {
+                if (this.idType === "int" && BasicUtils_1.isNumber(id)) {
+                    return Core_1.default.Instance.dsModule.int(id);
+                }
+                else if (this.idType === "string" && typeof id === "string") {
+                    if (id.length === 0) {
+                        Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
+                    }
+                    return id;
+                }
+                Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", id));
+            });
+        }
         return this;
     }
     ignoreDetectedAncestors() {
@@ -97,10 +130,11 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                     deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id])));
                 }
             }
+            else if (this.usingKeys) {
+                deleteKeys = this.deleteIds.map(this.augmentKey);
+            }
             else {
-                deleteKeys = this.deleteIds.map(id => {
-                    return this.createFullKey(baseKey.concat([this.kind, id]));
-                });
+                deleteKeys = this.deleteIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
             }
             let deleteResponse;
             if (this.transaction) {

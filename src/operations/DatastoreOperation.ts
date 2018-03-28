@@ -1,7 +1,7 @@
 import PebblebedModel from "../PebblebedModel";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import Core from "../Core";
-import { IPebblebedModelOptions, SchemaDefinition } from "../";
+import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
 
 export class DatastoreBaseOperation {
   protected model: PebblebedModel;
@@ -34,7 +34,17 @@ export class DatastoreBaseOperation {
     return this;
   }
 
-  protected createFullKey(fullPath) {
+  protected augmentKey = (key: DatastoreEntityKey): DatastoreEntityKey => {
+    if (this.namespace != null) {
+      key.namespace = this.namespace;
+    } else if (Core.Instance.namespace != null) {
+      key.namespace = Core.Instance.namespace;
+    }
+
+    return key;
+  };
+
+  protected createFullKey(fullPath): DatastoreEntityKey {
     if (this.namespace != null) {
       return Core.Instance.ds.key({
         namespace: this.namespace,

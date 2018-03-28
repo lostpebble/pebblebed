@@ -70,21 +70,10 @@ export default class DatastoreLoad extends DatastoreOperation {
     let loadKeys;
 
     if (this.usingKeys) {
-      loadKeys = this.loadIds.map((key: DatastoreEntityKey) => {
-        if (this.namespace != null) {
-          key.namespace = this.namespace;
-        } else if (Core.Instance.namespace != null) {
-          key.namespace = Core.Instance.namespace;
-        }
-
-        return key;
-      });
+      loadKeys = this.loadIds.map(this.augmentKey);
     } else {
       const baseKey = this.getBaseKey();
-
-      loadKeys = this.loadIds.map(id => {
-        return this.createFullKey(baseKey.concat(this.kind, id));
-      });
+      loadKeys = this.loadIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
     }
 
     let resp;

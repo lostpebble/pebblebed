@@ -160,7 +160,7 @@ export async function runAllOperations(prefix: string = "") {
   console.log("\nLOAD: Test Cache (before delete) String ID Entity\n", inspect(await TestEntityStringIdModel.load("abc123").run()));
   performance.mark("TEST_CACHE_LOAD_BEFORE_DELETE:STRING_ID");
 
-  console.log(`\nDELETE: (By id) String Entity`, inspect(await TestEntityStringIdModel.delete().ids(["abc123"]).run(), false, 6));
+  console.log(`\nDELETE: (By id) String Entity`, inspect(await TestEntityStringIdModel.delete().idsOrKeys(["abc123"]).run(), false, 6));
   performance.mark("DELETE:BY_ID:STRING_ID");
 
   console.log("\nWaiting 2 seconds\n");
@@ -180,6 +180,18 @@ export async function runAllOperations(prefix: string = "") {
 
   console.log(`\nFLUSH: Test loading then flushing then loading again\n`, inspect(await TestEntityStringIdModel.load("123abc").run()));
   performance.mark("TEST_CACHE_LOAD_AFTER_FLUSH:STRING_ID");
+
+  const key = TestEntityStringIdModel.key("123abc");
+
+  console.log(`\nDELETE: Test deleting with key the last string entity\n`, inspect(await TestEntityStringIdModel.delete().idsOrKeys(key).run()));
+  performance.mark("TEST_DELETE_WITH_KEY:STRING_ID");
+
+  console.log("\nWaiting 1 seconds\n");
+  await waitSeconds(1);
+  performance.mark("WAITED_AFTER_DELETE_TWO");
+
+  console.log("\nLOAD: Test Cache (after delete) with key String ID Entity\n", inspect(await TestEntityStringIdModel.load(key).run()));
+  performance.mark("TEST_CACHE_LOAD_WITH_KEY_AFTER_DELETE:STRING_ID");
 
   printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
 

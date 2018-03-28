@@ -3,12 +3,14 @@ import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
+import { DatastoreEntityKey } from "../types/PebblebedTypes";
 
 export default class DatastoreDelete extends DatastoreOperation {
   private dataObjects: any[];
-  private deleteIds: Array<string | number> = [];
+  private deleteIds: Array<string | number | DatastoreEntityKey> = [];
   private useIds = false;
   private ignoreAnc = false;
+  private usingKeys = false;
 
   constructor(model: PebblebedModel, data?: object | object[]) {
     super(model);
@@ -24,13 +26,45 @@ export default class DatastoreDelete extends DatastoreOperation {
     }
   }
 
-  public id(id: string | number) {
+  /*public id(id: string | number) {
     this.deleteIds = [id];
     return this;
   }
 
   public ids(ids: Array<string | number>) {
     this.deleteIds = ids;
+    return this;
+  }*/
+
+  public idsOrKeys(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
+    if (Array.isArray(idsOrKeys)) {
+      this.deleteIds = idsOrKeys;
+    } else {
+      this.deleteIds = [idsOrKeys];
+    }
+
+    if (typeof this.deleteIds[0] === "object") {
+      if ((this.deleteIds[0] as DatastoreEntityKey).kind === this.kind) {
+        this.usingKeys = true;
+      } else {
+        throwError(CreateMessage.OPERATION_KEYS_WRONG(this.model, "DELETE"));
+      }
+    } else {
+      this.deleteIds = this.deleteIds.map(id => {
+        if (this.idType === "int" && isNumber(id)) {
+          return Core.Instance.dsModule.int(id);
+        } else if (this.idType === "string" && typeof id === "string") {
+          if (id.length === 0) {
+            throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
+          }
+
+          return id;
+        }
+
+        throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", id));
+      });
+    }
+
     return this;
   }
 
@@ -104,10 +138,10 @@ export default class DatastoreDelete extends DatastoreOperation {
 
         deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id])));
       }
+    } else if (this.usingKeys) {
+      deleteKeys = this.deleteIds.map(this.augmentKey);
     } else {
-      deleteKeys = this.deleteIds.map(id => {
-        return this.createFullKey(baseKey.concat([this.kind, id]));
-      });
+      deleteKeys = this.deleteIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
     }
 
     let deleteResponse;

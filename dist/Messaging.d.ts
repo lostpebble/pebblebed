@@ -21,5 +21,5 @@ export declare const CreateMessage: {
     OPERATION_DATA_ID_TYPE_ERROR: (model: PebblebedModel<any>, operation: string, value: any) => string;
     OPERATION_SCHEMA_ID_TYPE_ERROR: (model: PebblebedModel<any>, operation: string) => string;
     DATASTORE_INSTANCE_ERROR: (operation: any) => string;
-    LOAD_QUERY_DATA_ID_TYPE_ERROR: (kind: string, wrongType: string, rightType: string, idProperty: string, id: string | number) => string;
+    LOAD_QUERY_DATA_ID_TYPE_ERROR: typeof LOAD_QUERY_DATA_ID_TYPE_ERROR;
 };

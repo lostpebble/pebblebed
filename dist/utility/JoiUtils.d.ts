@@ -4,5 +4,5 @@ export declare type TPebblebedJoiSchemaObject<T> = {
 };
 export declare function createObjectValidator<T = any>(keysSchema: TPebblebedJoiSchemaObject<T>): any;
 export declare const JoiUtils: {
-    createObjectValidator: <T = any>(keysSchema: TPebblebedJoiSchemaObject<T>) => any;
+    createObjectValidator: typeof createObjectValidator;
 };

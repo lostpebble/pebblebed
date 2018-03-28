@@ -30,8 +30,8 @@ class DatastoreSave extends DatastoreOperation_1.default {
         }
     }
     useTransaction(transaction, options = {
-            allocateIdsNow: false,
-        }) {
+        allocateIdsNow: false,
+    }) {
         super.useTransaction(transaction);
         this.transAllocateIds = options.allocateIdsNow;
         return this;
