@@ -11,3 +11,15 @@ export declare const PebbleBoolean: TPebblebedJoiTypeFunction<Joi.BooleanSchema,
 export declare const PebbleDateTime: TPebblebedJoiTypeFunction<Joi.DateSchema, Date>;
 export declare const PebbleArray: TPebblebedJoiTypeFunction<Joi.ArraySchema, any[]>;
 export declare const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema, object, IOJoiSchemaPropertyMetaInput<object> & IOJoiSchemaObjectPropertyMetaInput>;
+export declare const types: {
+    integerId: () => Joi.NumberSchema;
+    stringId: () => Joi.StringSchema;
+    integer: TPebblebedJoiTypeFunction<Joi.NumberSchema, number, IOJoiSchemaPropertyMetaInput<number>>;
+    string: TPebblebedJoiTypeFunction<Joi.StringSchema, string, IOJoiSchemaPropertyMetaInput<string>>;
+    double: TPebblebedJoiTypeFunction<Joi.NumberSchema, number, IOJoiSchemaPropertyMetaInput<number>>;
+    geoPoint: TPebblebedJoiTypeFunction<Joi.AnySchema, any, IOJoiSchemaPropertyMetaInput<any>>;
+    boolean: TPebblebedJoiTypeFunction<Joi.BooleanSchema, boolean, IOJoiSchemaPropertyMetaInput<boolean>>;
+    dateTime: TPebblebedJoiTypeFunction<Joi.DateSchema, Date, IOJoiSchemaPropertyMetaInput<Date>>;
+    array: TPebblebedJoiTypeFunction<Joi.ArraySchema, any[], IOJoiSchemaPropertyMetaInput<any[]>>;
+    object: TPebblebedJoiTypeFunction<Joi.ObjectSchema, object, IOJoiSchemaPropertyMetaInput<object> & IOJoiSchemaObjectPropertyMetaInput>;
+};

@@ -63,4 +63,16 @@ exports.PebbleObject = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.
     type: "object",
     propertyMeta: meta,
 }), meta);
+exports.types = {
+    integerId: exports.PebbleIntegerId,
+    stringId: exports.PebbleStringId,
+    integer: exports.PebbleInteger,
+    string: exports.PebbleString,
+    double: exports.PebbleDouble,
+    geoPoint: exports.PebbleGeoPoint,
+    boolean: exports.PebbleBoolean,
+    dateTime: exports.PebbleDateTime,
+    array: exports.PebbleArray,
+    object: exports.PebbleObject,
+};
 //# sourceMappingURL=PebblebedDataTypes.js.map

@@ -118,3 +118,16 @@ export const PebbleObject: TPebblebedJoiTypeFunction<
     }),
     meta
   );
+
+export const types = {
+  integerId: PebbleIntegerId,
+  stringId: PebbleStringId,
+  integer: PebbleInteger,
+  string: PebbleString,
+  double: PebbleDouble,
+  geoPoint: PebbleGeoPoint,
+  boolean: PebbleBoolean,
+  dateTime: PebbleDateTime,
+  array: PebbleArray,
+  object: PebbleObject,
+};

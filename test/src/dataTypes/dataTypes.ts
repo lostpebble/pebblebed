@@ -1,6 +1,8 @@
-import { PebbleDateTime } from "pebblebed";
+// import { PebbleDateTime } from "pebblebed";
 
-export const DefaultDateTimeNow = PebbleDateTime({
+import { types } from "pebblebed";
+
+export const DefaultDateTimeNow = types.dateTime({
   onSave: (value = null) => {
     if (value == null) {
       return new Date();

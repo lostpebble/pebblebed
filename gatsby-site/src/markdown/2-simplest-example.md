@@ -15,18 +15,16 @@ As a very basic example we're going to use some candy to give you a little taste
 ## First, let's define what our candy entities look like (the model)
 
 ```javascript
-import { Pebblebed, PebbleStringId, ...etc... PebbleDateTime } from "pebblebed";
+import { Pebblebed, PebblebedModel, types } from "pebblebed";
 
 const schema = Pebblebed.createSchema({
-    candyName: PebbleStringId(),
-    description: PebbleString({
-      indexed: false,
-    }),
-    type: PebbleString().required(),
-    colors: PebbleArray(),
-    shape: PebbleString().only(["ROUNDED", "RECTANGULAR"]),
-    tasteRating: PebbleDouble().min(0).max(10).default(5),
-    dateIntroduced: PebbleDateTime()
+    candyName:      types.stringId(),
+    description:    types.string({ indexed: false }),
+    type:           types.string({ required: true }),
+    colors:         types.array(),
+    shape:          types.string().only(["ROUNDED", "RECTANGULAR"]),
+    tasteRating:    types.double().min(0).max(10).default(5),
+    dateIntroduced: types.dateTime()
   });
 
   const CandyModel = new PebblebedModel("Candy", schema);
@@ -34,7 +32,7 @@ const schema = Pebblebed.createSchema({
 
 Here we've created a model for our entity kind of `"Candy"` with some basic properties.
 It uses Joi behind the scenes (so we can validate our data before saving),
-with some custom Pebblebed helpers to cut out verbosity and target the Datastore data types.
+with our custom `types` import to cut out verbosity and target the Datastore data types.
 
 #### Some things to note:
 * `candyName` is a **String Id** - which is to say this property will form the unique key for any Candy entity saved to the database - therefore it should always be unique to each candy.
