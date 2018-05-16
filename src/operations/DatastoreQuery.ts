@@ -6,7 +6,7 @@ import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdPro
 import convertToType from "../utility/convertToType";
 import Core from "../Core";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
-import { warn } from "../Messaging";
+import { throwError, warn } from "../Messaging";
 
 const crypto = require("crypto");
 
@@ -69,6 +69,10 @@ export function createDatastoreQuery(model: PebblebedModel, namespace: string = 
         comparator: TFilterComparator,
         value: string | number | boolean | Date
       ): DatastoreQuery {
+        if (!schema[property]) {
+          throwError(`Property "${property}" doesn't exist on entity schema for [ ${kind} ]`);
+        }
+
         return filterQuery(property, comparator, convertToType(value, schema[property].type));
       },
       withAncestors(...args: any[]): DatastoreQuery {

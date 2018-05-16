@@ -59,6 +59,9 @@ function createDatastoreQuery(model, namespace = null) {
             return this;
         },
         filter(property, comparator, value) {
+            if (!schema[property]) {
+                Messaging_1.throwError(`Property "${property}" doesn't exist on entity schema for [ ${kind} ]`);
+            }
             return filterQuery(property, comparator, convertToType_1.default(value, schema[property].type));
         },
         withAncestors(...args) {
