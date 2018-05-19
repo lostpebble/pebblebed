@@ -19,11 +19,12 @@ const Messaging_1 = require("./Messaging");
 const DatastoreQuery_1 = require("./operations/DatastoreQuery");
 const DatastoreFlush_1 = require("./operations/DatastoreFlush");
 class PebblebedModel {
-    constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, } = {}) {
+    constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, defaultNamespace = undefined, } = {}) {
         this.joiSchema = null;
         this.hasIdProperty = false;
         this.defaultCachingSeconds = null;
         this.neverCache = false;
+        this.defaultNamespace = undefined;
         this.getJoiSchema = () => {
             return this.joiSchema.__getJoiSchema();
         };
@@ -52,6 +53,7 @@ class PebblebedModel {
         this.kind = entityKind;
         this.idProperty = getIdPropertyFromSchema_1.default(this.schema);
         this.defaultCachingSeconds = defaultCachingSeconds;
+        this.defaultNamespace = defaultNamespace;
         this.neverCache = neverCache;
         if (this.idProperty != null) {
             this.hasIdProperty = true;
@@ -69,9 +71,10 @@ class PebblebedModel {
         checkDatastore_1.default("LOAD");
         return new DatastoreLoad_1.default(this, idsOrKeys);
     }
-    query(namespace = null) {
+    query(namespace) {
         checkDatastore_1.default("QUERY");
-        return DatastoreQuery_1.createDatastoreQuery(this, namespace);
+        let ns = namespace !== undefined ? namespace : this.defaultNamespace;
+        return DatastoreQuery_1.createDatastoreQuery(this, ns);
     }
     key(id) {
         checkDatastore_1.default("CREATE KEY");
@@ -113,6 +116,9 @@ class PebblebedModel {
     }
     get entityPebbleSchema() {
         return this.joiSchema;
+    }
+    get entityDefaultNamespace() {
+        return this.defaultNamespace;
     }
     get modelOptions() {
         return {

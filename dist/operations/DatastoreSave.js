@@ -107,8 +107,8 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     }
                 }
                 const key = id
-                    ? this.createFullKey(setAncestors.concat([this.kind, id]))
-                    : this.createFullKey(setAncestors.concat([this.kind]));
+                    ? this.createFullKey(setAncestors.concat([this.kind, id]), entityKey)
+                    : this.createFullKey(setAncestors.concat([this.kind]), entityKey);
                 const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
                 return {
                     key,

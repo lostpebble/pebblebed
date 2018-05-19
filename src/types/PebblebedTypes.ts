@@ -10,6 +10,7 @@ export type TReturnOnly = "FIRST" | "LAST" | "RANDOM";
 export interface IPebblebedModelOptions {
   neverCache?: boolean;
   defaultCachingSeconds?: number;
+  defaultNamespace?: string;
 }
 
 export interface IOJoiSchemaPropertyMetaInput<T> {

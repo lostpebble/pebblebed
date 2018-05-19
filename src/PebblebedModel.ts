@@ -22,10 +22,12 @@ export default class PebblebedModel<T = any> {
 
   private defaultCachingSeconds = null;
   private neverCache = false;
+  private defaultNamespace = undefined;
 
   constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {
     defaultCachingSeconds = null,
     neverCache = false,
+    defaultNamespace = undefined,
   }: IPebblebedModelOptions = {}) {
     if ((entitySchema as PebblebedJoiSchema<T>).__isPebblebedJoiSchema) {
       this.schema = (entitySchema as PebblebedJoiSchema<T>).__generateBasicSchema();
@@ -38,6 +40,7 @@ export default class PebblebedModel<T = any> {
     this.idProperty = getIdPropertyFromSchema(this.schema);
 
     this.defaultCachingSeconds = defaultCachingSeconds;
+    this.defaultNamespace = defaultNamespace;
     this.neverCache = neverCache;
 
     if (this.idProperty != null) {
@@ -86,9 +89,10 @@ export default class PebblebedModel<T = any> {
     return new DatastoreLoad(this, idsOrKeys);
   }
 
-  public query(namespace: string = null): DatastoreQuery {
+  public query(namespace?: string): DatastoreQuery {
     checkDatastore("QUERY");
-    return createDatastoreQuery(this, namespace);
+    let ns = namespace !== undefined ? namespace : this.defaultNamespace;
+    return createDatastoreQuery(this, ns);
   }
 
   public key(id: string | number): DatastoreEntityKey {
@@ -142,6 +146,10 @@ export default class PebblebedModel<T = any> {
 
   public get entityPebbleSchema() {
     return this.joiSchema;
+  }
+
+  public get entityDefaultNamespace() {
+    return this.defaultNamespace;
   }
 
   public get modelOptions(): IPebblebedModelOptions {

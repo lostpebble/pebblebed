@@ -6,8 +6,12 @@ class DatastoreBaseOperation {
     constructor(model) {
         this.hasIdProperty = false;
         this.namespace = null;
+        this.deliberateNamespace = false;
         this.ancestors = [];
         this.augmentKey = (key) => {
+            if (!this.deliberateNamespace) {
+                this.namespace = key.namespace || null;
+            }
             if (this.namespace != null) {
                 key.namespace = this.namespace;
             }
@@ -23,6 +27,7 @@ class DatastoreBaseOperation {
         this.idProperty = model.entityIdProperty;
         this.idType = model.entityIdType;
         this.hasIdProperty = model.entityHasIdProperty;
+        this.namespace = model.entityDefaultNamespace;
     }
     withAncestors(...args) {
         this.ancestors = extractAncestorPaths_1.default(this.model, ...args);
@@ -30,9 +35,13 @@ class DatastoreBaseOperation {
     }
     useNamespace(namespace) {
         this.namespace = namespace;
+        this.deliberateNamespace = true;
         return this;
     }
-    createFullKey(fullPath) {
+    createFullKey(fullPath, entityKey) {
+        if (entityKey && !this.deliberateNamespace) {
+            this.namespace = entityKey.namespace || null;
+        }
         if (this.namespace != null) {
             return Core_1.default.Instance.ds.key({
                 namespace: this.namespace,

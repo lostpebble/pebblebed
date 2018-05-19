@@ -136,7 +136,7 @@ export default class DatastoreDelete extends DatastoreOperation {
           }
         }
 
-        deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id])));
+        deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id]), entityKey));
       }
     } else if (this.usingKeys) {
       deleteKeys = this.deleteIds.map(this.augmentKey);

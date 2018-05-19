@@ -127,7 +127,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                             }
                         }
                     }
-                    deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id])));
+                    deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id]), entityKey));
                 }
             }
             else if (this.usingKeys) {

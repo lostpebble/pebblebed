@@ -12,6 +12,7 @@ export class DatastoreBaseOperation {
   protected idType: string;
   protected hasIdProperty = false;
   protected namespace = null;
+  protected deliberateNamespace = false;
   protected ancestors: Array<[string, string | number]> = [];
 
   constructor(model: PebblebedModel) {
@@ -22,6 +23,7 @@ export class DatastoreBaseOperation {
     this.idProperty = model.entityIdProperty;
     this.idType = model.entityIdType;
     this.hasIdProperty = model.entityHasIdProperty;
+    this.namespace = model.entityDefaultNamespace;
   }
 
   public withAncestors(...args: any[]) {
@@ -31,10 +33,15 @@ export class DatastoreBaseOperation {
 
   public useNamespace(namespace: string) {
     this.namespace = namespace;
+    this.deliberateNamespace = true;
     return this;
   }
 
   protected augmentKey = (key: DatastoreEntityKey): DatastoreEntityKey => {
+    if (!this.deliberateNamespace) {
+      this.namespace = key.namespace || null;
+    }
+
     if (this.namespace != null) {
       key.namespace = this.namespace;
     } else if (Core.Instance.namespace != null) {
@@ -44,7 +51,11 @@ export class DatastoreBaseOperation {
     return key;
   };
 
-  protected createFullKey(fullPath): DatastoreEntityKey {
+  protected createFullKey(fullPath, entityKey?: DatastoreEntityKey): DatastoreEntityKey {
+    if (entityKey && !this.deliberateNamespace) {
+      this.namespace = entityKey.namespace || null;
+    }
+
     if (this.namespace != null) {
       return Core.Instance.ds.key({
         namespace: this.namespace,

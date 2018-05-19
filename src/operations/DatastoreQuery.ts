@@ -10,14 +10,14 @@ import { throwError, warn } from "../Messaging";
 
 const crypto = require("crypto");
 
-export function createDatastoreQuery(model: PebblebedModel, namespace: string = null): DatastoreQuery {
+export function createDatastoreQuery(model: PebblebedModel, namespace?: string): DatastoreQuery {
   const idProp = model.entityIdProperty;
   const kind = model.entityKind;
   const hasIdProp = model.entityHasIdProperty;
   const type = hasIdProp ? model.entitySchema[model.entityIdProperty].type : null;
   const schema = model.entitySchema;
 
-  const ns = namespace != null ? namespace : Core.Instance.namespace;
+  const ns = namespace !== undefined ? namespace : Core.Instance.namespace;
 
   const dsQuery =
     ns != null

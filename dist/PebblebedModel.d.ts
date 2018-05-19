@@ -14,7 +14,8 @@ export default class PebblebedModel<T = any> {
     private hasIdProperty;
     private defaultCachingSeconds;
     private neverCache;
-    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache}?: IPebblebedModelOptions);
+    private defaultNamespace;
+    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache, defaultNamespace}?: IPebblebedModelOptions);
     getJoiSchema: () => Joi.Schema;
     validate: (data: object | object[]) => {
         positive: boolean;
@@ -33,5 +34,6 @@ export default class PebblebedModel<T = any> {
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
     readonly entityPebbleSchema: PebblebedJoiSchema<T>;
+    readonly entityDefaultNamespace: any;
     readonly modelOptions: IPebblebedModelOptions;
 }

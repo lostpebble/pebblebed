@@ -6,6 +6,7 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
+import { DatastoreEntityKey } from "..";
 
 export default class DatastoreSave extends DatastoreOperation {
   private dataObjects: any[];
@@ -52,7 +53,7 @@ export default class DatastoreSave extends DatastoreOperation {
     const entities = this.dataObjects.map(data => {
       let setAncestors = baseKey;
       let id = null;
-      const entityKey = data[Core.Instance.dsModule.KEY];
+      const entityKey: DatastoreEntityKey = data[Core.Instance.dsModule.KEY];
 
       if (this.hasIdProperty && data[this.idProperty] != null) {
         switch (this.idType) {
@@ -120,8 +121,8 @@ export default class DatastoreSave extends DatastoreOperation {
       }
 
       const key = id
-        ? this.createFullKey(setAncestors.concat([this.kind, id]))
-        : this.createFullKey(setAncestors.concat([this.kind]));
+        ? this.createFullKey(setAncestors.concat([this.kind, id]), entityKey)
+        : this.createFullKey(setAncestors.concat([this.kind]), entityKey);
 
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
 

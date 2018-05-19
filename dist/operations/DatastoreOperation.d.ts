@@ -9,12 +9,13 @@ export declare class DatastoreBaseOperation {
     protected idType: string;
     protected hasIdProperty: boolean;
     protected namespace: any;
+    protected deliberateNamespace: boolean;
     protected ancestors: Array<[string, string | number]>;
     constructor(model: PebblebedModel);
     withAncestors(...args: any[]): this;
     useNamespace(namespace: string): this;
     protected augmentKey: (key: DatastoreEntityKey) => DatastoreEntityKey;
-    protected createFullKey(fullPath: any): DatastoreEntityKey;
+    protected createFullKey(fullPath: any, entityKey?: DatastoreEntityKey): DatastoreEntityKey;
     protected getBaseKey(): any[];
 }
 export default class DatastoreOperation extends DatastoreBaseOperation {

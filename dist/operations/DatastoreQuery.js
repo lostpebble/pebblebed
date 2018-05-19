@@ -15,13 +15,13 @@ const Core_1 = require("../Core");
 const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
 const Messaging_1 = require("../Messaging");
 const crypto = require("crypto");
-function createDatastoreQuery(model, namespace = null) {
+function createDatastoreQuery(model, namespace) {
     const idProp = model.entityIdProperty;
     const kind = model.entityKind;
     const hasIdProp = model.entityHasIdProperty;
     const type = hasIdProp ? model.entitySchema[model.entityIdProperty].type : null;
     const schema = model.entitySchema;
-    const ns = namespace != null ? namespace : Core_1.default.Instance.namespace;
+    const ns = namespace !== undefined ? namespace : Core_1.default.Instance.namespace;
     const dsQuery = ns != null
         ? Core_1.default.Instance.ds.createQuery(ns, model.entityKind)
         : Core_1.default.Instance.ds.createQuery(model.entityKind);
