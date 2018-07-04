@@ -6,6 +6,7 @@ import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdPro
 import { CreateMessage, throwError } from "../Messaging";
 import { TReturnOnly, DatastoreEntityKey } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
+import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
 export default class DatastoreLoad extends DatastoreOperation {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
@@ -102,14 +103,22 @@ export default class DatastoreLoad extends DatastoreOperation {
       }
     }
 
-    if (this.hasIdProperty && resp[0].length > 0) {
-      augmentEntitiesWithIdProperties(resp[0], this.idProperty, this.idType, this.kind);
-    }
+    let entities = resp[0];
 
     if (this.returnOnlyEntity != null) {
-      return pickOutEntityFromResults(resp[0], this.returnOnlyEntity);
+      entities = [pickOutEntityFromResults(entities, this.returnOnlyEntity)];
+
+      if (entities[0] == null) {
+        return null;
+      }
     }
 
-    return resp[0];
+    if (this.hasIdProperty && entities.length > 0) {
+      augmentEntitiesWithIdProperties(entities, this.idProperty, this.idType, this.kind);
+    }
+
+    deserializeJsonProperties(entities, this.schema);
+
+    return this.returnOnlyEntity != null ? entities[0] : entities;
   }
 }

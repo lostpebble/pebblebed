@@ -9,6 +9,7 @@ class PebblebedValidations {
             this._AVJoiSchemaPropertyMetaInput = JoiUtils_1.JoiUtils.createObjectValidator({
                 required: Core_1.default.Joi.bool().default(false),
                 indexed: Core_1.default.Joi.bool().default(true),
+                reviver: Core_1.default.Joi.func().default(null),
                 role: Core_1.default.Joi.string().valid(["id"]),
                 onSave: Core_1.default.Joi.func(),
                 nullValueIfUnset: Core_1.default.Joi.bool().default(true),
@@ -107,6 +108,9 @@ class PebblebedJoiSchema {
                                         propertyExcludeFromIndexes.push(`${property}[]`);
                                         // warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
                                     }
+                                }
+                                if (propertyMeta.reviver) {
+                                    basicPropertyDefinition.reviver = propertyMeta.reviver;
                                 }
                                 if (propertyMeta.onSave) {
                                     basicPropertyDefinition.onSave = propertyMeta.onSave;

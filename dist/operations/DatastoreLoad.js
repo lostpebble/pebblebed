@@ -14,6 +14,7 @@ const BasicUtils_1 = require("../utility/BasicUtils");
 const augmentEntitiesWithIdProperties_1 = require("../utility/augmentEntitiesWithIdProperties");
 const Messaging_1 = require("../Messaging");
 const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
+const deserializeJsonProperties_1 = require("../utility/deserializeJsonProperties");
 class DatastoreLoad extends DatastoreOperation_1.default {
     constructor(model, idsOrKeys) {
         super(model);
@@ -99,13 +100,18 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                     resp = yield Core_1.default.Instance.ds.get(loadKeys);
                 }
             }
-            if (this.hasIdProperty && resp[0].length > 0) {
-                augmentEntitiesWithIdProperties_1.default(resp[0], this.idProperty, this.idType, this.kind);
-            }
+            let entities = resp[0];
             if (this.returnOnlyEntity != null) {
-                return pickOutEntityFromResults_1.default(resp[0], this.returnOnlyEntity);
+                entities = [pickOutEntityFromResults_1.default(entities, this.returnOnlyEntity)];
+                if (entities[0] == null) {
+                    return null;
+                }
             }
-            return resp[0];
+            if (this.hasIdProperty && entities.length > 0) {
+                augmentEntitiesWithIdProperties_1.default(entities, this.idProperty, this.idType, this.kind);
+            }
+            deserializeJsonProperties_1.default(entities, this.schema);
+            return this.returnOnlyEntity != null ? entities[0] : entities;
         });
     }
 }

@@ -25,6 +25,10 @@ export interface IOJoiSchemaObjectPropertyMetaInput {
   serialize?: boolean;
 }
 
+export interface IOJoiSchemaSerializedJsonPropertyMetaInput {
+  reviver?: (key: any, value: any) => any;
+}
+
 export interface IOJoiSchemaDefaultMetaInput {
   indexed?: boolean;
   nullValueIfUnset?: boolean;
@@ -52,11 +56,12 @@ export interface IPebblebedJoiSchema {
 }
 
 export type SchemaPropertyDefinition = {
-  type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint";
+  type: "string" | "int" | "double" | "boolean" | "datetime" | "array" | "object" | "geoPoint" | "serializedJson";
   required?: boolean;
   role?: "id";
   excludeFromIndexes?: boolean;
   serialize?: boolean;
+  reviver?: (key: any, value: any) => any;
   optional?: boolean;
   onSave?: (value: any) => any;
   default?: any;

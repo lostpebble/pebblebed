@@ -1,4 +1,8 @@
-import { IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput } from "../";
+import {
+  IOJoiSchemaObjectPropertyMetaInput,
+  IOJoiSchemaPropertyMetaInput,
+  IOJoiSchemaSerializedJsonPropertyMetaInput,
+} from "../";
 import Core from "../Core";
 import * as Joi from "joi";
 
@@ -119,6 +123,20 @@ export const PebbleObject: TPebblebedJoiTypeFunction<
     meta
   );
 
+export const PebbleSerializedJson: TPebblebedJoiTypeFunction<
+  Joi.AnySchema,
+  any,
+  IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput
+> = (meta = {}) =>
+  alterSchemaForPropertyMeta<Joi.AnySchema, any>(
+    Core.Joi.any().meta({
+      __typeDefinition: true,
+      type: "serializedJson",
+      propertyMeta: meta,
+    }),
+    meta
+  );
+
 export const types = {
   integerId: PebbleIntegerId,
   stringId: PebbleStringId,
@@ -130,4 +148,5 @@ export const types = {
   dateTime: PebbleDateTime,
   array: PebbleArray,
   object: PebbleObject,
+  serializedJson: PebbleSerializedJson,
 };

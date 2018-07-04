@@ -7,6 +7,7 @@ import convertToType from "../utility/convertToType";
 import Core from "../Core";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import { throwError, warn } from "../Messaging";
+import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
 const crypto = require("crypto");
 
@@ -113,6 +114,8 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
           if (queryResponse != null) {
             cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
 
+            deserializeJsonProperties(queryResponse.entities, schema);
+
             if (this.returnOnlyEntity != null) {
               return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;
             }
@@ -146,6 +149,8 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
           await Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
           removeSerializableKeysFromEntities(queryResponse);
         }
+
+        deserializeJsonProperties(queryResponse.entities, schema);
 
         if (this.returnOnlyEntity != null) {
           return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;

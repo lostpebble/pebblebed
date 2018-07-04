@@ -14,6 +14,7 @@ const convertToType_1 = require("../utility/convertToType");
 const Core_1 = require("../Core");
 const pickOutEntityFromResults_1 = require("../utility/pickOutEntityFromResults");
 const Messaging_1 = require("../Messaging");
+const deserializeJsonProperties_1 = require("../utility/deserializeJsonProperties");
 const crypto = require("crypto");
 function createDatastoreQuery(model, namespace) {
     const idProp = model.entityIdProperty;
@@ -96,6 +97,7 @@ function createDatastoreQuery(model, namespace) {
                     const queryResponse = yield Core_1.default.Instance.cacheStore.getQueryResponse(hash, this);
                     if (queryResponse != null) {
                         cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
+                        deserializeJsonProperties_1.default(queryResponse.entities, schema);
                         if (this.returnOnlyEntity != null) {
                             return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
                         }
@@ -121,6 +123,7 @@ function createDatastoreQuery(model, namespace) {
                     yield Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
                     removeSerializableKeysFromEntities(queryResponse);
                 }
+                deserializeJsonProperties_1.default(queryResponse.entities, schema);
                 if (this.returnOnlyEntity != null) {
                     return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
                 }

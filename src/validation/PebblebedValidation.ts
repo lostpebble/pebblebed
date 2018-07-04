@@ -1,6 +1,10 @@
 import * as Joi from "joi";
 import { JoiUtils, TPebblebedJoiSchemaObject } from "../utility/JoiUtils";
-import { IOJoiSchemaDefaultMetaInput, IOJoiSchemaPropertyMetaInput } from "../types/PebblebedTypes";
+import {
+  IOJoiSchemaDefaultMetaInput,
+  IOJoiSchemaPropertyMetaInput,
+  IOJoiSchemaSerializedJsonPropertyMetaInput
+} from "../types/PebblebedTypes";
 import { throwError, warn } from "../Messaging";
 import {
   IJoiDescribeObject,
@@ -17,9 +21,10 @@ class PebblebedValidations {
 
   static get AVJoiSchemaPropertyMetaInput() {
     if (this._AVJoiSchemaPropertyMetaInput == null) {
-      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput<any>>({
+      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput>({
         required: Core.Joi.bool().default(false),
         indexed: Core.Joi.bool().default(true),
+        reviver: Core.Joi.func().default(null),
         role: Core.Joi.string().valid(["id"]),
         onSave: Core.Joi.func(),
         nullValueIfUnset: Core.Joi.bool().default(true),
@@ -140,6 +145,10 @@ export class PebblebedJoiSchema<T> {
                     propertyExcludeFromIndexes.push(`${property}[]`);
                     // warn("Pebblebed: The Google Datastore Node.JS library currently does not provide a way to keep arrays excluded from indexes properly. Will be updating as soon as the functionality is available.");
                   }
+                }
+
+                if (propertyMeta.reviver) {
+                  basicPropertyDefinition.reviver = propertyMeta.reviver;
                 }
 
                 if (propertyMeta.onSave) {

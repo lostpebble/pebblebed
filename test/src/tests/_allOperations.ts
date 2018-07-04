@@ -20,6 +20,13 @@ export async function runAllOperations(prefix: string = "") {
     idThing: 123,
     amount: 20,
     tags: ["what", "blue", "red"],
+    testSerialization: {
+      time: new Date(),
+      other: {
+        "whaat": 123,
+        nowww: true,
+      }
+    }
   };
 
   const entityString: IDSTestEntityStringId = {

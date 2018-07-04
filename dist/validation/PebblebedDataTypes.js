@@ -63,6 +63,11 @@ exports.PebbleObject = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.
     type: "object",
     propertyMeta: meta,
 }), meta);
+exports.PebbleSerializedJson = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.any().meta({
+    __typeDefinition: true,
+    type: "serializedJson",
+    propertyMeta: meta,
+}), meta);
 exports.types = {
     integerId: exports.PebbleIntegerId,
     stringId: exports.PebbleStringId,
@@ -74,5 +79,6 @@ exports.types = {
     dateTime: exports.PebbleDateTime,
     array: exports.PebbleArray,
     object: exports.PebbleObject,
+    serializedJson: exports.PebbleSerializedJson,
 };
 //# sourceMappingURL=PebblebedDataTypes.js.map

@@ -50,6 +50,16 @@ async function runTests() {
         latitude: 0,
       },
       worthy: false,
+      testSerialization: {
+        time: new Date(),
+        things: ["abc", "123", "12gb"],
+        other: [[{ funny: "stuff", other: "stuff" }, { funny: "stuff", other: "stuff" }], [{ funny: "stuff", other: "stuff" }, { funny: "stuff", other: "stuff" }]],
+        funny: false,
+        eat: {
+          out: "more",
+          less: false,
+        },
+      }
     });
   }
 
@@ -86,6 +96,8 @@ async function runTests() {
     .run();
 
   console.log(queryResponseTwo);
+
+  console.log((queryResponseTwo.entities[0] as IDSTestEntityIntId).testSerialization.time);
 
   console.log(await TestEntityIntIdModel.delete(queryResponseTwo.entities).run());*/
 
