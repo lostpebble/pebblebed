@@ -10,7 +10,7 @@ export declare class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore
     private createEntityCacheKey(dsKey);
     getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<any>;
     setEntitiesAfterLoadOrSave(entities: any, secondsToCache: any): Promise<void>;
-    setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number): Promise<void>;
+    setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number): Promise<void>;
     getQueryResponse(queryHash: string): Promise<any>;
     flushQueryResponse(queryHash: string): Promise<void>;
     flushEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<void>;

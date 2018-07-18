@@ -16,7 +16,7 @@ export class PebblebedCacheStore {
     return null;
   }
 
-  async setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number, queryObject?: InternalDatastoreQuery) {
+  async setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number, queryObject?: InternalDatastoreQuery) {
     warn(`Pebblebed: Caching: Trying to cache entities after a query, but setQueryResponse() hasn't been implemented in your cache store yet.`);
     return null;
   }

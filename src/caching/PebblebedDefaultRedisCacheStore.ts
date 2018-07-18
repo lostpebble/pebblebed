@@ -54,7 +54,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     }
   }
 
-  async setQueryResponse(queryResponse: DatastoreQueryResponse, queryHash: string, secondsToCache: number) {
+  async setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number) {
     await this.redis.setex(`${this.namespace}:${queryHash}`, secondsToCache, JSON.stringify(queryResponse));
   }
 

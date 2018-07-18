@@ -1,4 +1,10 @@
-import { DatastoreEntityKey, DatastoreQuery, IPebblebedModelOptions, SchemaDefinition, } from "./types/PebblebedTypes";
+import {
+  DatastoreEntityKey,
+  DatastoreQuery,
+  DatastoreQueryRegular,
+  IPebblebedModelOptions,
+  SchemaDefinition,
+} from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
 import Core from "./Core";
@@ -89,7 +95,7 @@ export default class PebblebedModel<T = any> {
     return new DatastoreLoad(this, idsOrKeys);
   }
 
-  public query(namespace?: string): DatastoreQuery {
+  public query(namespace?: string): DatastoreQueryRegular<T> {
     checkDatastore("QUERY");
     let ns = namespace !== undefined ? namespace : this.defaultNamespace;
     return createDatastoreQuery(this, ns);

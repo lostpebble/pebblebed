@@ -1,5 +1,5 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreQuery } from "../";
+import { DatastoreQueryRegular } from "../";
 import { InternalDatastoreQuery } from "../types/PebblebedTypes";
-export declare function createDatastoreQuery(model: PebblebedModel, namespace?: string): DatastoreQuery;
+export declare function createDatastoreQuery<T>(model: PebblebedModel, namespace?: string): DatastoreQueryRegular<T>;
 export declare function createHashFromQuery(query: InternalDatastoreQuery): any;

@@ -1,5 +1,5 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey, DatastoreQuery, TDatastoreQueryResponse, TReturnOnly } from "../";
+import { DatastoreEntityKey, DatastoreQuery, DatastoreQueryRegular, TReturnOnly } from "../";
 import { DatastoreQueryResponse, InternalDatastoreQuery, TFilterComparator } from "../types/PebblebedTypes";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
@@ -11,7 +11,7 @@ import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
 const crypto = require("crypto");
 
-export function createDatastoreQuery(model: PebblebedModel, namespace?: string): DatastoreQuery {
+export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: string): DatastoreQueryRegular<T> {
   const idProp = model.entityIdProperty;
   const kind = model.entityKind;
   const hasIdProp = model.entityHasIdProperty;
@@ -69,14 +69,14 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
         property: string,
         comparator: TFilterComparator,
         value: string | number | boolean | Date
-      ): DatastoreQuery {
+      ) {
         if (!schema[property]) {
           throwError(`Property "${property}" doesn't exist on entity schema for [ ${kind} ]`);
         }
 
         return filterQuery(property, comparator, convertToType(value, schema[property].type));
       },
-      withAncestors(...args: any[]): DatastoreQuery {
+      withAncestors(...args: any[]) {
         const ancestors = extractAncestorPaths(model, ...args);
 
         if (ns != null) {
@@ -100,13 +100,13 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
           warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
         }
       },
-      async run(): Promise<TDatastoreQueryResponse> {
+      async run() {
         let hash = null;
 
         if (Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnQuery && this.useCache) {
           hash = createHashFromQuery(this);
 
-          const queryResponse: DatastoreQueryResponse = await Core.Instance.cacheStore.getQueryResponse(
+          const queryResponse: DatastoreQueryResponse<T> = await Core.Instance.cacheStore.getQueryResponse(
             hash,
             this
           );
@@ -117,7 +117,7 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
             deserializeJsonProperties(queryResponse.entities, schema);
 
             if (this.returnOnlyEntity != null) {
-              return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;
+              return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as T;
             }
 
             return queryResponse;
@@ -153,13 +153,13 @@ export function createDatastoreQuery(model: PebblebedModel, namespace?: string):
         deserializeJsonProperties(queryResponse.entities, schema);
 
         if (this.returnOnlyEntity != null) {
-          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as object;
+          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as T;
         }
 
         return queryResponse;
       },
-    } as Partial<DatastoreQuery>
-  );
+    } as Partial<DatastoreQueryRegular<T>>
+  ) as DatastoreQueryRegular<T>;
 }
 
 export function createHashFromQuery(query: InternalDatastoreQuery) {
@@ -179,19 +179,19 @@ end:${query.endVal}`;
 
 const serializableKeyName = "__pebblebed_serializable_key__";
 
-function cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse: DatastoreQueryResponse) {
+function cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse: DatastoreQueryResponse<any>) {
   for (const entity of queryResponse.entities) {
     entity[serializableKeyName] = entity[Core.Instance.dsModule.KEY];
   }
 }
 
-function removeSerializableKeysFromEntities(queryResponse: DatastoreQueryResponse) {
+function removeSerializableKeysFromEntities(queryResponse: DatastoreQueryResponse<any>) {
   for (const entity of queryResponse.entities) {
     delete entity[serializableKeyName];
   }
 }
 
-function cachingAugmentQueryEntitiesWithRealKeys(queryResponse: DatastoreQueryResponse) {
+function cachingAugmentQueryEntitiesWithRealKeys(queryResponse: DatastoreQueryResponse<any>) {
   for (const entity of queryResponse.entities) {
     entity[Core.Instance.dsModule.KEY] = entity[serializableKeyName];
     delete entity[serializableKeyName];

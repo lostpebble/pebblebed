@@ -74,36 +74,57 @@ export interface DatastoreEntityKey {
     parent?: DatastoreEntityKey;
     path: string[];
 }
-export interface DatastoreQueryResponse<T = any> {
+export interface DatastoreQueryResponse<T> {
     entities: T[];
     info?: {
         endCursor?: string;
         moreResults?: string;
     };
 }
-export declare type TDatastoreQueryResponse = DatastoreQueryResponse | object;
 export declare type TFilterComparator = "=" | "<" | ">" | "<=" | ">=";
-export declare type TFilterFunction = (property: string, comparator: TFilterComparator, value: string | number | boolean | Date) => DatastoreQuery;
-export interface DatastoreQuery {
-    filter: TFilterFunction;
+export declare type TFilterFunction<T, R> = (property: keyof T, comparator: TFilterComparator, value: string | number | boolean | Date) => R;
+export declare type DatastoreQuery<T> = DatastoreQueryRegular<T> | DatastoreQuerySingleReturn<T>;
+export interface DatastoreQueryRegular<T> {
+    filter: TFilterFunction<T, DatastoreQueryRegular<T>>;
     order(property: string, options?: {
         descending: boolean;
-    }): DatastoreQuery;
-    enableCache(on: boolean): DatastoreQuery;
-    cachingSeconds(seconds: number): DatastoreQuery;
-    withAncestors(...args: any[]): DatastoreQuery;
-    hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery;
-    end(cursorToken: string): DatastoreQuery;
-    limit(amount: number): DatastoreQuery;
-    offset(number: number): DatastoreQuery;
-    groupBy(properties: string[]): DatastoreQuery;
-    start(nextPageCursor: any): DatastoreQuery;
-    select(property: string | string[]): DatastoreQuery;
-    first(): DatastoreQuery;
-    last(): DatastoreQuery;
-    randomOne(): DatastoreQuery;
+    }): DatastoreQueryRegular<T>;
+    enableCache(on: boolean): DatastoreQueryRegular<T>;
+    cachingSeconds(seconds: number): DatastoreQueryRegular<T>;
+    withAncestors(...args: any[]): DatastoreQueryRegular<T>;
+    hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQueryRegular<T>;
+    end(cursorToken: string): DatastoreQueryRegular<T>;
+    limit(amount: number): DatastoreQueryRegular<T>;
+    offset(number: number): DatastoreQueryRegular<T>;
+    groupBy(properties: string[]): DatastoreQueryRegular<T>;
+    start(nextPageCursor: any): DatastoreQueryRegular<T>;
+    select(property: string | string[]): DatastoreQueryRegular<T>;
+    first(): DatastoreQuerySingleReturn<T>;
+    last(): DatastoreQuerySingleReturn<T>;
+    randomOne(): DatastoreQuerySingleReturn<T>;
     flushQueryInCache(): Promise<any>;
-    run(): Promise<any>;
+    run(): Promise<DatastoreQueryResponse<T>>;
+}
+export interface DatastoreQuerySingleReturn<T> {
+    filter: TFilterFunction<T, DatastoreQuerySingleReturn<T>>;
+    order(property: string, options?: {
+        descending: boolean;
+    }): DatastoreQuerySingleReturn<T>;
+    enableCache(on: boolean): DatastoreQuerySingleReturn<T>;
+    cachingSeconds(seconds: number): DatastoreQuerySingleReturn<T>;
+    withAncestors(...args: any[]): DatastoreQuerySingleReturn<T>;
+    hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuerySingleReturn<T>;
+    end(cursorToken: string): DatastoreQuerySingleReturn<T>;
+    limit(amount: number): DatastoreQuerySingleReturn<T>;
+    offset(number: number): DatastoreQuerySingleReturn<T>;
+    groupBy(properties: string[]): DatastoreQuerySingleReturn<T>;
+    start(nextPageCursor: any): DatastoreQuerySingleReturn<T>;
+    select(property: string | string[]): DatastoreQuerySingleReturn<T>;
+    first(): DatastoreQuerySingleReturn<T>;
+    last(): DatastoreQuerySingleReturn<T>;
+    randomOne(): DatastoreQuerySingleReturn<T>;
+    flushQueryInCache(): Promise<any>;
+    run(): Promise<T>;
 }
 export interface InternalDatastoreQueryFilter {
     name: string;
@@ -114,7 +135,7 @@ export interface InternalDatastoreQueryOrder {
     name: string;
     sign: "+" | "-";
 }
-export interface InternalDatastoreQuery extends DatastoreQuery {
+export interface InternalDatastoreQuery extends DatastoreQueryRegular<any> {
     filters: InternalDatastoreQueryFilter[];
     groupByVal: string[];
     kinds: string[];

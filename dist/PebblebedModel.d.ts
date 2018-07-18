@@ -1,4 +1,4 @@
-import { DatastoreEntityKey, DatastoreQuery, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
+import { DatastoreEntityKey, DatastoreQueryRegular, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
 import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
@@ -23,7 +23,7 @@ export default class PebblebedModel<T = any> {
     };
     save(data: object | object[]): DatastoreSave;
     load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreLoad;
-    query(namespace?: string): DatastoreQuery;
+    query(namespace?: string): DatastoreQueryRegular<T>;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: object | object[]): DatastoreDelete;
     flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush;
