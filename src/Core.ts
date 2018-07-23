@@ -1,6 +1,12 @@
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 
+export interface ICacheDefaults {
+  onSave: boolean;
+  onLoad: boolean;
+  onQuery: boolean;
+}
+
 export default class Core {
   private static _instance: Core;
   private static _redisClient = null;
@@ -14,9 +20,11 @@ export default class Core {
   public caching = true;
   public cacheStore: PebblebedCacheStore = null;
 
-  public cacheEnabledOnSaveDefault = true;
-  public cacheEnabledOnLoadDefault = true;
-  public cacheEnabledOnQueryDefault = false;
+  public cacheDefaults: ICacheDefaults = {
+    onSave: true,
+    onLoad: false,
+    onQuery: false,
+  };
 
   private constructor() {
     try {
@@ -55,6 +63,10 @@ export default class Core {
   public setCacheStore(cacheStore: PebblebedCacheStore) {
     this.cacheStore = cacheStore;
   }
+
+  public setCacheDefaults(newDefaults: Partial<ICacheDefaults>) {
+    Object.assign(this.cacheDefaults, newDefaults);
+  };
 
   public setNamespace(namespace: string) {
     this.namespace = namespace;

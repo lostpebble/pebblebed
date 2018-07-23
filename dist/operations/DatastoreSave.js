@@ -21,7 +21,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
         this.ignoreAnc = false;
         this.generate = false;
         this.transAllocateIds = false;
-        this.useCache = this.useCache ? Core_1.default.Instance.cacheEnabledOnSaveDefault : false;
+        this.useCache = this.useCache ? Core_1.default.Instance.cacheDefaults.onSave : false;
         if (Array.isArray(data)) {
             this.dataObjects = data;
         }

@@ -8,16 +8,16 @@ import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithA
 import { CreateMessage, throwError, warn } from "../Messaging";
 import { DatastoreEntityKey } from "..";
 
-export default class DatastoreSave extends DatastoreOperation {
+export default class DatastoreSave<T> extends DatastoreOperation<T> {
   private dataObjects: any[];
   private ignoreAnc = false;
   private generate = false;
   private transAllocateIds = false;
 
-  constructor(model: PebblebedModel, data: object | object[]) {
+  constructor(model: PebblebedModel<T>, data: T | T[]) {
     super(model);
 
-    this.useCache = this.useCache ? Core.Instance.cacheEnabledOnSaveDefault : false;
+    this.useCache = this.useCache ? Core.Instance.cacheDefaults.onSave : false;
 
     if (Array.isArray(data)) {
       this.dataObjects = data;

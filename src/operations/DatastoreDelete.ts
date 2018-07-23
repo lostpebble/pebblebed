@@ -5,14 +5,14 @@ import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
 import { DatastoreEntityKey } from "../types/PebblebedTypes";
 
-export default class DatastoreDelete extends DatastoreOperation {
+export default class DatastoreDelete<T> extends DatastoreOperation<T> {
   private dataObjects: any[];
   private deleteIds: Array<string | number | DatastoreEntityKey> = [];
   private useIds = false;
   private ignoreAnc = false;
   private usingKeys = false;
 
-  constructor(model: PebblebedModel, data?: object | object[]) {
+  constructor(model: PebblebedModel<T>, data?: T | T[]) {
     super(model);
 
     if (data) {

@@ -71,7 +71,7 @@ export const PebbleGeoPoint: TPebblebedJoiTypeFunction<Joi.AnySchema, any> = (me
 
 export const PebbleString: TPebblebedJoiTypeFunction<Joi.StringSchema, string> = (meta = {}) =>
   alterSchemaForPropertyMeta<Joi.StringSchema, string>(
-    Core.Joi.string().meta({
+    Core.Joi.string().allow("").meta({
       __typeDefinition: true,
       type: "string",
       propertyMeta: meta,

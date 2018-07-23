@@ -1,5 +1,6 @@
 import { DatastoreEntityKey, DatastoreTransaction, IPebblebedModelOptions } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
+import { ICacheDefaults } from "./Core";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
@@ -17,6 +18,7 @@ export declare const Pebblebed: {
     setCacheEnabledOnSaveDefault(on: boolean): void;
     setCacheEnabledOnLoadDefault(on: boolean): void;
     setCacheEnabledOnQueryDefault(on: boolean): void;
+    setCacheEnabledDefaults(newDefaults: Partial<ICacheDefaults>): void;
     key(...args: any[]): any;
     keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];
     uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];

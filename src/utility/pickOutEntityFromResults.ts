@@ -1,6 +1,6 @@
 import { TReturnOnly } from "../";
 
-export default function(resultArray: any[], pickType: TReturnOnly) {
+export default function<T>(resultArray: T[], pickType: TReturnOnly): T|null {
   if (resultArray.length > 0) {
     if (pickType === "FIRST") {
       return resultArray[0];

@@ -93,8 +93,6 @@ export interface DatastoreQueryResponse<T> {
   };
 }
 
-// export type TDatastoreQueryResponse<T> = DatastoreQueryResponse<T> | object;
-
 export type TFilterComparator = "=" | "<" | ">" | "<=" | ">=";
 
 export type TFilterFunction<T, R> = (
@@ -102,28 +100,8 @@ export type TFilterFunction<T, R> = (
   comparator: TFilterComparator,
   value: string | number | boolean | Date
 ) => R;
-// ) => DatastoreQuery<T>;
 
 export type DatastoreQuery<T> = DatastoreQueryRegular<T>|DatastoreQuerySingleReturn<T>;
-
-/*export interface DatastoreQuery<T> {
-  filter: TFilterFunction<T>;
-  order(property: string, options?: { descending: boolean }): DatastoreQuery<T>;
-  enableCache(on: boolean): DatastoreQuery<T>;
-  cachingSeconds(seconds: number): DatastoreQuery<T>;
-  withAncestors(...args: any[]): DatastoreQuery<T>;
-  hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuery<T>;
-  end(cursorToken: string): DatastoreQuery<T>;
-  limit(amount: number): DatastoreQuery<T>;
-  offset(number: number): DatastoreQuery<T>;
-  groupBy(properties: string[]): DatastoreQuery<T>;
-  start(nextPageCursor: any): DatastoreQuery<T>;
-  select(property: string | string[]): DatastoreQuery<T>;
-  first(): DatastoreQuery<T>;
-  last(): DatastoreQuery<T>;
-  randomOne(): DatastoreQuery<T>;
-  flushQueryInCache(): Promise<any>;
-}*/
 
 export interface DatastoreQueryRegular<T> {
   filter: TFilterFunction<T, DatastoreQueryRegular<T>>;
@@ -143,6 +121,7 @@ export interface DatastoreQueryRegular<T> {
   randomOne(): DatastoreQuerySingleReturn<T>;
   flushQueryInCache(): Promise<any>;
   run(): Promise<DatastoreQueryResponse<T>>;
+  run(throwIfNotFound: true): Promise<DatastoreQueryResponse<T>>;
 }
 
 export interface DatastoreQuerySingleReturn<T> {
@@ -162,7 +141,8 @@ export interface DatastoreQuerySingleReturn<T> {
   last(): DatastoreQuerySingleReturn<T>;
   randomOne(): DatastoreQuerySingleReturn<T>;
   flushQueryInCache(): Promise<any>;
-  run(): Promise<T>;
+  run(): Promise<T|null>;
+  run(throwIfNotFound: true): Promise<T>;
 }
 
 export interface InternalDatastoreQueryFilter {

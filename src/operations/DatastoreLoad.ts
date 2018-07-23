@@ -8,18 +8,34 @@ import { TReturnOnly, DatastoreEntityKey } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
-export default class DatastoreLoad extends DatastoreOperation {
+export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
+  first(): IDatastoreLoadSingleReturn<T>;
+  last(): IDatastoreLoadSingleReturn<T>;
+  randomOne(): IDatastoreLoadSingleReturn<T>;
+  run(): Promise<T|null>;
+  run(throwIfNotFound: true): Promise<T>;
+}
+
+export interface IDatastoreLoadRegular<T> extends DatastoreOperation<T> {
+  first(): IDatastoreLoadSingleReturn<T>;
+  last(): IDatastoreLoadSingleReturn<T>;
+  randomOne(): IDatastoreLoadSingleReturn<T>;
+  run(): Promise<Array<T>>;
+  run(throwIfNotFound: true): Promise<Array<T>>;
+}
+
+export default class DatastoreLoad<T> extends DatastoreOperation<T> implements IDatastoreLoadRegular<T> {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
   private returnOnlyEntity: TReturnOnly = null;
 
   constructor(
-    model: PebblebedModel,
+    model: PebblebedModel<T>,
     idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
   ) {
     super(model);
 
-    this.useCache = this.useCache ? Core.Instance.cacheEnabledOnLoadDefault : false;
+    this.useCache = this.useCache ? Core.Instance.cacheDefaults.onLoad : false;
 
     if (idsOrKeys != null) {
       if (Array.isArray(idsOrKeys)) {
@@ -67,8 +83,8 @@ export default class DatastoreLoad extends DatastoreOperation {
     return this;
   }
 
-  public async run() {
-    let loadKeys;
+  public async run(throwIfNotFound: boolean = false) {
+    let loadKeys: DatastoreEntityKey[];
 
     if (this.usingKeys) {
       loadKeys = this.loadIds.map(this.augmentKey);
@@ -104,6 +120,11 @@ export default class DatastoreLoad extends DatastoreOperation {
     }
 
     let entities = resp[0];
+
+    if (entities.length === 0 && throwIfNotFound) {
+      console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n\n${loadKeys.map((loadKey) => `${JSON.stringify(loadKey, null, 2)}`).join("\n")}`);
+      throwError(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s), see server log for more detail`);
+    }
 
     if (this.returnOnlyEntity != null) {
       entities = [pickOutEntityFromResults(entities, this.returnOnlyEntity)];

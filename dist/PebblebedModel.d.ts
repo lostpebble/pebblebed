@@ -1,6 +1,6 @@
 import { DatastoreEntityKey, DatastoreQueryRegular, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
 import DatastoreSave from "./operations/DatastoreSave";
-import DatastoreLoad from "./operations/DatastoreLoad";
+import { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import * as Joi from "joi";
@@ -21,12 +21,12 @@ export default class PebblebedModel<T = any> {
         positive: boolean;
         message: string;
     };
-    save(data: object | object[]): DatastoreSave;
-    load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreLoad;
+    save(data: T | T[]): DatastoreSave<T>;
+    load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): IDatastoreLoadRegular<T>;
     query(namespace?: string): DatastoreQueryRegular<T>;
     key(id: string | number): DatastoreEntityKey;
-    delete(data?: object | object[]): DatastoreDelete;
-    flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush;
+    delete(data?: T | T[]): DatastoreDelete<T>;
+    flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T>;
     allocateIds(amount: number, withAncestors?: any[]): Promise<Array<DatastoreEntityKey>>;
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition<T>;

@@ -5,12 +5,12 @@ import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
 
-export default class DatastoreFlush extends DatastoreBaseOperation {
+export default class DatastoreFlush<T> extends DatastoreBaseOperation<T> {
   private flushIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
 
   constructor(
-    model: PebblebedModel,
+    model: PebblebedModel<T>,
     idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
   ) {
     super(model);

@@ -1,2 +1,2 @@
 import { TReturnOnly } from "../";
-export default function (resultArray: any[], pickType: TReturnOnly): any;
+export default function <T>(resultArray: T[], pickType: TReturnOnly): T | null;

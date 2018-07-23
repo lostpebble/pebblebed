@@ -38,7 +38,7 @@ exports.PebbleGeoPoint = (meta = {}) => alterSchemaForPropertyMeta(Core_1.defaul
     type: "geoPoint",
     propertyMeta: meta,
 }), meta);
-exports.PebbleString = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.string().meta({
+exports.PebbleString = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.string().allow("").meta({
     __typeDefinition: true,
     type: "string",
     propertyMeta: meta,

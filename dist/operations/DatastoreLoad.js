@@ -21,7 +21,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
         this.loadIds = [];
         this.usingKeys = false;
         this.returnOnlyEntity = null;
-        this.useCache = this.useCache ? Core_1.default.Instance.cacheEnabledOnLoadDefault : false;
+        this.useCache = this.useCache ? Core_1.default.Instance.cacheDefaults.onLoad : false;
         if (idsOrKeys != null) {
             if (Array.isArray(idsOrKeys)) {
                 this.loadIds = idsOrKeys;
@@ -65,7 +65,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
         this.returnOnlyEntity = "RANDOM";
         return this;
     }
-    run() {
+    run(throwIfNotFound = false) {
         return __awaiter(this, void 0, void 0, function* () {
             let loadKeys;
             if (this.usingKeys) {
@@ -101,6 +101,10 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                 }
             }
             let entities = resp[0];
+            if (entities.length === 0 && throwIfNotFound) {
+                console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n\n${loadKeys.map((loadKey) => `${JSON.stringify(loadKey, null, 2)}`).join("\n")}`);
+                Messaging_1.throwError(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s), see server log for more detail`);
+            }
             if (this.returnOnlyEntity != null) {
                 entities = [pickOutEntityFromResults_1.default(entities, this.returnOnlyEntity)];
                 if (entities[0] == null) {

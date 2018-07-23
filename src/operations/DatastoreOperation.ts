@@ -3,7 +3,7 @@ import extractAncestorPaths from "../utility/extractAncestorPaths";
 import Core from "../Core";
 import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
 
-export class DatastoreBaseOperation {
+export class DatastoreBaseOperation<T> {
   protected model: PebblebedModel;
   protected modelOptions: IPebblebedModelOptions;
   protected kind: string;
@@ -15,7 +15,7 @@ export class DatastoreBaseOperation {
   protected deliberateNamespace = false;
   protected ancestors: Array<[string, string | number]> = [];
 
-  constructor(model: PebblebedModel) {
+  constructor(model: PebblebedModel<T>) {
     this.model = model;
     this.modelOptions = model.modelOptions;
     this.kind = model.entityKind;
@@ -81,13 +81,13 @@ export class DatastoreBaseOperation {
   }
 }
 
-export default class DatastoreOperation extends DatastoreBaseOperation {
+export default class DatastoreOperation<T> extends DatastoreBaseOperation<T> {
   protected transaction: any = null;
   protected runValidation: boolean = true;
   protected useCache: boolean = true;
   protected cachingTimeSeconds: number = 60 * 5;
 
-  constructor(model: PebblebedModel) {
+  constructor(model: PebblebedModel<T>) {
     super(model);
 
     this.runValidation = Core.Instance.validations;

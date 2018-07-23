@@ -9,7 +9,7 @@ import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
 import Core from "./Core";
 import DatastoreSave from "./operations/DatastoreSave";
-import DatastoreLoad from "./operations/DatastoreLoad";
+import DatastoreLoad, { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import extractAncestorPaths from "./utility/extractAncestorPaths";
 import { CreateMessage, throwError } from "./Messaging";
@@ -85,14 +85,14 @@ export default class PebblebedModel<T = any> {
     };
   };
 
-  public save(data: object | object[]) {
+  public save(data: T | T[]): DatastoreSave<T> {
     checkDatastore("SAVE");
     return new DatastoreSave(this, data);
   }
 
-  public load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
+  public load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): IDatastoreLoadRegular<T> {
     checkDatastore("LOAD");
-    return new DatastoreLoad(this, idsOrKeys);
+    return new DatastoreLoad<T>(this, idsOrKeys);
   }
 
   public query(namespace?: string): DatastoreQueryRegular<T> {
@@ -106,12 +106,12 @@ export default class PebblebedModel<T = any> {
     return Core.Instance.ds.key([this.kind, id]);
   }
 
-  public delete(data?: object | object[]) {
+  public delete(data?: T | T[]): DatastoreDelete<T> {
     checkDatastore("DELETE");
     return new DatastoreDelete(this, data);
   }
 
-  public flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
+  public flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T> {
     checkDatastore("FLUSH IN CACHE");
     return new DatastoreFlush(this, idsOrKeys);
   }

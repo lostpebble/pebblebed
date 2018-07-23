@@ -30,7 +30,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
 
   const useCache = (model.modelOptions.neverCache || !Core.Instance.caching)
     ? false
-    : Core.Instance.cacheEnabledOnQueryDefault;
+    : Core.Instance.cacheDefaults.onQuery;
 
   const returnOnlyEntity: TReturnOnly = null;
 
@@ -100,7 +100,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
           warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
         }
       },
-      async run() {
+      async run(throwIfNotFound: boolean = false) {
         let hash = null;
 
         if (Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnQuery && this.useCache) {
@@ -152,8 +152,13 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
 
         deserializeJsonProperties(queryResponse.entities, schema);
 
+        if (queryResponse.entities.length === 0 && throwIfNotFound) {
+          console.error(`Couldn't find any ${this.model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
+          throwError(`Couldn't find any ${this.model.entityKind} entity(s) with specified query, see server log for more detail`);
+        }
+
         if (this.returnOnlyEntity != null) {
-          return pickOutEntityFromResults(queryResponse.entities, this.returnOnlyEntity) as T;
+          return pickOutEntityFromResults<T>(queryResponse.entities, this.returnOnlyEntity);
         }
 
         return queryResponse;
@@ -162,8 +167,8 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
   ) as DatastoreQueryRegular<T>;
 }
 
-export function createHashFromQuery(query: InternalDatastoreQuery) {
-  const dataString = `namespace:${query.namespace != null ? query.namespace : ""}
+export function createDataStringFromQuery(query: InternalDatastoreQuery): string {
+  return `namespace:${query.namespace != null ? query.namespace : ""}
 kinds:${query.kinds.join("-KIND_JOIN-")}
 filters:${JSON.stringify(query.filters)}
 limit:${query.limitVal}
@@ -173,8 +178,21 @@ select:${query.selectVal.join("-SELECT_JOIN-")}
 groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
 start:${query.startVal}
 end:${query.endVal}`;
+}
 
-  return crypto.createHash("sha1").update(dataString).digest("base64");
+export function createHashFromQuery(query: InternalDatastoreQuery) {
+  /*const dataString = `namespace:${query.namespace != null ? query.namespace : ""}
+kinds:${query.kinds.join("-KIND_JOIN-")}
+filters:${JSON.stringify(query.filters)}
+limit:${query.limitVal}
+offset:${query.offsetVal}
+orders:${query.orders.join("-ORDERS_JOIN-")}
+select:${query.selectVal.join("-SELECT_JOIN-")}
+groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
+start:${query.startVal}
+end:${query.endVal}`;*/
+
+  return crypto.createHash("sha1").update(createDataStringFromQuery(query)).digest("base64");
 }
 
 const serializableKeyName = "__pebblebed_serializable_key__";

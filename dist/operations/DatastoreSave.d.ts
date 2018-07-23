@@ -1,11 +1,11 @@
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
-export default class DatastoreSave extends DatastoreOperation {
+export default class DatastoreSave<T> extends DatastoreOperation<T> {
     private dataObjects;
     private ignoreAnc;
     private generate;
     private transAllocateIds;
-    constructor(model: PebblebedModel, data: object | object[]);
+    constructor(model: PebblebedModel<T>, data: T | T[]);
     useTransaction(transaction: any, options?: {
         allocateIdsNow: boolean;
     }): this;

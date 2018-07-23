@@ -9,9 +9,11 @@ class Core {
         this.validations = true;
         this.caching = true;
         this.cacheStore = null;
-        this.cacheEnabledOnSaveDefault = true;
-        this.cacheEnabledOnLoadDefault = true;
-        this.cacheEnabledOnQueryDefault = false;
+        this.cacheDefaults = {
+            onSave: true,
+            onLoad: false,
+            onQuery: false,
+        };
         try {
             this.dsModule = require("@google-cloud/datastore");
         }
@@ -42,6 +44,10 @@ class Core {
     setCacheStore(cacheStore) {
         this.cacheStore = cacheStore;
     }
+    setCacheDefaults(newDefaults) {
+        Object.assign(this.cacheDefaults, newDefaults);
+    }
+    ;
     setNamespace(namespace) {
         this.namespace = namespace;
     }

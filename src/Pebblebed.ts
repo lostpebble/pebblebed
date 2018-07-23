@@ -6,7 +6,7 @@ import {
 } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
-import Core from "./Core";
+import Core, { ICacheDefaults } from "./Core";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
@@ -77,15 +77,19 @@ export const Pebblebed = {
   },
 
   setCacheEnabledOnSaveDefault(on: boolean) {
-    Core.Instance.cacheEnabledOnSaveDefault = on;
+    Core.Instance.cacheDefaults.onSave = on;
   },
 
   setCacheEnabledOnLoadDefault(on: boolean) {
-    Core.Instance.cacheEnabledOnLoadDefault = on;
+    Core.Instance.cacheDefaults.onLoad = on;
   },
 
   setCacheEnabledOnQueryDefault(on: boolean) {
-    Core.Instance.cacheEnabledOnQueryDefault = on;
+    Core.Instance.cacheDefaults.onQuery = on;
+  },
+
+  setCacheEnabledDefaults(newDefaults: Partial<ICacheDefaults>) {
+    Core.Instance.setCacheDefaults(newDefaults);
   },
 
   key(...args: any[]) {

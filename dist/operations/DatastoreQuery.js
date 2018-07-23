@@ -30,7 +30,7 @@ function createDatastoreQuery(model, namespace) {
     const filterQuery = dsQuery.filter.bind(dsQuery);
     const useCache = (model.modelOptions.neverCache || !Core_1.default.Instance.caching)
         ? false
-        : Core_1.default.Instance.cacheEnabledOnQueryDefault;
+        : Core_1.default.Instance.cacheDefaults.onQuery;
     const returnOnlyEntity = null;
     const cachingTimeSeconds = model.modelOptions.defaultCachingSeconds != null
         ? model.modelOptions.defaultCachingSeconds
@@ -89,7 +89,7 @@ function createDatastoreQuery(model, namespace) {
                 }
             });
         },
-        run() {
+        run(throwIfNotFound = false) {
             return __awaiter(this, void 0, void 0, function* () {
                 let hash = null;
                 if (Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnQuery && this.useCache) {
@@ -124,6 +124,10 @@ function createDatastoreQuery(model, namespace) {
                     removeSerializableKeysFromEntities(queryResponse);
                 }
                 deserializeJsonProperties_1.default(queryResponse.entities, schema);
+                if (queryResponse.entities.length === 0 && throwIfNotFound) {
+                    console.error(`Couldn't find any ${this.model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
+                    Messaging_1.throwError(`Couldn't find any ${this.model.entityKind} entity(s) with specified query, see server log for more detail`);
+                }
                 if (this.returnOnlyEntity != null) {
                     return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
                 }
@@ -133,8 +137,8 @@ function createDatastoreQuery(model, namespace) {
     });
 }
 exports.createDatastoreQuery = createDatastoreQuery;
-function createHashFromQuery(query) {
-    const dataString = `namespace:${query.namespace != null ? query.namespace : ""}
+function createDataStringFromQuery(query) {
+    return `namespace:${query.namespace != null ? query.namespace : ""}
 kinds:${query.kinds.join("-KIND_JOIN-")}
 filters:${JSON.stringify(query.filters)}
 limit:${query.limitVal}
@@ -144,7 +148,20 @@ select:${query.selectVal.join("-SELECT_JOIN-")}
 groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
 start:${query.startVal}
 end:${query.endVal}`;
-    return crypto.createHash("sha1").update(dataString).digest("base64");
+}
+exports.createDataStringFromQuery = createDataStringFromQuery;
+function createHashFromQuery(query) {
+    /*const dataString = `namespace:${query.namespace != null ? query.namespace : ""}
+  kinds:${query.kinds.join("-KIND_JOIN-")}
+  filters:${JSON.stringify(query.filters)}
+  limit:${query.limitVal}
+  offset:${query.offsetVal}
+  orders:${query.orders.join("-ORDERS_JOIN-")}
+  select:${query.selectVal.join("-SELECT_JOIN-")}
+  groupBy:${query.groupByVal.join("-GROUP_BY_JOIN-")}
+  start:${query.startVal}
+  end:${query.endVal}`;*/
+    return crypto.createHash("sha1").update(createDataStringFromQuery(query)).digest("base64");
 }
 exports.createHashFromQuery = createHashFromQuery;
 const serializableKeyName = "__pebblebed_serializable_key__";

@@ -104,6 +104,7 @@ export interface DatastoreQueryRegular<T> {
     randomOne(): DatastoreQuerySingleReturn<T>;
     flushQueryInCache(): Promise<any>;
     run(): Promise<DatastoreQueryResponse<T>>;
+    run(throwIfNotFound: true): Promise<DatastoreQueryResponse<T>>;
 }
 export interface DatastoreQuerySingleReturn<T> {
     filter: TFilterFunction<T, DatastoreQuerySingleReturn<T>>;
@@ -124,7 +125,8 @@ export interface DatastoreQuerySingleReturn<T> {
     last(): DatastoreQuerySingleReturn<T>;
     randomOne(): DatastoreQuerySingleReturn<T>;
     flushQueryInCache(): Promise<any>;
-    run(): Promise<T>;
+    run(): Promise<T | null>;
+    run(throwIfNotFound: true): Promise<T>;
 }
 export interface InternalDatastoreQueryFilter {
     name: string;
