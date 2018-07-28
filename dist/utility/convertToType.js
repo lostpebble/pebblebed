@@ -33,7 +33,6 @@ function convertToType(value, type) {
             return value;
         }
         case "serializedJson": {
-            console.log(`Serializing Javascript Object`);
             return JSON.stringify(value);
         }
         default: {

@@ -5,13 +5,17 @@
 import PebblebedModel from "./PebblebedModel";
 import Core from "./Core";
 
-export function throwError(message: string) {
-  throw new Error(message);
+export function throwError(msg: string) {
+  throw new Error(message(msg));
 }
 
-export function warn(message: string) {
+export function errorNoThrow(msg: string) {
+  console.error(message(msg));
+}
+
+export function warn(msg: string) {
   if (!Core.Instance.isProductionEnv) {
-    console.warn(message);
+    console.warn(message(msg));
   }
 }
 

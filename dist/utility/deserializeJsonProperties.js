@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Messaging_1 = require("../Messaging");
 function deserializeJsonProperties(respArray, schema) {
     const reviveProperties = [];
     for (const property in schema) {
@@ -13,11 +14,23 @@ function deserializeJsonProperties(respArray, schema) {
         for (const entity of respArray) {
             for (const property of reviveProperties) {
                 if (entity[property] != null) {
-                    if (schema[property].reviver != null) {
-                        entity[property] = JSON.parse(entity[property], schema[property].reviver);
+                    try {
+                        if (schema[property].reviver != null) {
+                            entity[property] = JSON.parse(entity[property], schema[property].reviver);
+                        }
+                        else {
+                            entity[property] = JSON.parse(entity[property]);
+                        }
                     }
-                    else {
-                        entity[property] = JSON.parse(entity[property]);
+                    catch (e) {
+                        if (typeof entity[property] === "string") {
+                            Messaging_1.errorNoThrow(`Trying to deserialize entity property with a JSON string type has failed. The string could me malformed JSON and cannot convert.\n${e.message}`);
+                            console.error(e);
+                        }
+                        else {
+                            Messaging_1.errorNoThrow(`Trying to deserialize entity property with a JSON string type has failed. It appears to not be a string at all: typeof = ${typeof entity[property]}`);
+                            console.error(e);
+                        }
                     }
                 }
             }

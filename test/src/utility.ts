@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-const { performance } = require("perf_hooks");
+const { performance, PerformanceEntry } = require("perf_hooks");
 
 export async function waitSeconds(seconds: number) {
   return new Promise((resolve) => {

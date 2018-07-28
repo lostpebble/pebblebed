@@ -81,7 +81,14 @@ class DatastoreLoad extends DatastoreOperation_1.default {
             }
             else {
                 if (this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnLoad) {
-                    let cachedEntities = yield Core_1.default.Instance.cacheStore.getEntitiesByKeys(loadKeys);
+                    let cachedEntities = null;
+                    try {
+                        cachedEntities = yield Core_1.default.Instance.cacheStore.getEntitiesByKeys(loadKeys);
+                    }
+                    catch (e) {
+                        Messaging_1.errorNoThrow(`Loading from cache error: ${e.message}`);
+                        console.error(e);
+                    }
                     if (cachedEntities != null && cachedEntities.length > 0) {
                         resp = [];
                         resp.push(cachedEntities.map((entity, index) => {
@@ -102,7 +109,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
             }
             let entities = resp[0];
             if (entities.length === 0 && throwIfNotFound) {
-                console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n\n${loadKeys.map((loadKey) => `${JSON.stringify(loadKey, null, 2)}`).join("\n")}`);
+                console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n${loadKeys.map((loadKey) => `(ns)${loadKey.namespace}->${loadKey.path.join(":")}`).join("\n")}`);
                 Messaging_1.throwError(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s), see server log for more detail`);
             }
             if (this.returnOnlyEntity != null) {

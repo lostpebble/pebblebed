@@ -2,9 +2,6 @@ import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import { DatastoreEntityKey } from "../";
 export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
-    first(): IDatastoreLoadSingleReturn<T>;
-    last(): IDatastoreLoadSingleReturn<T>;
-    randomOne(): IDatastoreLoadSingleReturn<T>;
     run(): Promise<T | null>;
     run(throwIfNotFound: true): Promise<T>;
 }

@@ -15,6 +15,7 @@ const buildDataFromSchema_1 = require("../utility/buildDataFromSchema");
 const extractSavedIds_1 = require("../utility/extractSavedIds");
 const replaceIncompleteWithAllocatedIds_1 = require("../utility/replaceIncompleteWithAllocatedIds");
 const Messaging_1 = require("../Messaging");
+const serializeJsonProperties_1 = require("../utility/serializeJsonProperties");
 class DatastoreSave extends DatastoreOperation_1.default {
     constructor(model, data) {
         super(model);
@@ -47,6 +48,8 @@ class DatastoreSave extends DatastoreOperation_1.default {
     run() {
         return __awaiter(this, void 0, void 0, function* () {
             const baseKey = this.getBaseKey();
+            const cachingEnabled = this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnSave;
+            const cachableEntitySourceData = [];
             const entities = this.dataObjects.map(data => {
                 let setAncestors = baseKey;
                 let id = null;
@@ -109,11 +112,15 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 const key = id
                     ? this.createFullKey(setAncestors.concat([this.kind, id]), entityKey)
                     : this.createFullKey(setAncestors.concat([this.kind]), entityKey);
+                const generated = (id == null);
+                if (cachingEnabled) {
+                    cachableEntitySourceData.push({ key, data, generated });
+                }
                 const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
                 return {
                     key,
                     excludeFromIndexes,
-                    generated: id == null,
+                    generated,
                     data: dataObject,
                 };
             });
@@ -135,12 +142,12 @@ class DatastoreSave extends DatastoreOperation_1.default {
             }
             return Core_1.default.Instance.ds.save(entities).then(data => {
                 const saveResponse = extractSavedIds_1.default(data)[0];
-                if (this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnSave && entities.length > 0) {
+                if (cachingEnabled && cachableEntitySourceData.length > 0) {
                     const cacheEntities = [];
-                    for (let i = 0; i < entities.length; i += 1) {
-                        cacheEntities.push(Object.assign({ [Core_1.default.Instance.dsModule.KEY]: entities[i].key }, entities[i].data));
+                    for (let i = 0; i < cachableEntitySourceData.length; i += 1) {
+                        cacheEntities.push(Object.assign({ [Core_1.default.Instance.dsModule.KEY]: cachableEntitySourceData[i].key }, cachableEntitySourceData[i].data));
                         // Get the generated IDs from the save response (it returns the generated IDs on save)
-                        if (entities[i].generated) {
+                        if (cachableEntitySourceData[i].generated) {
                             cacheEntities[i][Core_1.default.Instance.dsModule.KEY].path.push(saveResponse.generatedIds[i]);
                             if (this.idType === "int") {
                                 cacheEntities[i][Core_1.default.Instance.dsModule.KEY].id = saveResponse.generatedIds[i];
@@ -151,6 +158,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         }
                     }
                     if (cacheEntities.length > 0) {
+                        serializeJsonProperties_1.default(cacheEntities, this.schema);
                         Core_1.default.Instance.cacheStore.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
                     }
                 }

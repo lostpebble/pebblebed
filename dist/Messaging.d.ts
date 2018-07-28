@@ -3,8 +3,9 @@
  *
  */
 import PebblebedModel from "./PebblebedModel";
-export declare function throwError(message: string): void;
-export declare function warn(message: string): void;
+export declare function throwError(msg: string): void;
+export declare function errorNoThrow(msg: string): void;
+export declare function warn(msg: string): void;
 export declare function LOAD_QUERY_DATA_ID_TYPE_ERROR(kind: string, wrongType: string, rightType: string, idProperty: string, id: number | string): string;
 export declare const CreateMessage: {
     NO_GOOGLE_CLOUD_DEPENDENCY: string;

@@ -3,12 +3,20 @@ import { IDSTestEntityStringId, TestEntityStringIdModel } from "../entities/Test
 import { inspect } from "util";
 import { Pebblebed } from "pebblebed";
 import { printMarkMeasurements, waitSeconds } from "../utility";
-const { performance } = require("perf_hooks");
+const { performance, PerformanceEntry, PerformanceObserver } = require("perf_hooks");
 const datastore = require("@google-cloud/datastore");
 
 const doubleQueryValue = datastore.double(20);
 
 export async function runAllOperations(prefix: string = "") {
+  /*const obs = new PerformanceObserver((list, observer) => {
+    console.log(printMarkMeasurements(list.getEntriesByType("mark"), prefix));
+    performance.clearMarks();
+    observer.disconnect();
+  });
+
+  obs.observe({ entryTypes: ["mark"], buffered: true });*/
+
   console.warn(`RUNNING ------> ${prefix} <------ OPERATIONS`);
 
   const entityGenerated: IDSTestEntityIntId = {
@@ -200,7 +208,7 @@ export async function runAllOperations(prefix: string = "") {
   console.log("\nLOAD: Test Cache (after delete) with key String ID Entity\n", inspect(await TestEntityStringIdModel.load(key).run()));
   performance.mark("TEST_CACHE_LOAD_WITH_KEY_AFTER_DELETE:STRING_ID");
 
-  printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
+  // printMarkMeasurements(performance.getEntriesByType("mark"), prefix);
 
   performance.clearMarks();
 }

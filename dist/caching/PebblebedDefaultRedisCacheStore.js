@@ -15,6 +15,10 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
     constructor(ioRedisClient) {
         super();
         this.namespace = "PEBBLEBED";
+        if (process.env.PEBBLEBED_REDIS_CACHE_NAMESPACE) {
+            console.info(`Pebblebed: Using Redis Cache namespace from environment variable: PEBBLEBED_REDIS_CACHE_NAMESPACE = "${process.env.PEBBLEBED_REDIS_CACHE_NAMESPACE}"`);
+            this.namespace = process.env.PEBBLEBED_REDIS_CACHE_NAMESPACE;
+        }
         this.redis = ioRedisClient;
     }
     createEntityCacheKey(dsKey) {

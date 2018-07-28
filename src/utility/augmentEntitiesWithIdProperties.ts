@@ -1,5 +1,6 @@
 import Core from "../Core";
-import { CreateMessage, warn } from "../Messaging";
+import { CreateMessage, throwError, warn } from "../Messaging";
+import { DatastoreEntityKey } from "..";
 
 export default function augmentEntitiesWithIdProperties(
   respArray: any[],
@@ -8,9 +9,16 @@ export default function augmentEntitiesWithIdProperties(
   kind: string
 ) {
   for (const entity of respArray) {
-    if (entity[Object.getOwnPropertySymbols(entity)[0]].hasOwnProperty("id")) {
+    const key: DatastoreEntityKey = entity[Core.Instance.dsModule.KEY];
+
+    if (!key) {
+      console.error(entity);
+      throwError(`Something went wrong trying to augment an entity with its ID property from the Datastore key - please make sure you are not running two libraries of @google-cloud/datastore somehow`);
+    }
+
+    if (key.hasOwnProperty("id")) {
       if (type === "int") {
-        entity[idProperty] = entity[Core.Instance.dsModule.KEY].id;
+        entity[idProperty] = key.id;
       } else {
         warn(
           CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(
@@ -24,9 +32,9 @@ export default function augmentEntitiesWithIdProperties(
       }
     }
 
-    if (entity[Core.Instance.dsModule.KEY].hasOwnProperty("name")) {
+    if (key.hasOwnProperty("name")) {
       if (type === "string") {
-        entity[idProperty] = entity[Core.Instance.dsModule.KEY].name;
+        entity[idProperty] = key.name;
       } else {
         warn(
           CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(

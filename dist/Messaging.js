@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Core_1 = require("./Core");
-function throwError(message) {
-    throw new Error(message);
+function throwError(msg) {
+    throw new Error(message(msg));
 }
 exports.throwError = throwError;
-function warn(message) {
+function errorNoThrow(msg) {
+    console.error(message(msg));
+}
+exports.errorNoThrow = errorNoThrow;
+function warn(msg) {
     if (!Core_1.default.Instance.isProductionEnv) {
-        console.warn(message);
+        console.warn(message(msg));
     }
 }
 exports.warn = warn;

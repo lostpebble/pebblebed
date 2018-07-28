@@ -3,15 +3,15 @@ import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
-import { CreateMessage, throwError } from "../Messaging";
+import { CreateMessage, errorNoThrow, throwError, warn } from "../Messaging";
 import { TReturnOnly, DatastoreEntityKey } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
 export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
-  first(): IDatastoreLoadSingleReturn<T>;
-  last(): IDatastoreLoadSingleReturn<T>;
-  randomOne(): IDatastoreLoadSingleReturn<T>;
+  // first(): IDatastoreLoadSingleReturn<T>;
+  // last(): IDatastoreLoadSingleReturn<T>;
+  // randomOne(): IDatastoreLoadSingleReturn<T>;
   run(): Promise<T|null>;
   run(throwIfNotFound: true): Promise<T>;
 }
@@ -99,7 +99,14 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       resp = await this.transaction.get(loadKeys);
     } else {
       if (this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnLoad) {
-        let cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
+        let cachedEntities = null;
+
+        try {
+          cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
+        } catch (e) {
+          errorNoThrow(`Loading from cache error: ${e.message}`);
+          console.error(e);
+        }
 
         if (cachedEntities != null && cachedEntities.length > 0) {
           resp = [];
@@ -122,7 +129,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
     let entities = resp[0];
 
     if (entities.length === 0 && throwIfNotFound) {
-      console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n\n${loadKeys.map((loadKey) => `${JSON.stringify(loadKey, null, 2)}`).join("\n")}`);
+      console.error(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s):\n${loadKeys.map((loadKey) => `(ns)${loadKey.namespace}->${loadKey.path.join(":")}`).join("\n")}`);
       throwError(`Couldn't find ${this.model.entityKind} entity(s) with specified key(s), see server log for more detail`);
     }
 

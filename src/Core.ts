@@ -32,9 +32,9 @@ export default class Core {
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         throwError(CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
+      } else {
+        throw e;
       }
-
-      throw e;
     }
   }
 

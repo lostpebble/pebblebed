@@ -10,6 +10,7 @@ import { IDSTestEntityIntId, TestEntityIntIdModel } from "./entities/TestEntityI
 import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
 import { testPickingOut } from "./tests/_testPickingOut";
 import { runExample } from "./tests/candyExample";
+import { runCachingSerializationTests } from "./tests/_cachingSerializationTests";
 
 const redis = new IoRedisLib();
 
@@ -19,10 +20,16 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 async function runTests() {
+  console.log(`Starting tests`);
+
+  // Pebblebed.setCacheStore(new PebblebedDefaultRedisCacheStore(redis));
+  // await runCachingSerializationTests();
+
+  // require("./errors/datastore-key-issue");
   console.log("Running allOperations");
 
-  await testPickingOut();
   await runAllOperations("BASIC_NO_CACHE");
+  await testPickingOut();
 
   await redis.flushall();
 
@@ -32,6 +39,8 @@ async function runTests() {
   await runAllOperations("SECOND_RUN_DEFAULT_REDIS_CACHE");
 
   await testPickingOut();
+
+  await runCachingSerializationTests();
 
   await TestEntityIntIdModel.delete((await TestEntityIntIdModel.query().run()).entities).run();
 

@@ -21,7 +21,9 @@ class Core {
             if (e.code === "MODULE_NOT_FOUND") {
                 Messaging_1.throwError(Messaging_1.CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
             }
-            throw e;
+            else {
+                throw e;
+            }
         }
     }
     static get Instance() {
