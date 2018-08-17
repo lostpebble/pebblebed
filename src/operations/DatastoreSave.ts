@@ -120,7 +120,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
         const validation = Core.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
 
         if (validation.error !== null) {
-          throwError(`Pebblebed: On save entity of kind -> ${this.model.entityKind} : ${validation.error}`);
+          throwError(`On save entity of kind -> ${this.model.entityKind} : ${validation.error}`);
         }
       }
 

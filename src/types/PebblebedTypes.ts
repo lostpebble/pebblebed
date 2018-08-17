@@ -87,9 +87,9 @@ export interface DatastoreEntityKey {
 
 export interface DatastoreQueryResponse<T> {
   entities: T[];
-  info?: {
-    endCursor?: string;
-    moreResults?: string;
+  info: {
+    endCursor: string;
+    moreResults: string;
   };
 }
 
