@@ -74,6 +74,10 @@ export interface DatastoreEntityKey {
     parent?: DatastoreEntityKey;
     path: string[];
 }
+export interface DatastoreKeyOnlySelection {
+    id: string;
+    [key: string]: any;
+}
 export interface DatastoreQueryResponse<T> {
     entities: T[];
     info: {
@@ -98,6 +102,7 @@ export interface DatastoreQueryRegular<T> {
     offset(number: number): DatastoreQueryRegular<T>;
     groupBy(properties: string[]): DatastoreQueryRegular<T>;
     start(nextPageCursor: any): DatastoreQueryRegular<T>;
+    select(property: "__key__"): DatastoreQueryRegular<DatastoreKeyOnlySelection>;
     select(property: string | string[]): DatastoreQueryRegular<T>;
     first(): DatastoreQuerySingleReturn<T>;
     last(): DatastoreQuerySingleReturn<T>;
@@ -120,6 +125,7 @@ export interface DatastoreQuerySingleReturn<T> {
     offset(number: number): DatastoreQuerySingleReturn<T>;
     groupBy(properties: string[]): DatastoreQuerySingleReturn<T>;
     start(nextPageCursor: any): DatastoreQuerySingleReturn<T>;
+    select(property: "__key__"): DatastoreQuerySingleReturn<DatastoreKeyOnlySelection>;
     select(property: string | string[]): DatastoreQuerySingleReturn<T>;
     first(): DatastoreQuerySingleReturn<T>;
     last(): DatastoreQuerySingleReturn<T>;

@@ -10,4 +10,5 @@ __export(require("./validation/PebblebedDataTypes"));
 __export(require("./validation/PebblebedValidation"));
 __export(require("./caching/PebblebedCacheStore"));
 __export(require("./caching/PebblebedDefaultRedisCacheStore"));
+__export(require("./userUtils/QueryUtils"));
 //# sourceMappingURL=index.js.map
