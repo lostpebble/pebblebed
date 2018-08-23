@@ -32,8 +32,6 @@ PebblebedValidations._AVJoiSchemaDefaultMetaInput = null;
 class PebblebedJoiSchema {
     constructor(schema) {
         this.__isPebblebedJoiSchema = true;
-        this.schema = null;
-        this.basicSchemaObject = null;
         this.defaultMeta = {
             indexed: true,
             nullValueIfUnset: true,

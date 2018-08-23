@@ -8,10 +8,10 @@ export class DatastoreBaseOperation<T> {
   protected modelOptions: IPebblebedModelOptions;
   protected kind: string;
   protected schema: SchemaDefinition<any>;
-  protected idProperty: string;
+  protected idProperty: string|null;
   protected idType: string;
   protected hasIdProperty = false;
-  protected namespace = null;
+  protected namespace: string|null|undefined = null;
   protected deliberateNamespace = false;
   protected ancestors: Array<[string, string | number]> = [];
 
@@ -51,7 +51,7 @@ export class DatastoreBaseOperation<T> {
     return key;
   };
 
-  protected createFullKey(fullPath, entityKey?: DatastoreEntityKey): DatastoreEntityKey {
+  protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey {
     if (entityKey && !this.deliberateNamespace) {
       this.namespace = entityKey.namespace || null;
     }
@@ -71,7 +71,7 @@ export class DatastoreBaseOperation<T> {
   }
 
   protected getBaseKey() {
-    const baseKey = [];
+    const baseKey: any[] = [];
 
     for (const ancestor of this.ancestors) {
       baseKey.push(ancestor[0], ancestor[1]);

@@ -3,7 +3,7 @@ import { get } from "./BasicUtils";
 export default function extractSavedIds(data) {
   const results = get(data, [0, "mutationResults"], null);
 
-  const ids = [];
+  const ids: string[] = [];
 
   if (results) {
     for (const result of results) {

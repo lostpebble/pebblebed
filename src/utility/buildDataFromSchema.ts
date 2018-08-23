@@ -35,7 +35,7 @@ export default function buildDataFromSchema(
         if (!(value === null || value === undefined)) {
           dataObject[property] = convertToType(value, schemaProp.type);
         } else if (schemaProp.required) {
-          throwError(CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
+          throwError(CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind!));
         } else if (!(value === undefined)) {
           dataObject[property] = value;
         } else if (!schemaProp.optional || schemaProp.hasOwnProperty("default")) {

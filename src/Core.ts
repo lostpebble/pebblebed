@@ -13,12 +13,12 @@ export default class Core {
 
   public ds: any;
   public dsModule: any;
-  public namespace: string = null;
+  public namespace: string | null = null;
   public isProductionEnv = process.env.NODE_ENV === "production";
   public defaultCachingSeconds = 60 * 5;
   public validations = true;
   public caching = true;
-  public cacheStore: PebblebedCacheStore = null;
+  public cacheStore: PebblebedCacheStore | null = null;
 
   public cacheDefaults: ICacheDefaults = {
     onSave: true,
@@ -31,6 +31,7 @@ export default class Core {
       this.dsModule = require("@google-cloud/datastore");
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
+        console.error(e);
         throwError(CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
       } else {
         throw e;
@@ -66,9 +67,9 @@ export default class Core {
 
   public setCacheDefaults(newDefaults: Partial<ICacheDefaults>) {
     Object.assign(this.cacheDefaults, newDefaults);
-  };
+  }
 
-  public setNamespace(namespace: string) {
+  public setNamespace(namespace: string | null) {
     this.namespace = namespace;
   }
 

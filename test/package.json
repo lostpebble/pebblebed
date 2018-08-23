@@ -5,7 +5,7 @@
     "node": ">=6.5.0"
   },
   "scripts": {
-    "test": "ts-node --inspect src/runTests.ts"
+    "test": "ts-node --preserve-symlinks --inspect src/runTests.ts"
   },
   "repository": {
     "type": "git",

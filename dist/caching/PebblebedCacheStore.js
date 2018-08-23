@@ -24,13 +24,11 @@ class PebblebedCacheStore {
     setEntitiesAfterLoadOrSave(entities, secondsToCache) {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to cache entities after a load or save, but setEntitiesAfterLoadOrSave() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
     setQueryResponse(queryResponse, queryHash, secondsToCache, queryObject) {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to cache entities after a query, but setQueryResponse() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
     getQueryResponse(queryHash, queryObject) {
@@ -42,25 +40,21 @@ class PebblebedCacheStore {
     flushQueryResponse(queryHash, queryObject) {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to flush a query result out of the cache, but flushQueryResponse() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
     flushEntitiesByKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to flush entities by keys, but flushEntitiesByKeys() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
     flushEntities() {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to flush entities, but flushEntities() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
     flushQueries() {
         return __awaiter(this, void 0, void 0, function* () {
             Messaging_1.warn(`Pebblebed: Caching: Trying to flush queries, but flushQueries() hasn't been implemented in your cache store yet.`);
-            return null;
         });
     }
 }

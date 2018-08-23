@@ -4,11 +4,11 @@ export declare class PebblebedCacheStore {
     cacheOnLoad: boolean;
     cacheOnQuery: boolean;
     getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<null | any[]>;
-    setEntitiesAfterLoadOrSave(entities: any[], secondsToCache: number): Promise<any>;
-    setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number, queryObject?: InternalDatastoreQuery): Promise<any>;
-    getQueryResponse(queryHash: string, queryObject?: InternalDatastoreQuery): Promise<any>;
-    flushQueryResponse(queryHash: string, queryObject?: InternalDatastoreQuery): Promise<any>;
-    flushEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<any>;
-    flushEntities(): Promise<any>;
-    flushQueries(): Promise<any>;
+    setEntitiesAfterLoadOrSave(entities: any[], secondsToCache: number): Promise<void>;
+    setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number, queryObject?: InternalDatastoreQuery): Promise<void>;
+    getQueryResponse<T = any>(queryHash: string, queryObject?: InternalDatastoreQuery): Promise<DatastoreQueryResponse<T>>;
+    flushQueryResponse(queryHash: string, queryObject?: InternalDatastoreQuery): Promise<void>;
+    flushEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<void>;
+    flushEntities(): Promise<void>;
+    flushQueries(): Promise<void>;
 }

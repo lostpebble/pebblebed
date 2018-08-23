@@ -19,6 +19,7 @@ class Core {
         }
         catch (e) {
             if (e.code === "MODULE_NOT_FOUND") {
+                console.error(e);
                 Messaging_1.throwError(Messaging_1.CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
             }
             else {
@@ -49,7 +50,6 @@ class Core {
     setCacheDefaults(newDefaults) {
         Object.assign(this.cacheDefaults, newDefaults);
     }
-    ;
     setNamespace(namespace) {
         this.namespace = namespace;
     }

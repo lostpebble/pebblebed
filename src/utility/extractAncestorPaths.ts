@@ -1,7 +1,7 @@
 import { CreateMessage, throwError } from "../Messaging";
 
 export default function extractAncestorPaths(model, ...args: any[]) {
-  let ancestors = [];
+  let ancestors: any[] = [];
 
   for (let i = 0; i < args.length; i += 2) {
     if (typeof args[i] === "string") {

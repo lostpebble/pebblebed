@@ -9,7 +9,7 @@ export type TReturnOnly = "FIRST" | "LAST" | "RANDOM";
 
 export interface IPebblebedModelOptions {
   neverCache?: boolean;
-  defaultCachingSeconds?: number;
+  defaultCachingSeconds?: number|null;
   defaultNamespace?: string;
 }
 

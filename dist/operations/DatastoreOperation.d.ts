@@ -5,17 +5,17 @@ export declare class DatastoreBaseOperation<T> {
     protected modelOptions: IPebblebedModelOptions;
     protected kind: string;
     protected schema: SchemaDefinition<any>;
-    protected idProperty: string;
+    protected idProperty: string | null;
     protected idType: string;
     protected hasIdProperty: boolean;
-    protected namespace: any;
+    protected namespace: string | null | undefined;
     protected deliberateNamespace: boolean;
     protected ancestors: Array<[string, string | number]>;
     constructor(model: PebblebedModel<T>);
     withAncestors(...args: any[]): this;
     useNamespace(namespace: string): this;
     protected augmentKey: (key: DatastoreEntityKey) => DatastoreEntityKey;
-    protected createFullKey(fullPath: any, entityKey?: DatastoreEntityKey): DatastoreEntityKey;
+    protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey;
     protected getBaseKey(): any[];
 }
 export default class DatastoreOperation<T> extends DatastoreBaseOperation<T> {

@@ -1,4 +1,3 @@
-/// <reference types="ioredis" />
 import { PebblebedCacheStore } from "./PebblebedCacheStore";
 import { Redis } from "ioredis";
 import { DatastoreEntityKey } from "../";
@@ -7,7 +6,7 @@ export declare class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore
     redis: Redis;
     namespace: string;
     constructor(ioRedisClient: Redis);
-    private createEntityCacheKey(dsKey);
+    createEntityCacheKey(dsKey: DatastoreEntityKey): string;
     getEntitiesByKeys(keys: DatastoreEntityKey[]): Promise<any>;
     setEntitiesAfterLoadOrSave(entities: any, secondsToCache: any): Promise<void>;
     setQueryResponse(queryResponse: DatastoreQueryResponse<any>, queryHash: string, secondsToCache: number): Promise<void>;

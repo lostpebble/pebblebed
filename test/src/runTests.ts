@@ -11,6 +11,7 @@ import { TestEntityStringIdModel } from "./entities/TestEntityStringId";
 import { testPickingOut } from "./tests/_testPickingOut";
 import { runExample } from "./tests/candyExample";
 import { runCachingSerializationTests } from "./tests/_cachingSerializationTests";
+import { runCachingChecks } from "./tests/_cachingChecks";
 
 const redis = new IoRedisLib();
 
@@ -28,6 +29,9 @@ async function runTests() {
   // require("./errors/datastore-key-issue");
   console.log("Running allOperations");
 
+  await runCachingChecks();
+
+/*
   await runAllOperations("BASIC_NO_CACHE");
   await testPickingOut();
 
@@ -43,6 +47,7 @@ async function runTests() {
   await runCachingSerializationTests();
 
   await TestEntityIntIdModel.delete((await TestEntityIntIdModel.query().run()).entities).run();
+*/
 
   console.log("Finished");
 

@@ -7,7 +7,7 @@ import {
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
 import Core, { ICacheDefaults } from "./Core";
-import { CreateMessage, throwError } from "./Messaging";
+import { CreateMessage, throwError, warn } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
@@ -17,6 +17,22 @@ export const Pebblebed = {
     Core.Instance.setDatastore(datastore);
 
     console.log("Connecting Pebbledbed to Datastore");
+  },
+
+  get ds() {
+    return Core.Instance.ds;
+  },
+
+  get dsLibrary() {
+    return Core.Instance.dsModule;
+  },
+
+  async flushCacheKeys(keys: DatastoreEntityKey[]) {
+    if (Core.Instance.cacheStore) {
+      await Core.Instance.cacheStore.flushEntitiesByKeys(keys);
+    } else {
+      warn(`Tried to flush keys in cache but there is no cache store connected.`);
+    }
   },
 
   transaction: (): DatastoreTransaction => {
@@ -48,7 +64,7 @@ export const Pebblebed = {
     Core.Instance.setCacheStore(cacheStore);
   },
 
-  setDefaultNamespace: (namespace: string) => {
+  setDefaultNamespace: (namespace: string | null) => {
     if (namespace != null) {
       if (typeof namespace === "string") {
         if (namespace.length > 0) {
@@ -93,7 +109,7 @@ export const Pebblebed = {
   },
 
   key(...args: any[]) {
-    const keyPath = [];
+    const keyPath: string[] = [];
 
     let currentIdType = "unknown";
 
@@ -132,7 +148,7 @@ export const Pebblebed = {
     }
 
     return sourceArray.map(source => {
-      const keyPath = [];
+      const keyPath: any[] = [];
 
       for (let i = 0; i < args.length; i += 2) {
         keyPath.push(args[i], source[args[i + 1] as keyof T]);
@@ -154,8 +170,8 @@ export const Pebblebed = {
     const keys: DatastoreEntityKey[] = [];
 
     for (const source of sourceArray) {
-      const keyPath = [];
-      const kindKeyPath = [];
+      const keyPath: any[] = [];
+      const kindKeyPath: any[] = [];
 
       for (let i = 0; i < args.length; i += 2) {
         keyPath.push(args[i], source[args[i + 1] as keyof T]);

@@ -19,7 +19,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     this.redis = ioRedisClient;
   }
 
-  private createEntityCacheKey(dsKey: DatastoreEntityKey) {
+  createEntityCacheKey(dsKey: DatastoreEntityKey) {
     return `${this.namespace}:${dsKey.namespace}:${dsKey.path.join(":")}`;
   }
 

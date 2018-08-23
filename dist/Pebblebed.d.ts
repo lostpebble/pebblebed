@@ -6,12 +6,15 @@ import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
 export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
+    readonly ds: any;
+    readonly dsLibrary: any;
+    flushCacheKeys(keys: DatastoreEntityKey[]): Promise<void>;
     transaction: () => DatastoreTransaction;
     combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => PebblebedJoiSchema<T>;
     createSchema: <T = any>(schema: TPebblebedJoiSchemaObject<T>) => PebblebedJoiSchema<T>;
     createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options?: IPebblebedModelOptions) => PebblebedModel<T>;
     setCacheStore: (cacheStore: PebblebedCacheStore) => void;
-    setDefaultNamespace: (namespace: string) => void;
+    setDefaultNamespace: (namespace: string | null) => void;
     enableValidations(on?: boolean): void;
     enableCaching(on?: boolean): void;
     setDefaultCachingSeconds: (seconds: number) => void;

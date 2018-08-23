@@ -27,7 +27,7 @@ export interface IDatastoreLoadRegular<T> extends DatastoreOperation<T> {
 export default class DatastoreLoad<T> extends DatastoreOperation<T> implements IDatastoreLoadRegular<T> {
   private loadIds: Array<string | number | DatastoreEntityKey> = [];
   private usingKeys = false;
-  private returnOnlyEntity: TReturnOnly = null;
+  private returnOnlyEntity: TReturnOnly|null = null;
 
   constructor(
     model: PebblebedModel<T>,
@@ -99,7 +99,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       resp = await this.transaction.get(loadKeys);
     } else {
       if (this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnLoad) {
-        let cachedEntities = null;
+        let cachedEntities: any[]|null = null;
 
         try {
           cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);
@@ -142,7 +142,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
     }
 
     if (this.hasIdProperty && entities.length > 0) {
-      augmentEntitiesWithIdProperties(entities, this.idProperty, this.idType, this.kind);
+      augmentEntitiesWithIdProperties(entities, this.idProperty!, this.idType, this.kind);
     }
 
     deserializeJsonProperties(entities, this.schema);

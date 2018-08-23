@@ -1,4 +1,4 @@
-export default function replaceIncompleteWithAllocatedIds(entities: any, transaction?: any): Promise<{
-    ids: any[];
+export default function replaceIncompleteWithAllocatedIds(entities: any, transaction?: any | null): Promise<{
+    ids: (string | null)[];
     newEntities: any;
 }>;

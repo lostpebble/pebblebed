@@ -10,7 +10,8 @@
     "inlineSourceMap": false,
     "declaration": true,
     "sourceRoot": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "strictNullChecks": true
   },
   "exclude": [
     "dist",

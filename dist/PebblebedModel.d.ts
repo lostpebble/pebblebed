@@ -15,7 +15,7 @@ export default class PebblebedModel<T = any> {
     private defaultCachingSeconds;
     private neverCache;
     private defaultNamespace;
-    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {defaultCachingSeconds, neverCache, defaultNamespace}?: IPebblebedModelOptions);
+    constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, { defaultCachingSeconds, neverCache, defaultNamespace, }?: IPebblebedModelOptions);
     getJoiSchema: () => Joi.Schema;
     validate: (data: object | object[]) => {
         positive: boolean;
@@ -27,13 +27,13 @@ export default class PebblebedModel<T = any> {
     key(id: string | number): DatastoreEntityKey;
     delete(data?: T | T[]): DatastoreDelete<T>;
     flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T>;
-    allocateIds(amount: number, withAncestors?: any[]): Promise<Array<DatastoreEntityKey>>;
+    allocateIds(amount: number, withAncestors?: any[] | null): Promise<Array<DatastoreEntityKey>>;
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition<T>;
-    readonly entityIdProperty: string;
+    readonly entityIdProperty: string | null;
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
     readonly entityPebbleSchema: PebblebedJoiSchema<T>;
-    readonly entityDefaultNamespace: any;
+    readonly entityDefaultNamespace: string | undefined;
     readonly modelOptions: IPebblebedModelOptions;
 }

@@ -1,6 +1,6 @@
 import Core from "../Core";
 
-export default async function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
+export default async function replaceIncompleteWithAllocatedIds(entities, transaction: any|null = null) {
   let allocateAmount = 0;
   let incompleteKey = null;
 
@@ -22,7 +22,7 @@ export default async function replaceIncompleteWithAllocatedIds(entities, transa
     allocatedKeys = await Core.Instance.ds.allocateIds(incompleteKey, allocateAmount);
   }
 
-  let ids = [];
+  let ids: (string|null)[] = [];
 
   for (let i = 0; i < entities.length; i += 1) {
     if (entities[i].generated) {

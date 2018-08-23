@@ -20,15 +20,15 @@ import DatastoreFlush from "./operations/DatastoreFlush";
 
 export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
-  private joiSchema: PebblebedJoiSchema<T> = null;
+  private joiSchema: PebblebedJoiSchema<T>;
   private kind: string;
-  private idProperty: string;
+  private idProperty: string|null;
   private idType: string;
   private hasIdProperty = false;
 
-  private defaultCachingSeconds = null;
+  private defaultCachingSeconds: number|null = null;
   private neverCache = false;
-  private defaultNamespace = undefined;
+  private defaultNamespace: undefined|string = undefined;
 
   constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {
     defaultCachingSeconds = null,
@@ -116,13 +116,13 @@ export default class PebblebedModel<T = any> {
     return new DatastoreFlush(this, idsOrKeys);
   }
 
-  public async allocateIds(amount: number, withAncestors: any[] = null): Promise<Array<DatastoreEntityKey>> {
+  public async allocateIds(amount: number, withAncestors: any[]|null = null): Promise<Array<DatastoreEntityKey>> {
     checkDatastore("ALLOCATE IDS");
 
-    let keyPath = [this.kind];
+    let keyPath: any[] = [this.kind];
 
     if (withAncestors != null) {
-      keyPath = [].concat(...extractAncestorPaths(this, ...withAncestors), keyPath);
+      keyPath = ([] as any[]).concat(...extractAncestorPaths(this, ...withAncestors), keyPath);
     }
 
     const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);

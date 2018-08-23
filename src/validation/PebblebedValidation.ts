@@ -48,8 +48,8 @@ class PebblebedValidations {
 
 export class PebblebedJoiSchema<T> {
   public __isPebblebedJoiSchema = true;
-  private schema: Joi.Schema = null;
-  private basicSchemaObject: TPebblebedJoiSchemaObject<T> = null;
+  private schema: Joi.Schema;
+  private basicSchemaObject: TPebblebedJoiSchemaObject<T>;
   private defaultMeta: IOJoiSchemaDefaultMetaInput = {
     indexed: true,
     nullValueIfUnset: true,
@@ -89,14 +89,14 @@ export class PebblebedJoiSchema<T> {
     let roleIdSet = false;
 
     const basicSchema = {
-      __excludeFromIndexes: [],
+      __excludeFromIndexes: ([] as string[]),
     } as SchemaDefinition<T>;
 
     for (const property in entityProperties as IJoiDescribeObject) {
       if (entityProperties.hasOwnProperty(property)) {
         const currentProp: IJoiDescribeObjectProperty = entityProperties[property];
 
-        const propertyExcludeFromIndexes = [];
+        const propertyExcludeFromIndexes: string[] = [];
         const basicPropertyDefinition: Partial<SchemaPropertyDefinition> = {};
 
         if (currentProp.flags) {
@@ -165,7 +165,7 @@ export class PebblebedJoiSchema<T> {
           });
         }
 
-        basicSchema.__excludeFromIndexes = basicSchema.__excludeFromIndexes.concat(
+        basicSchema.__excludeFromIndexes = basicSchema.__excludeFromIndexes!.concat(
           propertyExcludeFromIndexes
         );
         basicSchema[property] = basicPropertyDefinition;

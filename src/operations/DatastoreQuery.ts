@@ -15,7 +15,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
   const idProp = model.entityIdProperty;
   const kind = model.entityKind;
   const hasIdProp = model.entityHasIdProperty;
-  const type = hasIdProp ? model.entitySchema[model.entityIdProperty].type : null;
+  const type = hasIdProp ? model.entitySchema[model.entityIdProperty!].type : null;
   const schema = model.entitySchema;
 
   const ns = namespace !== undefined ? namespace : Core.Instance.namespace;
@@ -32,7 +32,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
     ? false
     : Core.Instance.cacheDefaults.onQuery;
 
-  const returnOnlyEntity: TReturnOnly = null;
+  const returnOnlyEntity: TReturnOnly|null = null;
 
   const cachingTimeSeconds =
     model.modelOptions.defaultCachingSeconds != null
@@ -101,13 +101,13 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
         }
       },
       async run(throwIfNotFound: boolean = false) {
-        let hash = null;
+        let hash: string|null = null;
 
         if (Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnQuery && this.useCache) {
           hash = createHashFromQuery(this);
 
           const queryResponse: DatastoreQueryResponse<T> = await Core.Instance.cacheStore.getQueryResponse(
-            hash,
+            hash!,
             this
           );
 
@@ -127,7 +127,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
         const data = await runQuery();
 
         if (hasIdProp && data[0].length > 0) {
-          augmentEntitiesWithIdProperties(data[0], idProp, type, kind);
+          augmentEntitiesWithIdProperties(data[0], idProp!, type!, kind);
         }
 
         const queryResponse = {
@@ -146,7 +146,7 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: strin
           }
 
           cachingAugmentQueryEntitiesWithSerializableKeys(queryResponse);
-          await Core.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
+          await Core.Instance.cacheStore.setQueryResponse(queryResponse, hash!, this.cachingTimeSeconds, this);
           removeSerializableKeysFromEntities(queryResponse);
         }
 

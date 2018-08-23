@@ -9,12 +9,12 @@ export default class Core {
     private static _redisClient;
     ds: any;
     dsModule: any;
-    namespace: string;
+    namespace: string | null;
     isProductionEnv: boolean;
     defaultCachingSeconds: number;
     validations: boolean;
     caching: boolean;
-    cacheStore: PebblebedCacheStore;
+    cacheStore: PebblebedCacheStore | null;
     cacheDefaults: ICacheDefaults;
     private constructor();
     static readonly Instance: Core;
@@ -22,7 +22,7 @@ export default class Core {
     setDatastore(datastore: any): void;
     setCacheStore(cacheStore: PebblebedCacheStore): void;
     setCacheDefaults(newDefaults: Partial<ICacheDefaults>): void;
-    setNamespace(namespace: string): void;
+    setNamespace(namespace: string | null): void;
     enableValidations(on?: boolean): void;
     enableCaching(on?: boolean): void;
 }

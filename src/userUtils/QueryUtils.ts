@@ -15,7 +15,7 @@ type TRunOnResultsFunction<T> = (results: T[], total: number) => (Promise<IRunOn
 async function paginateThroughQuery<T>(query: DatastoreQueryRegular<T>, runOnResults: TRunOnResultsFunction<T>): Promise<IOPaginateThroughQueryOutput> {
   let more = true;
   let cursor: string | null = null;
-  let nextLimit: number | null = null;
+  let nextLimit: number | undefined = undefined;
   let total = 0;
 
   while (more) {

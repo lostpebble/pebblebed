@@ -6,4 +6,4 @@ export * from "./validation/PebblebedValidation";
 export * from "./caching/PebblebedCacheStore";
 export * from "./caching/PebblebedDefaultRedisCacheStore";
 export * from "./userUtils/QueryUtils";
-export { PebblebedModel };
+export { PebblebedModel, };

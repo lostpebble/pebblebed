@@ -20,7 +20,6 @@ const DatastoreQuery_1 = require("./operations/DatastoreQuery");
 const DatastoreFlush_1 = require("./operations/DatastoreFlush");
 class PebblebedModel {
     constructor(entityKind, entitySchema, { defaultCachingSeconds = null, neverCache = false, defaultNamespace = undefined, } = {}) {
-        this.joiSchema = null;
         this.hasIdProperty = false;
         this.defaultCachingSeconds = null;
         this.neverCache = false;

@@ -9,7 +9,7 @@ export declare type SchemaDefinition<T = any> = SchemaDefinitionProperties<T> & 
 export declare type TReturnOnly = "FIRST" | "LAST" | "RANDOM";
 export interface IPebblebedModelOptions {
     neverCache?: boolean;
-    defaultCachingSeconds?: number;
+    defaultCachingSeconds?: number | null;
     defaultNamespace?: string;
 }
 export interface IOJoiSchemaPropertyMetaInput<T> {

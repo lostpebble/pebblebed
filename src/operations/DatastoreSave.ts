@@ -52,42 +52,42 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
     const baseKey = this.getBaseKey();
 
     const cachingEnabled = this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnSave;
-    const cachableEntitySourceData = [];
+    const cachableEntitySourceData: any[] = [];
 
     const entities = this.dataObjects.map(data => {
       let setAncestors = baseKey;
-      let id = null;
+      let id: string|null = null;
       const entityKey: DatastoreEntityKey = data[Core.Instance.dsModule.KEY];
 
-      if (this.hasIdProperty && data[this.idProperty] != null) {
+      if (this.hasIdProperty && data[this.idProperty!] != null) {
         switch (this.idType) {
           case "string": {
-            if (typeof data[this.idProperty] === "string") {
-              if (data[this.idProperty].length === 0) {
+            if (typeof data[this.idProperty!] === "string") {
+              if (data[this.idProperty!].length === 0) {
                 throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
               }
 
-              id = data[this.idProperty];
+              id = data[this.idProperty!];
             }
             break;
           }
           case "int": {
-            if (isNumber(data[this.idProperty])) {
-              id = Core.Instance.dsModule.int(data[this.idProperty]);
+            if (isNumber(data[this.idProperty!])) {
+              id = Core.Instance.dsModule.int(data[this.idProperty!]);
             }
             break;
           }
         }
 
         if (id == null) {
-          throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty]));
+          throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty!]));
         }
       } else {
         if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
           if (entityKey.hasOwnProperty("id")) {
             id = Core.Instance.dsModule.int(entityKey.id);
           } else {
-            id = entityKey.name;
+            id = entityKey.name!;
           }
         } else {
           if (this.hasIdProperty && (this.idType === "string" || !this.generate)) {
@@ -168,7 +168,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
       const saveResponse = extractSavedIds(data)[0];
 
       if (cachingEnabled && cachableEntitySourceData.length > 0) {
-        const cacheEntities = [];
+        const cacheEntities: any[] = [];
 
         for (let i = 0; i < cachableEntitySourceData.length; i += 1) {
           cacheEntities.push({
@@ -190,7 +190,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
 
         if (cacheEntities.length > 0) {
           serializeJsonProperties(cacheEntities, this.schema);
-          Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
+          Core.Instance.cacheStore!.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
         }
       }
 

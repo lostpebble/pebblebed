@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const PebblebedModel_1 = require("./PebblebedModel");
 const BasicUtils_1 = require("./utility/BasicUtils");
@@ -9,6 +17,22 @@ exports.Pebblebed = {
     connectDatastore: (datastore) => {
         Core_1.default.Instance.setDatastore(datastore);
         console.log("Connecting Pebbledbed to Datastore");
+    },
+    get ds() {
+        return Core_1.default.Instance.ds;
+    },
+    get dsLibrary() {
+        return Core_1.default.Instance.dsModule;
+    },
+    flushCacheKeys(keys) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Core_1.default.Instance.cacheStore) {
+                yield Core_1.default.Instance.cacheStore.flushEntitiesByKeys(keys);
+            }
+            else {
+                Messaging_1.warn(`Tried to flush keys in cache but there is no cache store connected.`);
+            }
+        });
     },
     transaction: () => {
         return Core_1.default.Instance.ds.transaction();

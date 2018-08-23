@@ -75,7 +75,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
 
   public async run() {
     const baseKey = this.getBaseKey();
-    let deleteKeys = [];
+    let deleteKeys: DatastoreEntityKey[] = [];
 
     if (!this.useIds) {
       for (const data of this.dataObjects) {
@@ -83,27 +83,27 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
         let id = null;
         const entityKey = data[Core.Instance.dsModule.KEY];
 
-        if (this.hasIdProperty && data[this.idProperty] != null) {
+        if (this.hasIdProperty && data[this.idProperty!] != null) {
           switch (this.idType) {
             case "int":
-              if (isNumber(data[this.idProperty])) {
-                id = Core.Instance.dsModule.int(data[this.idProperty]);
+              if (isNumber(data[this.idProperty!])) {
+                id = Core.Instance.dsModule.int(data[this.idProperty!]);
               }
               break;
             case "string":
-              if (typeof data[this.idProperty] === "string") {
-                if (data[this.idProperty].length === 0) {
+              if (typeof data[this.idProperty!] === "string") {
+                if (data[this.idProperty!].length === 0) {
                   throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
                 }
 
-                id = data[this.idProperty];
+                id = data[this.idProperty!];
               }
               break;
           }
 
           if (id == null) {
             throwError(
-              CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", data[this.idProperty])
+              CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", data[this.idProperty!])
             );
           }
         } else if (entityKey != null) {
