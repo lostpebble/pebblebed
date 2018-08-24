@@ -116,7 +116,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
         }
       }
 
-      if (this.runValidation && this.model.entityPebbleSchema !== null) {
+      if (this.runValidation && this.model.entityPebbleSchema != null) {
         const validation = Core.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
 
         if (validation.error !== null) {
