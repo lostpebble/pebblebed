@@ -50,7 +50,6 @@ class DatastoreSave extends DatastoreOperation_1.default {
             const baseKey = this.getBaseKey();
             const cachingEnabled = this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnSave;
             const cachableEntitySourceData = [];
-            console.log(`Saving with cache enabled: ${cachingEnabled}`);
             const entities = this.dataObjects.map(data => {
                 let setAncestors = baseKey;
                 let id = null;
@@ -143,8 +142,6 @@ class DatastoreSave extends DatastoreOperation_1.default {
             }
             return Core_1.default.Instance.ds.save(entities).then(data => {
                 const saveResponse = extractSavedIds_1.default(data)[0];
-                console.log(`Cachable Entity Source Data`);
-                console.log(cachableEntitySourceData);
                 if (cachingEnabled && cachableEntitySourceData.length > 0) {
                     const cacheEntities = [];
                     for (let i = 0; i < cachableEntitySourceData.length; i += 1) {
