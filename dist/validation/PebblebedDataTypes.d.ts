@@ -2,6 +2,8 @@ import { IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput, IOJoi
 import * as Joi from "joi";
 export declare type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>> = (meta?: I) => T;
 export declare const PebbleStringId: () => Joi.StringSchema;
+export declare const PebbleStringIdStrict: () => Joi.StringSchema;
+export declare const PebbleStringIdStrictWithFirebase: () => Joi.StringSchema;
 export declare const PebbleIntegerId: () => Joi.NumberSchema;
 export declare const PebbleInteger: TPebblebedJoiTypeFunction<Joi.NumberSchema, number>;
 export declare const PebbleDouble: TPebblebedJoiTypeFunction<Joi.NumberSchema, number>;
@@ -15,6 +17,8 @@ export declare const PebbleSerializedJson: TPebblebedJoiTypeFunction<Joi.AnySche
 export declare const types: {
     integerId: () => Joi.NumberSchema;
     stringId: () => Joi.StringSchema;
+    stringIdStrict: () => Joi.StringSchema;
+    stringIdStrictFirebase: () => Joi.StringSchema;
     integer: TPebblebedJoiTypeFunction<Joi.NumberSchema, number, IOJoiSchemaPropertyMetaInput<number>>;
     string: TPebblebedJoiTypeFunction<Joi.StringSchema, string, IOJoiSchemaPropertyMetaInput<string>>;
     double: TPebblebedJoiTypeFunction<Joi.NumberSchema, number, IOJoiSchemaPropertyMetaInput<number>>;
@@ -24,4 +28,8 @@ export declare const types: {
     array: TPebblebedJoiTypeFunction<Joi.ArraySchema, any[], IOJoiSchemaPropertyMetaInput<any[]>>;
     object: TPebblebedJoiTypeFunction<Joi.ObjectSchema, object, IOJoiSchemaPropertyMetaInput<object> & IOJoiSchemaObjectPropertyMetaInput>;
     serializedJson: TPebblebedJoiTypeFunction<Joi.AnySchema, any, IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput>;
+    specialized: {
+        dateTimeUpdated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date, IOJoiSchemaPropertyMetaInput<Date>>;
+        dateTimeCreated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date, IOJoiSchemaPropertyMetaInput<Date>>;
+    };
 };

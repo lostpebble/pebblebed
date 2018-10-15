@@ -28,6 +28,12 @@ export const PebbleStringId: () => Joi.StringSchema = () =>
       role: "id",
     });
 
+export const PebbleStringIdStrict: () => Joi.StringSchema = () =>
+  PebbleStringId().regex(/^[^\/\s]+$/, "strict Datastore string id");
+
+export const PebbleStringIdStrictWithFirebase: () => Joi.StringSchema = () =>
+  PebbleStringId().regex(/^[^\/\s\[\].$#]+$/, "strict Firebase-compliant string id");
+
 export const PebbleIntegerId: () => Joi.NumberSchema = () =>
   Core.Joi.number()
     .integer()
@@ -137,9 +143,19 @@ export const PebbleSerializedJson: TPebblebedJoiTypeFunction<
     meta
   );
 
+const dateTimeUpdated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
+  return PebbleDateTime({ onSave: () => new Date(), ...meta });
+};
+
+const dateTimeCreated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
+  return PebbleDateTime({ onSave: (date) => date ? date : new Date() });
+};
+
 export const types = {
   integerId: PebbleIntegerId,
   stringId: PebbleStringId,
+  stringIdStrict: PebbleStringIdStrict,
+  stringIdStrictFirebase: PebbleStringIdStrictWithFirebase,
   integer: PebbleInteger,
   string: PebbleString,
   double: PebbleDouble,
@@ -149,4 +165,8 @@ export const types = {
   array: PebbleArray,
   object: PebbleObject,
   serializedJson: PebbleSerializedJson,
+  specialized: {
+    dateTimeUpdated,
+    dateTimeCreated,
+  },
 };

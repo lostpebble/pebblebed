@@ -14,6 +14,8 @@ exports.PebbleStringId = () => Core_1.default.Joi.string()
     type: "string",
     role: "id",
 });
+exports.PebbleStringIdStrict = () => exports.PebbleStringId().regex(/^[^\/\s]+$/, "strict Datastore string id");
+exports.PebbleStringIdStrictWithFirebase = () => exports.PebbleStringId().regex(/^[^\/\s\[\].$#]+$/, "strict Firebase-compliant string id");
 exports.PebbleIntegerId = () => Core_1.default.Joi.number()
     .integer()
     .meta({
@@ -68,9 +70,17 @@ exports.PebbleSerializedJson = (meta = {}) => alterSchemaForPropertyMeta(Core_1.
     type: "serializedJson",
     propertyMeta: meta,
 }), meta);
+const dateTimeUpdated = (meta) => {
+    return exports.PebbleDateTime(Object.assign({ onSave: () => new Date() }, meta));
+};
+const dateTimeCreated = (meta) => {
+    return exports.PebbleDateTime({ onSave: (date) => date ? date : new Date() });
+};
 exports.types = {
     integerId: exports.PebbleIntegerId,
     stringId: exports.PebbleStringId,
+    stringIdStrict: exports.PebbleStringIdStrict,
+    stringIdStrictFirebase: exports.PebbleStringIdStrictWithFirebase,
     integer: exports.PebbleInteger,
     string: exports.PebbleString,
     double: exports.PebbleDouble,
@@ -80,5 +90,9 @@ exports.types = {
     array: exports.PebbleArray,
     object: exports.PebbleObject,
     serializedJson: exports.PebbleSerializedJson,
+    specialized: {
+        dateTimeUpdated,
+        dateTimeCreated,
+    },
 };
 //# sourceMappingURL=PebblebedDataTypes.js.map
