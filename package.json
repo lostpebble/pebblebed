@@ -55,7 +55,7 @@
     "lodash": "^4.17.5",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
-    "typescript": "^3.0.1",
+    "typescript": "3.0.3",
     "ioredis": "^3.2.2",
     "joi": "^13.1.2"
   }
