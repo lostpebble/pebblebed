@@ -50,15 +50,7 @@ export default class DatastoreFlush<T> extends DatastoreBaseOperation<T> {
     let flushKeys;
 
     if (this.usingKeys) {
-      flushKeys = this.flushIds.map((key: DatastoreEntityKey) => {
-        if (this.namespace != null) {
-          key.namespace = this.namespace;
-        } else if (Core.Instance.namespace != null) {
-          key.namespace = Core.Instance.namespace;
-        }
-
-        return key;
-      });
+      flushKeys = this.flushIds.map(this.augmentKey);
     } else {
       const baseKey = this.getBaseKey();
 

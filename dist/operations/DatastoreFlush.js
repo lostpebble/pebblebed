@@ -52,15 +52,7 @@ class DatastoreFlush extends DatastoreOperation_1.DatastoreBaseOperation {
         return __awaiter(this, void 0, void 0, function* () {
             let flushKeys;
             if (this.usingKeys) {
-                flushKeys = this.flushIds.map((key) => {
-                    if (this.namespace != null) {
-                        key.namespace = this.namespace;
-                    }
-                    else if (Core_1.default.Instance.namespace != null) {
-                        key.namespace = Core_1.default.Instance.namespace;
-                    }
-                    return key;
-                });
+                flushKeys = this.flushIds.map(this.augmentKey);
             }
             else {
                 const baseKey = this.getBaseKey();
