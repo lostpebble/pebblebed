@@ -4,24 +4,24 @@ import { DatastoreQueryResponse, InternalDatastoreQuery, TFilterComparator } fro
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import convertToType from "../utility/convertToType";
-import Core from "../Core";
+import Core, { UNSET_NAMESPACE } from "../Core";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import { throwError, warn } from "../Messaging";
 import deserializeJsonProperties from "../utility/deserializeJsonProperties";
 
 const crypto = require("crypto");
 
-export function createDatastoreQuery<T>(model: PebblebedModel, namespace?: string): DatastoreQueryRegular<T> {
+export function createDatastoreQuery<T>(model: PebblebedModel, namespace: string|null): DatastoreQueryRegular<T> {
   const idProp = model.entityIdProperty;
   const kind = model.entityKind;
   const hasIdProp = model.entityHasIdProperty;
   const type = hasIdProp ? model.entitySchema[model.entityIdProperty!].type : null;
   const schema = model.entitySchema;
 
-  const ns = namespace !== undefined ? namespace : Core.Instance.namespace;
+  const ns: string|null = namespace !== UNSET_NAMESPACE ? namespace : (Core.Instance.namespace !== UNSET_NAMESPACE ? Core.Instance.namespace : null);
 
   const dsQuery =
-    ns != null
+    (ns != null && ns !== UNSET_NAMESPACE)
       ? Core.Instance.ds.createQuery(ns, model.entityKind)
       : Core.Instance.ds.createQuery(model.entityKind);
 

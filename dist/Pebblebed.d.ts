@@ -14,6 +14,7 @@ export declare const Pebblebed: {
     createSchema: <T = any>(schema: TPebblebedJoiSchemaObject<T>) => PebblebedJoiSchema<T>;
     createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options?: IPebblebedModelOptions) => PebblebedModel<T>;
     setCacheStore: (cacheStore: PebblebedCacheStore) => void;
+    clearDefaultNamespace: () => void;
     setDefaultNamespace: (namespace: string | null) => void;
     enableValidations(on?: boolean): void;
     enableCaching(on?: boolean): void;

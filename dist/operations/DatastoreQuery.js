@@ -22,8 +22,8 @@ function createDatastoreQuery(model, namespace) {
     const hasIdProp = model.entityHasIdProperty;
     const type = hasIdProp ? model.entitySchema[model.entityIdProperty].type : null;
     const schema = model.entitySchema;
-    const ns = namespace !== undefined ? namespace : Core_1.default.Instance.namespace;
-    const dsQuery = ns != null
+    const ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE ? Core_1.default.Instance.namespace : null);
+    const dsQuery = (ns != null && ns !== Core_1.UNSET_NAMESPACE)
         ? Core_1.default.Instance.ds.createQuery(ns, model.entityKind)
         : Core_1.default.Instance.ds.createQuery(model.entityKind);
     const runQuery = dsQuery.run.bind(dsQuery);

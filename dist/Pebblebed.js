@@ -50,23 +50,24 @@ exports.Pebblebed = {
     setCacheStore: (cacheStore) => {
         Core_1.default.Instance.setCacheStore(cacheStore);
     },
+    clearDefaultNamespace: () => {
+        Core_1.default.Instance.setNamespace(Core_1.UNSET_NAMESPACE);
+    },
     setDefaultNamespace: (namespace) => {
-        if (namespace != null) {
-            if (typeof namespace === "string") {
-                if (namespace.length > 0) {
-                    Core_1.default.Instance.setNamespace(namespace);
-                }
-                else {
-                    Core_1.default.Instance.setNamespace(null);
-                }
+        Core_1.default.Instance.setNamespace(namespace);
+        /*if (namespace != null) {
+          if (typeof namespace === "string") {
+            if (namespace.length > 0) {
+              Core.Instance.setNamespace(namespace);
+            } else {
+              Core.Instance.setNamespace(null);
             }
-            else {
-                Messaging_1.throwError(Messaging_1.CreateMessage.SET_NAMESPACE_INCORRECT);
-            }
-        }
-        else {
-            Core_1.default.Instance.setNamespace(null);
-        }
+          } else {
+            throwError(CreateMessage.SET_NAMESPACE_INCORRECT);
+          }
+        } else {
+          Core.Instance.setNamespace(null);
+        }*/
     },
     enableValidations(on = true) {
         Core_1.default.Instance.enableValidations(on);

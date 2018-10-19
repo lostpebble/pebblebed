@@ -4,6 +4,7 @@ export interface ICacheDefaults {
     onLoad: boolean;
     onQuery: boolean;
 }
+export declare const UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__";
 export default class Core {
     private static _instance;
     private static _redisClient;

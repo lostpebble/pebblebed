@@ -5,19 +5,11 @@ const Core_1 = require("../Core");
 class DatastoreBaseOperation {
     constructor(model) {
         this.hasIdProperty = false;
-        this.namespace = null;
-        this.deliberateNamespace = false;
+        this.defaultNamespace = Core_1.UNSET_NAMESPACE;
+        this.deliberateNamespace = Core_1.UNSET_NAMESPACE;
         this.ancestors = [];
         this.augmentKey = (key) => {
-            if (!this.deliberateNamespace) {
-                this.namespace = key.namespace || null;
-            }
-            if (this.namespace != null) {
-                key.namespace = this.namespace;
-            }
-            else if (Core_1.default.Instance.namespace != null) {
-                key.namespace = Core_1.default.Instance.namespace;
-            }
+            key.namespace = this.getFinalNamespace(key.namespace);
             return key;
         };
         this.model = model;
@@ -27,30 +19,34 @@ class DatastoreBaseOperation {
         this.idProperty = model.entityIdProperty;
         this.idType = model.entityIdType;
         this.hasIdProperty = model.entityHasIdProperty;
-        this.namespace = model.entityDefaultNamespace;
+        this.defaultNamespace = model.entityDefaultNamespace;
     }
     withAncestors(...args) {
         this.ancestors = extractAncestorPaths_1.default(this.model, ...args);
         return this;
     }
     useNamespace(namespace) {
-        this.namespace = namespace;
-        this.deliberateNamespace = true;
+        this.deliberateNamespace = namespace;
         return this;
     }
+    getFinalNamespace(keyOriginalNamespace = undefined) {
+        if (this.deliberateNamespace !== Core_1.UNSET_NAMESPACE) {
+            return this.deliberateNamespace || undefined;
+        }
+        if (this.defaultNamespace !== Core_1.UNSET_NAMESPACE) {
+            return this.defaultNamespace || undefined;
+        }
+        if (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE) {
+            return Core_1.default.Instance.namespace || undefined;
+        }
+        return keyOriginalNamespace;
+    }
     createFullKey(fullPath, entityKey) {
-        if (entityKey && !this.deliberateNamespace) {
-            this.namespace = entityKey.namespace || null;
-        }
-        if (this.namespace != null) {
+        let originalKeyNamespace = entityKey ? entityKey.namespace : undefined;
+        const newNamespace = this.getFinalNamespace(originalKeyNamespace);
+        if (newNamespace !== undefined) {
             return Core_1.default.Instance.ds.key({
-                namespace: this.namespace,
-                path: fullPath,
-            });
-        }
-        else if (Core_1.default.Instance.namespace != null) {
-            return Core_1.default.Instance.ds.key({
-                namespace: Core_1.default.Instance.namespace,
+                namespace: newNamespace,
                 path: fullPath,
             });
         }

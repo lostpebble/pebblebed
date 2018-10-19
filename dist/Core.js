@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Messaging_1 = require("./Messaging");
+exports.UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__";
 class Core {
     constructor() {
-        this.namespace = null;
+        this.namespace = exports.UNSET_NAMESPACE;
         this.isProductionEnv = process.env.NODE_ENV === "production";
         this.defaultCachingSeconds = 60 * 5;
         this.validations = true;

@@ -113,6 +113,9 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     ? this.createFullKey(setAncestors.concat([this.kind, id]), entityKey)
                     : this.createFullKey(setAncestors.concat([this.kind]), entityKey);
                 const generated = (id == null);
+                if (entityKey) {
+                    delete data[Core_1.default.Instance.dsModule.KEY];
+                }
                 if (cachingEnabled) {
                     cachableEntitySourceData.push({ key, data, generated });
                 }

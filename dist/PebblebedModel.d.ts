@@ -23,7 +23,7 @@ export default class PebblebedModel<T = any> {
     };
     save(data: T | T[]): DatastoreSave<T>;
     load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): IDatastoreLoadRegular<T>;
-    query(namespace?: string): DatastoreQueryRegular<T>;
+    query(namespace?: string | null): DatastoreQueryRegular<T>;
     key(id: string | number): DatastoreEntityKey;
     delete(data?: T | T[]): DatastoreDelete<T>;
     flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T>;
@@ -34,6 +34,6 @@ export default class PebblebedModel<T = any> {
     readonly entityIdType: string;
     readonly entityHasIdProperty: boolean;
     readonly entityPebbleSchema: PebblebedJoiSchema<T>;
-    readonly entityDefaultNamespace: string | undefined;
+    readonly entityDefaultNamespace: string;
     readonly modelOptions: IPebblebedModelOptions;
 }

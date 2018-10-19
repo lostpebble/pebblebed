@@ -6,7 +6,7 @@ import {
 } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
-import Core, { ICacheDefaults } from "./Core";
+import Core, { ICacheDefaults, UNSET_NAMESPACE } from "./Core";
 import { CreateMessage, throwError, warn } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
@@ -64,8 +64,13 @@ export const Pebblebed = {
     Core.Instance.setCacheStore(cacheStore);
   },
 
+  clearDefaultNamespace: () => {
+    Core.Instance.setNamespace(UNSET_NAMESPACE);
+  },
+
   setDefaultNamespace: (namespace: string | null) => {
-    if (namespace != null) {
+    Core.Instance.setNamespace(namespace);
+    /*if (namespace != null) {
       if (typeof namespace === "string") {
         if (namespace.length > 0) {
           Core.Instance.setNamespace(namespace);
@@ -77,7 +82,7 @@ export const Pebblebed = {
       }
     } else {
       Core.Instance.setNamespace(null);
-    }
+    }*/
   },
 
   enableValidations(on: boolean = true) {

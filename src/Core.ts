@@ -7,13 +7,15 @@ export interface ICacheDefaults {
   onQuery: boolean;
 }
 
+export const UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__";
+
 export default class Core {
   private static _instance: Core;
   private static _redisClient = null;
 
   public ds: any;
   public dsModule: any;
-  public namespace: string | null = null;
+  public namespace: string | null = UNSET_NAMESPACE;
   public isProductionEnv = process.env.NODE_ENV === "production";
   public defaultCachingSeconds = 60 * 5;
   public validations = true;

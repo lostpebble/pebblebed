@@ -8,12 +8,13 @@ export declare class DatastoreBaseOperation<T> {
     protected idProperty: string | null;
     protected idType: string;
     protected hasIdProperty: boolean;
-    protected namespace: string | null | undefined;
-    protected deliberateNamespace: boolean;
+    protected defaultNamespace: string | null;
+    protected deliberateNamespace: string | null;
     protected ancestors: Array<[string, string | number]>;
     constructor(model: PebblebedModel<T>);
     withAncestors(...args: any[]): this;
-    useNamespace(namespace: string): this;
+    useNamespace(namespace: string | null): this;
+    protected getFinalNamespace(keyOriginalNamespace?: string | undefined): string | undefined;
     protected augmentKey: (key: DatastoreEntityKey) => DatastoreEntityKey;
     protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey;
     protected getBaseKey(): any[];

@@ -1,6 +1,6 @@
 import PebblebedModel from "../PebblebedModel";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
-import Core from "../Core";
+import Core, { UNSET_NAMESPACE } from "../Core";
 import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
 
 export class DatastoreBaseOperation<T> {
@@ -11,8 +11,8 @@ export class DatastoreBaseOperation<T> {
   protected idProperty: string|null;
   protected idType: string;
   protected hasIdProperty = false;
-  protected namespace: string|null|undefined = null;
-  protected deliberateNamespace = false;
+  protected defaultNamespace: string|null = UNSET_NAMESPACE;
+  protected deliberateNamespace: string|null = UNSET_NAMESPACE;
   protected ancestors: Array<[string, string | number]> = [];
 
   constructor(model: PebblebedModel<T>) {
@@ -23,7 +23,7 @@ export class DatastoreBaseOperation<T> {
     this.idProperty = model.entityIdProperty;
     this.idType = model.entityIdType;
     this.hasIdProperty = model.entityHasIdProperty;
-    this.namespace = model.entityDefaultNamespace;
+    this.defaultNamespace = model.entityDefaultNamespace;
   }
 
   public withAncestors(...args: any[]) {
@@ -31,42 +31,44 @@ export class DatastoreBaseOperation<T> {
     return this;
   }
 
-  public useNamespace(namespace: string) {
-    this.namespace = namespace;
-    this.deliberateNamespace = true;
+  public useNamespace(namespace: string|null) {
+    this.deliberateNamespace = namespace;
     return this;
   }
 
+  protected getFinalNamespace(keyOriginalNamespace: string|undefined = undefined): string|undefined {
+    if (this.deliberateNamespace !== UNSET_NAMESPACE) {
+      return this.deliberateNamespace || undefined;
+    }
+
+    if (this.defaultNamespace !== UNSET_NAMESPACE) {
+      return this.defaultNamespace || undefined;
+    }
+
+    if (Core.Instance.namespace !== UNSET_NAMESPACE) {
+      return Core.Instance.namespace || undefined;
+    }
+
+    return keyOriginalNamespace;
+  }
+
   protected augmentKey = (key: DatastoreEntityKey): DatastoreEntityKey => {
-    if (!this.deliberateNamespace) {
-      this.namespace = key.namespace || null;
-    }
-
-    if (this.namespace != null) {
-      key.namespace = this.namespace;
-    } else if (Core.Instance.namespace != null) {
-      key.namespace = Core.Instance.namespace;
-    }
-
+    key.namespace = this.getFinalNamespace(key.namespace);
     return key;
   };
 
   protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey {
-    if (entityKey && !this.deliberateNamespace) {
-      this.namespace = entityKey.namespace || null;
+    let originalKeyNamespace: string|undefined = entityKey ? entityKey.namespace : undefined;
+
+    const newNamespace = this.getFinalNamespace(originalKeyNamespace);
+
+    if (newNamespace !== undefined) {
+      return Core.Instance.ds.key({
+        namespace: newNamespace,
+        path: fullPath,
+      });
     }
 
-    if (this.namespace != null) {
-      return Core.Instance.ds.key({
-        namespace: this.namespace,
-        path: fullPath,
-      });
-    } else if (Core.Instance.namespace != null) {
-      return Core.Instance.ds.key({
-        namespace: Core.Instance.namespace,
-        path: fullPath,
-      });
-    }
     return Core.Instance.ds.key(fullPath);
   }
 

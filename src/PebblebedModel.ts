@@ -7,7 +7,7 @@ import {
 } from "./types/PebblebedTypes";
 import checkDatastore from "./utility/checkDatastore";
 import getIdPropertyFromSchema from "./utility/getIdPropertyFromSchema";
-import Core from "./Core";
+import Core, { UNSET_NAMESPACE } from "./Core";
 import DatastoreSave from "./operations/DatastoreSave";
 import DatastoreLoad, { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
@@ -22,24 +22,28 @@ export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
   private joiSchema: PebblebedJoiSchema<T>;
   private kind: string;
-  private idProperty: string|null;
+  private idProperty: string | null;
   private idType: string;
   private hasIdProperty = false;
 
-  private defaultCachingSeconds: number|null = null;
+  private defaultCachingSeconds: number | null = null;
   private neverCache = false;
-  private defaultNamespace: undefined|string = undefined;
+  private defaultNamespace: string = UNSET_NAMESPACE;
 
-  constructor(entityKind: string, entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>, {
-    defaultCachingSeconds = null,
-    neverCache = false,
-    defaultNamespace = undefined,
-  }: IPebblebedModelOptions = {}) {
+  constructor(
+    entityKind: string,
+    entitySchema: SchemaDefinition<T> | PebblebedJoiSchema<T>,
+    {
+      defaultCachingSeconds = null,
+      neverCache = false,
+      defaultNamespace = UNSET_NAMESPACE,
+    }: IPebblebedModelOptions = {}
+  ) {
     if ((entitySchema as PebblebedJoiSchema<T>).__isPebblebedJoiSchema) {
       this.schema = (entitySchema as PebblebedJoiSchema<T>).__generateBasicSchema();
-      this.joiSchema = (entitySchema as PebblebedJoiSchema<T>);
+      this.joiSchema = entitySchema as PebblebedJoiSchema<T>;
     } else {
-      this.schema = (entitySchema as SchemaDefinition<T>);
+      this.schema = entitySchema as SchemaDefinition<T>;
     }
 
     this.kind = entityKind;
@@ -64,7 +68,9 @@ export default class PebblebedModel<T = any> {
     return this.joiSchema.__getJoiSchema();
   };
 
-  public validate = (data: object | object[]): {
+  public validate = (
+    data: object | object[]
+  ): {
     positive: boolean;
     message: string;
   } => {
@@ -90,14 +96,20 @@ export default class PebblebedModel<T = any> {
     return new DatastoreSave(this, data);
   }
 
-  public load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): IDatastoreLoadRegular<T> {
+  public load(
+    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+  ): IDatastoreLoadRegular<T> {
     checkDatastore("LOAD");
     return new DatastoreLoad<T>(this, idsOrKeys);
   }
 
-  public query(namespace?: string): DatastoreQueryRegular<T> {
+  public query(namespace: string|null = UNSET_NAMESPACE): DatastoreQueryRegular<T> {
     checkDatastore("QUERY");
-    let ns = namespace !== undefined ? namespace : this.defaultNamespace;
+    let ns =
+      namespace !== UNSET_NAMESPACE
+        ? namespace
+        : this.defaultNamespace;
+
     return createDatastoreQuery(this, ns);
   }
 
@@ -111,12 +123,17 @@ export default class PebblebedModel<T = any> {
     return new DatastoreDelete(this, data);
   }
 
-  public flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T> {
+  public flush(
+    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+  ): DatastoreFlush<T> {
     checkDatastore("FLUSH IN CACHE");
     return new DatastoreFlush(this, idsOrKeys);
   }
 
-  public async allocateIds(amount: number, withAncestors: any[]|null = null): Promise<Array<DatastoreEntityKey>> {
+  public async allocateIds(
+    amount: number,
+    withAncestors: any[] | null = null
+  ): Promise<Array<DatastoreEntityKey>> {
     checkDatastore("ALLOCATE IDS");
 
     let keyPath: any[] = [this.kind];

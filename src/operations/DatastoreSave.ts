@@ -130,6 +130,10 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
 
       const generated = (id == null);
 
+      if (entityKey) {
+        delete data[Core.Instance.dsModule.KEY];
+      }
+
       if (cachingEnabled) {
         cachableEntitySourceData.push({ key, data, generated })
       }
