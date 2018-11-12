@@ -103,12 +103,9 @@ export default class PebblebedModel<T = any> {
     return new DatastoreLoad<T>(this, idsOrKeys);
   }
 
-  public query(namespace: string|null = UNSET_NAMESPACE): DatastoreQueryRegular<T> {
+  public query(namespace: string | null = UNSET_NAMESPACE): DatastoreQueryRegular<T> {
     checkDatastore("QUERY");
-    let ns =
-      namespace !== UNSET_NAMESPACE
-        ? namespace
-        : this.defaultNamespace;
+    let ns = namespace !== UNSET_NAMESPACE ? namespace : this.defaultNamespace;
 
     return createDatastoreQuery(this, ns);
   }
@@ -130,11 +127,19 @@ export default class PebblebedModel<T = any> {
     return new DatastoreFlush(this, idsOrKeys);
   }
 
-  public async allocateIds(
-    amount: number,
-    withAncestors: any[] | null = null
-  ): Promise<Array<DatastoreEntityKey>> {
+  public async allocateIds({
+    amount,
+    withAncestors = null,
+    namespace = UNSET_NAMESPACE,
+  }: {
+    amount: number;
+    withAncestors?: any[] | null;
+    namespace?: string|null;
+  }): Promise<Array<DatastoreEntityKey>> {
     checkDatastore("ALLOCATE IDS");
+
+    let ns: string|null = namespace !== UNSET_NAMESPACE ? namespace : this.defaultNamespace;
+    ns = ns !== UNSET_NAMESPACE ? ns : (Core.Instance.namespace !== UNSET_NAMESPACE ? Core.Instance.namespace : null);
 
     let keyPath: any[] = [this.kind];
 
@@ -142,8 +147,16 @@ export default class PebblebedModel<T = any> {
       keyPath = ([] as any[]).concat(...extractAncestorPaths(this, ...withAncestors), keyPath);
     }
 
-    const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);
+    if (ns != null) {
+      const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key({
+        namespace: ns,
+        path: keyPath
+      }), amount);
 
+      return allocateIds[0];
+    }
+
+    const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);
     return allocateIds[0];
   }
 

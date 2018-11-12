@@ -27,7 +27,11 @@ export default class PebblebedModel<T = any> {
     key(id: string | number): DatastoreEntityKey;
     delete(data?: T | T[]): DatastoreDelete<T>;
     flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T>;
-    allocateIds(amount: number, withAncestors?: any[] | null): Promise<Array<DatastoreEntityKey>>;
+    allocateIds({ amount, withAncestors, namespace, }: {
+        amount: number;
+        withAncestors?: any[] | null;
+        namespace?: string | null;
+    }): Promise<Array<DatastoreEntityKey>>;
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition<T>;
     readonly entityIdProperty: string | null;

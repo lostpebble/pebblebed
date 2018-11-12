@@ -37,7 +37,7 @@ class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore_1.PebblebedCac
                     containsNulls = true;
                     return null;
                 });
-                if (containsNulls === false) {
+                if (!containsNulls) {
                     return results;
                 }
             }

@@ -72,9 +72,7 @@ class PebblebedModel {
     }
     query(namespace = Core_1.UNSET_NAMESPACE) {
         checkDatastore_1.default("QUERY");
-        let ns = namespace !== Core_1.UNSET_NAMESPACE
-            ? namespace
-            : this.defaultNamespace;
+        let ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : this.defaultNamespace;
         return DatastoreQuery_1.createDatastoreQuery(this, ns);
     }
     key(id) {
@@ -89,12 +87,21 @@ class PebblebedModel {
         checkDatastore_1.default("FLUSH IN CACHE");
         return new DatastoreFlush_1.default(this, idsOrKeys);
     }
-    allocateIds(amount, withAncestors = null) {
+    allocateIds({ amount, withAncestors = null, namespace = Core_1.UNSET_NAMESPACE, }) {
         return __awaiter(this, void 0, void 0, function* () {
             checkDatastore_1.default("ALLOCATE IDS");
+            let ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : this.defaultNamespace;
+            ns = ns !== Core_1.UNSET_NAMESPACE ? ns : (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE ? Core_1.default.Instance.namespace : null);
             let keyPath = [this.kind];
             if (withAncestors != null) {
                 keyPath = [].concat(...extractAncestorPaths_1.default(this, ...withAncestors), keyPath);
+            }
+            if (ns != null) {
+                const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.ds.key({
+                    namespace: ns,
+                    path: keyPath
+                }), amount);
+                return allocateIds[0];
             }
             const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.ds.key(keyPath), amount);
             return allocateIds[0];

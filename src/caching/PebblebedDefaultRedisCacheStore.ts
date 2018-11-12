@@ -30,6 +30,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
       const redisResult = await this.redis.mget(...keyStrings);
 
       let containsNulls = false;
+
       const results = redisResult.map((result) => {
         if (result != null) {
           return JSON.parse(result, reviveDateObjects);
@@ -39,7 +40,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
         return null;
       });
 
-      if (containsNulls === false) {
+      if (!containsNulls) {
         return results;
       }
     }
