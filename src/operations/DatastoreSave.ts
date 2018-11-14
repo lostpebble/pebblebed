@@ -6,8 +6,9 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { DatastoreEntityKey } from "..";
+import { DatastoreEntityKey, EDebugPointId } from "..";
 import serializeJsonProperties from "../utility/serializeJsonProperties";
+import { debugPoint } from "../debugging/DebugUtils";
 
 export default class DatastoreSave<T> extends DatastoreOperation<T> {
   private dataObjects: any[];
@@ -147,6 +148,8 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
         data: dataObject,
       };
     });
+
+    debugPoint(EDebugPointId.ON_SAVE_BUILT_ENTITIES, entities);
 
     if (this.transaction) {
       if (this.transAllocateIds) {

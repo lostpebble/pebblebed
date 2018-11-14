@@ -1,5 +1,6 @@
 import PebblebedModel from "./PebblebedModel";
 export * from "./Pebblebed";
+export * from "./PebblebedGlobalConfig";
 export * from "./types/PebblebedTypes";
 export * from "./validation/PebblebedDataTypes";
 export * from "./validation/PebblebedValidation";

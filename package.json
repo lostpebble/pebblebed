@@ -2,48 +2,60 @@
   "name": "pebblebed",
   "version": "1.0.0-beta.0",
   "description": "Simplified interactions with Google Datastore for NodeJS",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "engines": {
-    "node": ">=6.5.0"
-  },
-  "scripts": {
-    "build": "npm run build-es6",
-    "watch": "npm run watch-es6",
-    "build-es2017": "rimraf ./dist-next tsc --p tsconfig.next.json",
-    "watch-es2017": "tsc --p tsconfig.next.json --watch",
-    "build-es6": "rimraf ./dist && tsc",
-    "watch-es6": "tsc --watch",
-    "prepublish": "in-publish && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "cut-patch-release": "npm version patch && git push --follow-tags && npm publish",
-    "cut-minor-release": "npm version minor && git push --follow-tags && npm publish",
-    "cut-major-release": "npm version major && git push --follow-tags && npm publish"
+  "keywords": [
+    "cloud",
+    "datastore",
+    "entities",
+    "google",
+    "load",
+    "nodejs",
+    "query",
+    "save"
+  ],
+  "homepage": "https://github.com/lostpebble/pebblebed#readme",
+  "bugs": {
+    "url": "https://github.com/lostpebble/pebblebed/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lostpebble/pebblebed.git"
   },
-  "keywords": [
-    "google",
-    "cloud",
-    "datastore",
-    "nodejs",
-    "entities",
-    "query",
-    "load",
-    "save"
-  ],
-  "author": "Paul Myburgh",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/lostpebble/pebblebed/issues"
+  "author": "Paul Myburgh",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "npm run build-es6",
+    "build-es2017": "rimraf ./dist-next tsc --p tsconfig.next.json",
+    "build-es6": "rimraf ./dist && tsc",
+    "cut-major-release": "npm version major && git push --follow-tags && npm publish",
+    "cut-minor-release": "npm version minor && git push --follow-tags && npm publish",
+    "cut-patch-release": "npm version patch && git push --follow-tags && npm publish",
+    "prepublish": "in-publish && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm run watch-es6",
+    "watch-es2017": "tsc --p tsconfig.next.json --watch",
+    "watch-es6": "tsc --watch"
   },
-  "homepage": "https://github.com/lostpebble/pebblebed#readme",
-  "peerDependencies": {
-    "@google-cloud/datastore": "^1.3.3",
-    "ioredis": "^3.2.2",
-    "joi": "^13.1.2"
+  "jest": {
+    "bail": false,
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testEnvironment": "jsdom",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "verbose": true
+  },
+  "dependencies": {
+    "dynamic-config-store": "^1.0.3"
   },
   "devDependencies": {
     "@types/ioredis": "^3.2.7",
@@ -52,11 +64,20 @@
     "@types/node": "^8.0.17",
     "concurrently": "^3.5.0",
     "in-publish": "^2.0.0",
+    "ioredis": "^3.2.2",
+    "jest": "^23.6.0",
+    "joi": "^13.1.2",
     "lodash": "^4.17.5",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
-    "typescript": "3.0.3",
+    "typescript": "3.0.3"
+  },
+  "peerDependencies": {
+    "@google-cloud/datastore": "^1.3.3",
     "ioredis": "^3.2.2",
     "joi": "^13.1.2"
+  },
+  "engines": {
+    "node": ">=6.5.0"
   }
 }

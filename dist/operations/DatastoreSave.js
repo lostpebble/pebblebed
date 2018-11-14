@@ -15,7 +15,9 @@ const buildDataFromSchema_1 = require("../utility/buildDataFromSchema");
 const extractSavedIds_1 = require("../utility/extractSavedIds");
 const replaceIncompleteWithAllocatedIds_1 = require("../utility/replaceIncompleteWithAllocatedIds");
 const Messaging_1 = require("../Messaging");
+const __1 = require("..");
 const serializeJsonProperties_1 = require("../utility/serializeJsonProperties");
+const DebugUtils_1 = require("../debugging/DebugUtils");
 class DatastoreSave extends DatastoreOperation_1.default {
     constructor(model, data) {
         super(model);
@@ -127,6 +129,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     data: dataObject,
                 };
             });
+            DebugUtils_1.debugPoint(__1.EDebugPointId.ON_SAVE_BUILT_ENTITIES, entities);
             if (this.transaction) {
                 if (this.transAllocateIds) {
                     const { newEntities, ids } = yield replaceIncompleteWithAllocatedIds_1.default(entities, this.transaction);
