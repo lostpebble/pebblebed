@@ -25,6 +25,7 @@ class PebblebedValidations {
         required: Core.Joi.bool().default(false),
         indexed: Core.Joi.bool().default(true),
         reviver: Core.Joi.func().default(null),
+        joiSchema: Core.Joi.any().default(null),
         role: Core.Joi.string().valid(["id"]),
         onSave: Core.Joi.func(),
         nullValueIfUnset: Core.Joi.bool().default(true),

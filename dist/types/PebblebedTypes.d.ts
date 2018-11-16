@@ -24,6 +24,7 @@ export interface IOJoiSchemaObjectPropertyMetaInput {
 }
 export interface IOJoiSchemaSerializedJsonPropertyMetaInput {
     reviver?: (key: any, value: any) => any;
+    joiSchema?: Joi.Schema;
 }
 export interface IOJoiSchemaDefaultMetaInput {
     indexed?: boolean;

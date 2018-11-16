@@ -40,7 +40,9 @@ exports.PebbleGeoPoint = (meta = {}) => alterSchemaForPropertyMeta(Core_1.defaul
     type: "geoPoint",
     propertyMeta: meta,
 }), meta);
-exports.PebbleString = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.string().allow("").meta({
+exports.PebbleString = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.string()
+    .allow("")
+    .meta({
     __typeDefinition: true,
     type: "string",
     propertyMeta: meta,
@@ -65,16 +67,22 @@ exports.PebbleObject = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.
     type: "object",
     propertyMeta: meta,
 }), meta);
-exports.PebbleSerializedJson = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.any().meta({
-    __typeDefinition: true,
-    type: "serializedJson",
-    propertyMeta: meta,
-}), meta);
+exports.PebbleSerializedJson = (meta = {}) => meta.joiSchema != null
+    ? alterSchemaForPropertyMeta(meta.joiSchema.meta({
+        __typeDefinition: true,
+        type: "serializedJson",
+        propertyMeta: meta,
+    }), meta)
+    : alterSchemaForPropertyMeta(Core_1.default.Joi.any().meta({
+        __typeDefinition: true,
+        type: "serializedJson",
+        propertyMeta: meta,
+    }), meta);
 const dateTimeUpdated = (meta) => {
     return exports.PebbleDateTime(Object.assign({ onSave: () => new Date() }, meta));
 };
 const dateTimeCreated = (meta) => {
-    return exports.PebbleDateTime({ onSave: (date) => date ? date : new Date() });
+    return exports.PebbleDateTime({ onSave: date => (date ? date : new Date()) });
 };
 exports.types = {
     integerId: exports.PebbleIntegerId,

@@ -77,11 +77,13 @@ export const PebbleGeoPoint: TPebblebedJoiTypeFunction<Joi.AnySchema, any> = (me
 
 export const PebbleString: TPebblebedJoiTypeFunction<Joi.StringSchema, string> = (meta = {}) =>
   alterSchemaForPropertyMeta<Joi.StringSchema, string>(
-    Core.Joi.string().allow("").meta({
-      __typeDefinition: true,
-      type: "string",
-      propertyMeta: meta,
-    }),
+    Core.Joi.string()
+      .allow("")
+      .meta({
+        __typeDefinition: true,
+        type: "string",
+        propertyMeta: meta,
+      }),
     meta
   );
 
@@ -134,21 +136,30 @@ export const PebbleSerializedJson: TPebblebedJoiTypeFunction<
   any,
   IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput
 > = (meta = {}) =>
-  alterSchemaForPropertyMeta<Joi.AnySchema, any>(
-    Core.Joi.any().meta({
-      __typeDefinition: true,
-      type: "serializedJson",
-      propertyMeta: meta,
-    }),
-    meta
-  );
+  meta.joiSchema != null
+    ? alterSchemaForPropertyMeta<Joi.AnySchema, any>(
+        meta.joiSchema.meta({
+          __typeDefinition: true,
+          type: "serializedJson",
+          propertyMeta: meta,
+        }),
+        meta
+      )
+    : alterSchemaForPropertyMeta<Joi.AnySchema, any>(
+        Core.Joi.any().meta({
+          __typeDefinition: true,
+          type: "serializedJson",
+          propertyMeta: meta,
+        }),
+        meta
+      );
 
 const dateTimeUpdated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
   return PebbleDateTime({ onSave: () => new Date(), ...meta });
 };
 
 const dateTimeCreated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
-  return PebbleDateTime({ onSave: (date) => date ? date : new Date() });
+  return PebbleDateTime({ onSave: date => (date ? date : new Date()) });
 };
 
 export const types = {
