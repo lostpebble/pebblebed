@@ -142,7 +142,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 return {
                     get generatedIds() {
                         Messaging_1.warn(Messaging_1.CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
-                        return null;
+                        return [null];
                     },
                 };
             }

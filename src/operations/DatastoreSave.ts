@@ -49,7 +49,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
     return this;
   }
 
-  public async run() {
+  public async run(): Promise<{ generatedIds: (string|null)[] }> {
     const baseKey = this.getBaseKey();
 
     const cachingEnabled = this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnSave;
@@ -166,7 +166,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
       return {
         get generatedIds() {
           warn(CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
-          return null;
+          return [null];
         },
       };
     }

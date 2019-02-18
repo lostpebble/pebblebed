@@ -11,5 +11,7 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
     }): this;
     generateUnsetIds(): this;
     ignoreDetectedAncestors(): this;
-    run(): Promise<any>;
+    run(): Promise<{
+        generatedIds: (string | null)[];
+    }>;
 }
