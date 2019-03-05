@@ -41,7 +41,9 @@ class PebblebedJoiSchema {
         this.schema = JoiUtils_1.JoiUtils.createObjectValidator(schema);
     }
     setDefaultMeta(defaultMeta) {
-        const validate = Core_1.default.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, { allowUnknown: false });
+        const validate = Core_1.default.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, {
+            allowUnknown: false,
+        });
         if (validate.error != null) {
             Messaging_1.throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error}`);
         }

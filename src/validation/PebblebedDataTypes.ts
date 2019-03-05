@@ -6,7 +6,10 @@ import {
 import Core from "../Core";
 import * as Joi from "joi";
 
-export type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>> = (meta?: I) => T;
+export type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>, E = any> = (
+  meta?: I,
+  extraOptions?: E
+) => T;
 
 function alterSchemaForPropertyMeta<T extends Joi.AnySchema, K>(
   schema: T,
@@ -75,15 +78,30 @@ export const PebbleGeoPoint: TPebblebedJoiTypeFunction<Joi.AnySchema, any> = (me
     meta
   );
 
-export const PebbleString: TPebblebedJoiTypeFunction<Joi.StringSchema, string> = (meta = {}) =>
+interface IPebbleStringExtraOptions {
+  allowEmpty?: boolean;
+}
+
+export const PebbleString: TPebblebedJoiTypeFunction<
+  Joi.StringSchema,
+  string,
+  IOJoiSchemaPropertyMetaInput<string>,
+  IPebbleStringExtraOptions
+> = (meta = {}, { allowEmpty = true }: IPebbleStringExtraOptions = {}) =>
   alterSchemaForPropertyMeta<Joi.StringSchema, string>(
-    Core.Joi.string()
-      .allow("")
-      .meta({
-        __typeDefinition: true,
-        type: "string",
-        propertyMeta: meta,
-      }),
+    allowEmpty
+      ? Core.Joi.string()
+          .allow("")
+          .meta({
+            __typeDefinition: true,
+            type: "string",
+            propertyMeta: meta,
+          })
+      : Core.Joi.string().min(1).meta({
+          __typeDefinition: true,
+          type: "string",
+          propertyMeta: meta,
+        }),
     meta
   );
 

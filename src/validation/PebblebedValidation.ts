@@ -3,12 +3,13 @@ import { JoiUtils, TPebblebedJoiSchemaObject } from "../utility/JoiUtils";
 import {
   IOJoiSchemaDefaultMetaInput,
   IOJoiSchemaPropertyMetaInput,
-  IOJoiSchemaSerializedJsonPropertyMetaInput
+  IOJoiSchemaSerializedJsonPropertyMetaInput,
 } from "../types/PebblebedTypes";
 import { throwError, warn } from "../Messaging";
 import {
   IJoiDescribeObject,
-  IJoiDescribeObjectProperty, IPebblebedJoiSchema,
+  IJoiDescribeObjectProperty,
+  IPebblebedJoiSchema,
   SchemaDefinition,
   SchemaPropertyDefinition,
 } from "../";
@@ -21,7 +22,9 @@ class PebblebedValidations {
 
   static get AVJoiSchemaPropertyMetaInput() {
     if (this._AVJoiSchemaPropertyMetaInput == null) {
-      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput>({
+      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<
+        IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput
+      >({
         required: Core.Joi.bool().default(false),
         indexed: Core.Joi.bool().default(true),
         reviver: Core.Joi.func().default(null),
@@ -62,7 +65,9 @@ export class PebblebedJoiSchema<T> {
   }
 
   setDefaultMeta(defaultMeta: IOJoiSchemaDefaultMetaInput) {
-    const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, { allowUnknown: false });
+    const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, {
+      allowUnknown: false,
+    });
 
     if (validate.error != null) {
       throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error}`);
@@ -90,7 +95,7 @@ export class PebblebedJoiSchema<T> {
     let roleIdSet = false;
 
     const basicSchema = {
-      __excludeFromIndexes: ([] as string[]),
+      __excludeFromIndexes: [] as string[],
     } as SchemaDefinition<T>;
 
     for (const property in entityProperties as IJoiDescribeObject) {
@@ -125,10 +130,16 @@ export class PebblebedJoiSchema<T> {
                   );
                 }
               } else {
-                const validate = Core.Joi.validate(metaObject.propertyMeta, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
+                const validate = Core.Joi.validate(
+                  metaObject.propertyMeta,
+                  PebblebedValidations.AVJoiSchemaPropertyMetaInput,
+                  { allowUnknown: false }
+                );
 
                 if (validate.error != null) {
-                  throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
+                  throwError(
+                    `Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`
+                  );
                 }
 
                 const propertyMeta = Object.assign({}, this.defaultMeta, metaObject.propertyMeta);

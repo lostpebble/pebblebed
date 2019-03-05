@@ -40,13 +40,19 @@ exports.PebbleGeoPoint = (meta = {}) => alterSchemaForPropertyMeta(Core_1.defaul
     type: "geoPoint",
     propertyMeta: meta,
 }), meta);
-exports.PebbleString = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.string()
-    .allow("")
-    .meta({
-    __typeDefinition: true,
-    type: "string",
-    propertyMeta: meta,
-}), meta);
+exports.PebbleString = (meta = {}, { allowEmpty = true } = {}) => alterSchemaForPropertyMeta(allowEmpty
+    ? Core_1.default.Joi.string()
+        .allow("")
+        .meta({
+        __typeDefinition: true,
+        type: "string",
+        propertyMeta: meta,
+    })
+    : Core_1.default.Joi.string().min(1).meta({
+        __typeDefinition: true,
+        type: "string",
+        propertyMeta: meta,
+    }), meta);
 exports.PebbleBoolean = (meta = {}) => alterSchemaForPropertyMeta(Core_1.default.Joi.boolean().meta({
     __typeDefinition: true,
     type: "boolean",
