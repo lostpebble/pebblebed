@@ -18,12 +18,34 @@ const Messaging_1 = require("../Messaging");
 const __1 = require("..");
 const serializeJsonProperties_1 = require("../utility/serializeJsonProperties");
 const DebugUtils_1 = require("../debugging/DebugUtils");
+const convertSaveEntitesToRegular_1 = require("../utility/convertSaveEntitesToRegular");
+/*export interface IDatastoreSaveReturnEntities<T> extends DatastoreOperation<T> {
+  useTransaction(
+    transaction: any,
+    options?: {
+      allocateIdsNow?: boolean,
+    }
+  ): IDatastoreSaveRegular<T>;
+  run(): Promise<{ generatedIds: (string|null)[], savedEntities?: T[] }>;
+}
+
+export interface IDatastoreSaveRegular<T> extends DatastoreOperation<T> {
+  useTransaction(
+    transaction: any,
+    options?: {
+      allocateIdsNow?: boolean,
+    }
+  ): IDatastoreSaveRegular<T>;
+  returnSavedEntities(): IDatastoreSaveReturnEntities<T>;
+  run(): Promise<{ generatedIds: (string|null)[] }>;
+}*/
 class DatastoreSave extends DatastoreOperation_1.default {
     constructor(model, data) {
         super(model);
         this.ignoreAnc = false;
         this.generate = false;
         this.transAllocateIds = false;
+        this.returnSaved = false;
         this.useCache = this.useCache ? Core_1.default.Instance.cacheDefaults.onSave : false;
         if (Array.isArray(data)) {
             this.dataObjects = data;
@@ -45,6 +67,10 @@ class DatastoreSave extends DatastoreOperation_1.default {
     }
     ignoreDetectedAncestors() {
         this.ignoreAnc = true;
+        return this;
+    }
+    returnSavedEntities() {
+        this.returnSaved = true;
         return this;
     }
     run() {
@@ -118,10 +144,10 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 if (entityKey) {
                     delete data[Core_1.default.Instance.dsModule.KEY];
                 }
-                if (cachingEnabled) {
-                    cachableEntitySourceData.push({ key, data, generated });
-                }
                 const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
+                if (cachingEnabled) {
+                    cachableEntitySourceData.push({ key, data: dataObject, generated });
+                }
                 return {
                     key,
                     excludeFromIndexes,
@@ -134,19 +160,19 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 if (this.transAllocateIds) {
                     const { newEntities, ids } = yield replaceIncompleteWithAllocatedIds_1.default(entities, this.transaction);
                     this.transaction.save(newEntities);
-                    return {
-                        generatedIds: ids,
-                    };
+                    return Object.assign({ generatedIds: ids }, this.returnSaved && {
+                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType),
+                    });
                 }
                 this.transaction.save(entities);
-                return {
-                    get generatedIds() {
+                return Object.assign({ get generatedIds() {
                         Messaging_1.warn(Messaging_1.CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
                         return [null];
-                    },
-                };
+                    } }, this.returnSaved && {
+                    savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities, this.idProperty, this.idType),
+                });
             }
-            return Core_1.default.Instance.ds.save(entities).then(data => {
+            return Core_1.default.Instance.ds.save(entities).then((data) => {
                 const saveResponse = extractSavedIds_1.default(data)[0];
                 if (cachingEnabled && cachableEntitySourceData.length > 0) {
                     const cacheEntities = [];
@@ -167,6 +193,23 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         serializeJsonProperties_1.default(cacheEntities, this.schema);
                         Core_1.default.Instance.cacheStore.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
                     }
+                }
+                if (this.returnSaved) {
+                    return {
+                        generatedIds: saveResponse.generatedIds,
+                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities.map((e, i) => {
+                            if (e.generated) {
+                                e.key.path.push(saveResponse.generatedIds[i]);
+                                if (this.idType === "int") {
+                                    e.key.id = saveResponse.generatedIds[i];
+                                }
+                                else {
+                                    e.key.name = saveResponse.generatedIds[i];
+                                }
+                            }
+                            return e;
+                        }), this.idProperty, this.idType),
+                    };
                 }
                 return saveResponse;
             });

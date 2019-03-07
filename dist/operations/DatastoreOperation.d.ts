@@ -6,7 +6,7 @@ export declare class DatastoreBaseOperation<T> {
     protected kind: string;
     protected schema: SchemaDefinition<any>;
     protected idProperty: string | null;
-    protected idType: string;
+    protected idType: "string" | "int";
     protected hasIdProperty: boolean;
     protected defaultNamespace: string | null;
     protected deliberateNamespace: string | null;

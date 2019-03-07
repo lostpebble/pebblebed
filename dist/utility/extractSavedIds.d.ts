@@ -1,1 +1,3 @@
-export default function extractSavedIds(data: any): any;
+export default function extractSavedIds(data: any): [{
+    generatedIds: string[];
+}];

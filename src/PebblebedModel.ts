@@ -23,7 +23,7 @@ export default class PebblebedModel<T = any> {
   private joiSchema: PebblebedJoiSchema<T>;
   private kind: string;
   private idProperty: string | null;
-  private idType: string;
+  private idType: "string" | "int";
   private hasIdProperty = false;
 
   private defaultCachingSeconds: number | null = null;
@@ -93,7 +93,7 @@ export default class PebblebedModel<T = any> {
 
   public save(data: T | T[]): DatastoreSave<T> {
     checkDatastore("SAVE");
-    return new DatastoreSave(this, data);
+    return new DatastoreSave<T>(this, data);
   }
 
   public load(

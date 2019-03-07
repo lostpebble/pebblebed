@@ -12,6 +12,12 @@ export interface IPebblebedModelOptions {
     defaultCachingSeconds?: number | null;
     defaultNamespace?: string;
 }
+export interface IPebblebedSaveEntity<T> {
+    key: DatastoreEntityKey;
+    excludeFromIndexes: string[];
+    generated: boolean;
+    data: T;
+}
 export interface IOJoiSchemaPropertyMetaInput<T> {
     role?: "id";
     indexed?: boolean;

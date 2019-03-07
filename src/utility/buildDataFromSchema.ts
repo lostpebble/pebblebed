@@ -6,13 +6,13 @@ const schemaOptionProps = {
   __excludeFromIndexes: true,
 };
 
-export default function buildDataFromSchema(
+export default function buildDataFromSchema<T>(
   data: any,
   schema: SchemaDefinition<any>,
   entityKind?: string
-): { excludeFromIndexes: string[]; dataObject: object } {
+): { excludeFromIndexes: string[]; dataObject: T } {
   let excludeFromIndexesArray: string[] = [];
-  const dataObject = {};
+  const dataObject: T = {} as T;
 
   for (const property in schema) {
     if (schema.hasOwnProperty(property) && !schemaOptionProps[property]) {

@@ -6,15 +6,40 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { DatastoreEntityKey, EDebugPointId } from "..";
+import { DatastoreEntityKey, EDebugPointId, IPebblebedSaveEntity } from "..";
 import serializeJsonProperties from "../utility/serializeJsonProperties";
 import { debugPoint } from "../debugging/DebugUtils";
+import { convertSaveEntitiesToRegular } from "../utility/convertSaveEntitesToRegular";
 
-export default class DatastoreSave<T> extends DatastoreOperation<T> {
+interface IOSaveRunResponse<T> { generatedIds: (string|null)[], savedEntities?: T[] }
+
+/*export interface IDatastoreSaveReturnEntities<T> extends DatastoreOperation<T> {
+  useTransaction(
+    transaction: any,
+    options?: {
+      allocateIdsNow?: boolean,
+    }
+  ): IDatastoreSaveRegular<T>;
+  run(): Promise<{ generatedIds: (string|null)[], savedEntities?: T[] }>;
+}
+
+export interface IDatastoreSaveRegular<T> extends DatastoreOperation<T> {
+  useTransaction(
+    transaction: any,
+    options?: {
+      allocateIdsNow?: boolean,
+    }
+  ): IDatastoreSaveRegular<T>;
+  returnSavedEntities(): IDatastoreSaveReturnEntities<T>;
+  run(): Promise<{ generatedIds: (string|null)[] }>;
+}*/
+
+export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generatedIds: (string|null)[] }> extends DatastoreOperation<T> {
   private dataObjects: any[];
   private ignoreAnc = false;
   private generate = false;
   private transAllocateIds = false;
+  private returnSaved = false;
 
   constructor(model: PebblebedModel<T>, data: T | T[]) {
     super(model);
@@ -49,13 +74,18 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
     return this;
   }
 
-  public async run(): Promise<{ generatedIds: (string|null)[] }> {
+  public returnSavedEntities(): DatastoreSave<T, { generatedIds: (string|null)[], savedEntities: T[] }> {
+    this.returnSaved = true;
+    return this as DatastoreSave<T, { generatedIds: (string|null)[], savedEntities: T[] }>;
+  }
+
+  public async run(): Promise<R> {
     const baseKey = this.getBaseKey();
 
     const cachingEnabled = this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnSave;
     const cachableEntitySourceData: any[] = [];
 
-    const entities = this.dataObjects.map(data => {
+    const entities: IPebblebedSaveEntity<T>[] = this.dataObjects.map(data => {
       let setAncestors = baseKey;
       let id: string|null = null;
       const entityKey: DatastoreEntityKey = data[Core.Instance.dsModule.KEY];
@@ -135,11 +165,11 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
         delete data[Core.Instance.dsModule.KEY];
       }
 
-      if (cachingEnabled) {
-        cachableEntitySourceData.push({ key, data, generated })
-      }
-
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
+
+      if (cachingEnabled) {
+        cachableEntitySourceData.push({ key, data: dataObject, generated })
+      }
 
       return {
         key,
@@ -153,12 +183,15 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
 
     if (this.transaction) {
       if (this.transAllocateIds) {
-        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds(entities, this.transaction);
+        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds<T>(entities, this.transaction);
         this.transaction.save(newEntities);
 
         return {
           generatedIds: ids,
-        };
+          ...this.returnSaved && {
+            savedEntities: convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType),
+          },
+        } as R;
       }
 
       this.transaction.save(entities);
@@ -168,10 +201,13 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
           warn(CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
           return [null];
         },
-      };
+        ...this.returnSaved && {
+          savedEntities: convertSaveEntitiesToRegular(entities, this.idProperty, this.idType),
+        },
+      }  as R;
     }
 
-    return Core.Instance.ds.save(entities).then(data => {
+    return Core.Instance.ds.save(entities).then((data): R => {
       const saveResponse = extractSavedIds(data)[0];
 
       if (cachingEnabled && cachableEntitySourceData.length > 0) {
@@ -201,7 +237,25 @@ export default class DatastoreSave<T> extends DatastoreOperation<T> {
         }
       }
 
-      return saveResponse;
+      if (this.returnSaved) {
+        return {
+          generatedIds: saveResponse.generatedIds,
+          savedEntities: convertSaveEntitiesToRegular(entities.map((e, i) => {
+            if (e.generated) {
+              e.key.path.push(saveResponse.generatedIds[i]);
+
+              if (this.idType === "int") {
+                e.key.id = saveResponse.generatedIds[i];
+              } else {
+                e.key.name = saveResponse.generatedIds[i];
+              }
+            }
+            return e;
+          }), this.idProperty, this.idType),
+        } as R
+      }
+
+      return saveResponse as R;
     });
   }
 }

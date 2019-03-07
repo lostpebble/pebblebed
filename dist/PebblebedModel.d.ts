@@ -35,7 +35,7 @@ export default class PebblebedModel<T = any> {
     readonly entityKind: string;
     readonly entitySchema: SchemaDefinition<T>;
     readonly entityIdProperty: string | null;
-    readonly entityIdType: string;
+    readonly entityIdType: "string" | "int";
     readonly entityHasIdProperty: boolean;
     readonly entityPebbleSchema: PebblebedJoiSchema<T>;
     readonly entityDefaultNamespace: string;

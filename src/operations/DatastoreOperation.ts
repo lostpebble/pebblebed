@@ -9,7 +9,7 @@ export class DatastoreBaseOperation<T> {
   protected kind: string;
   protected schema: SchemaDefinition<any>;
   protected idProperty: string|null;
-  protected idType: string;
+  protected idType: "string" | "int";
   protected hasIdProperty = false;
   protected defaultNamespace: string|null = UNSET_NAMESPACE;
   protected deliberateNamespace: string|null = UNSET_NAMESPACE;

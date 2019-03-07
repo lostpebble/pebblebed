@@ -1,4 +1,5 @@
-export default function replaceIncompleteWithAllocatedIds(entities: any, transaction?: any | null): Promise<{
+import { IPebblebedSaveEntity } from "..";
+export default function replaceIncompleteWithAllocatedIds<T>(entities: IPebblebedSaveEntity<T>[], transaction?: any | null): Promise<{
     ids: (string | null)[];
-    newEntities: any;
+    newEntities: IPebblebedSaveEntity<T>[];
 }>;

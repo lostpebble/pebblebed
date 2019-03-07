@@ -1,6 +1,6 @@
 import { get } from "./BasicUtils";
 
-export default function extractSavedIds(data) {
+export default function extractSavedIds(data): [{ generatedIds: string[] }] {
   const results = get(data, [0, "mutationResults"], null);
 
   const ids: string[] = [];
