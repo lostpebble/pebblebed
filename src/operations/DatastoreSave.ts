@@ -2,7 +2,7 @@ import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
-import buildDataFromSchema from "../utility/buildDataFromSchema";
+import buildDataFromSchema, { preBuildDataFromSchema } from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
@@ -10,6 +10,7 @@ import { DatastoreEntityKey, EDebugPointId, IPebblebedSaveEntity } from "..";
 import serializeJsonProperties from "../utility/serializeJsonProperties";
 import { debugPoint } from "../debugging/DebugUtils";
 import { convertSaveEntitiesToRegular } from "../utility/convertSaveEntitesToRegular";
+import { convertDatastoreDataToRegularData } from "../utility/convertDatastoreDataToRegular";
 
 interface IOSaveRunResponse<T> { generatedIds: (string|null)[], savedEntities?: T[] }
 
@@ -168,7 +169,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
 
       if (cachingEnabled) {
-        cachableEntitySourceData.push({ key, data: dataObject, generated })
+        cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegularData(dataObject), generated })
       }
 
       return {

@@ -1,5 +1,6 @@
 import { IPebblebedSaveEntity } from "..";
 import Core from "../Core";
+import { convertDatastoreDataToRegularData } from "./convertDatastoreDataToRegular";
 
 export function convertSaveEntitiesToRegular<T>(
   saveEntities: IPebblebedSaveEntity<T>[],
@@ -10,7 +11,7 @@ export function convertSaveEntitiesToRegular<T>(
     (e): T =>
       ({
         [Core.Instance.dsModule.KEY]: e.key,
-        ...(e.data as any),
+        ...convertDatastoreDataToRegularData(e.data),
         ...(idProperty != null && { [idProperty]: idType === "string" ? e.key.name : e.key.id }),
       } as any)
   );

@@ -6,6 +6,37 @@ const schemaOptionProps = {
   __excludeFromIndexes: true,
 };
 
+export function preBuildDataFromSchema<T>(
+  data: any,
+  schema: SchemaDefinition<any>,
+): T {
+  const dataObject: T = {} as T;
+
+  for (const property of Object.keys(schema)) {
+    if (!schemaOptionProps[property]) {
+      const schemaProp: SchemaPropertyDefinition = schema[property];
+
+      if (schemaProp.role !== "id") {
+        let value: any = data[property];
+
+        if (schemaProp.onSave && typeof schemaProp.onSave === "function") {
+          value = schemaProp.onSave(value);
+        }
+
+        if (value === undefined && (!schemaProp.optional || schemaProp.hasOwnProperty("default"))) {
+          dataObject[property] = schemaProp.default != null ? schemaProp.default : null;
+        }
+
+        dataObject[property] = value;
+      } else {
+        dataObject[property] = data[property];
+      }
+    }
+  }
+
+  return dataObject;
+}
+
 export default function buildDataFromSchema<T>(
   data: any,
   schema: SchemaDefinition<any>,

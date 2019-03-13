@@ -19,6 +19,7 @@ const __1 = require("..");
 const serializeJsonProperties_1 = require("../utility/serializeJsonProperties");
 const DebugUtils_1 = require("../debugging/DebugUtils");
 const convertSaveEntitesToRegular_1 = require("../utility/convertSaveEntitesToRegular");
+const convertDatastoreDataToRegular_1 = require("../utility/convertDatastoreDataToRegular");
 /*export interface IDatastoreSaveReturnEntities<T> extends DatastoreOperation<T> {
   useTransaction(
     transaction: any,
@@ -146,7 +147,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 }
                 const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
                 if (cachingEnabled) {
-                    cachableEntitySourceData.push({ key, data: dataObject, generated });
+                    cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegular_1.convertDatastoreDataToRegularData(dataObject), generated });
                 }
                 return {
                     key,

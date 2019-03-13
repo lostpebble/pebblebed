@@ -5,6 +5,29 @@ const Messaging_1 = require("../Messaging");
 const schemaOptionProps = {
     __excludeFromIndexes: true,
 };
+function preBuildDataFromSchema(data, schema) {
+    const dataObject = {};
+    for (const property of Object.keys(schema)) {
+        if (!schemaOptionProps[property]) {
+            const schemaProp = schema[property];
+            if (schemaProp.role !== "id") {
+                let value = data[property];
+                if (schemaProp.onSave && typeof schemaProp.onSave === "function") {
+                    value = schemaProp.onSave(value);
+                }
+                if (value === undefined && (!schemaProp.optional || schemaProp.hasOwnProperty("default"))) {
+                    dataObject[property] = schemaProp.default != null ? schemaProp.default : null;
+                }
+                dataObject[property] = value;
+            }
+            else {
+                dataObject[property] = data[property];
+            }
+        }
+    }
+    return dataObject;
+}
+exports.preBuildDataFromSchema = preBuildDataFromSchema;
 function buildDataFromSchema(data, schema, entityKind) {
     let excludeFromIndexesArray = [];
     const dataObject = {};
