@@ -97,13 +97,13 @@ class PebblebedModel {
                 keyPath = [].concat(...extractAncestorPaths_1.default(this, ...withAncestors), keyPath);
             }
             if (ns != null) {
-                const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.ds.key({
+                const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.dsModule.key({
                     namespace: ns,
                     path: keyPath
                 }), amount);
                 return allocateIds[0];
             }
-            const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.ds.key(keyPath), amount);
+            const allocateIds = yield Core_1.default.Instance.dsModule.allocateIds(Core_1.default.Instance.dsModule.key(keyPath), amount);
             return allocateIds[0];
         });
     }

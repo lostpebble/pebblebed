@@ -23,7 +23,7 @@ export default async function replaceIncompleteWithAllocatedIds<T>(
   if (transaction) {
     allocatedKeys = await transaction.allocateIds(incompleteKey, allocateAmount);
   } else {
-    allocatedKeys = await Core.Instance.ds.allocateIds(incompleteKey, allocateAmount);
+    allocatedKeys = await Core.Instance.dsModule.allocateIds(incompleteKey, allocateAmount);
   }
 
   let ids: (string | null)[] = [];

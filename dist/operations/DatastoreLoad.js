@@ -97,14 +97,14 @@ class DatastoreLoad extends DatastoreOperation_1.default {
                         }));
                     }
                     else {
-                        resp = yield Core_1.default.Instance.ds.get(loadKeys);
+                        resp = yield Core_1.default.Instance.dsModule.get(loadKeys);
                         if (resp[0].length > 0) {
                             Core_1.default.Instance.cacheStore.setEntitiesAfterLoadOrSave(resp[0], this.cachingTimeSeconds);
                         }
                     }
                 }
                 else {
-                    resp = yield Core_1.default.Instance.ds.get(loadKeys);
+                    resp = yield Core_1.default.Instance.dsModule.get(loadKeys);
                 }
             }
             let entities = resp[0];

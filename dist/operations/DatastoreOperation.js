@@ -45,12 +45,12 @@ class DatastoreBaseOperation {
         let originalKeyNamespace = entityKey ? entityKey.namespace : undefined;
         const newNamespace = this.getFinalNamespace(originalKeyNamespace);
         if (newNamespace !== undefined) {
-            return Core_1.default.Instance.ds.key({
+            return Core_1.default.Instance.dsModule.key({
                 namespace: newNamespace,
                 path: fullPath,
             });
         }
-        return Core_1.default.Instance.ds.key(fullPath);
+        return Core_1.default.Instance.dsModule.key(fullPath);
     }
     getBaseKey() {
         const baseKey = [];

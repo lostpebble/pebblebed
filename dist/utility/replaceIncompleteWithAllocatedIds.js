@@ -26,7 +26,7 @@ function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
             allocatedKeys = yield transaction.allocateIds(incompleteKey, allocateAmount);
         }
         else {
-            allocatedKeys = yield Core_1.default.Instance.ds.allocateIds(incompleteKey, allocateAmount);
+            allocatedKeys = yield Core_1.default.Instance.dsModule.allocateIds(incompleteKey, allocateAmount);
         }
         let ids = [];
         for (let i = 0; i < entities.length; i += 1) {

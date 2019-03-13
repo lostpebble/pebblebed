@@ -63,13 +63,13 @@ export class DatastoreBaseOperation<T> {
     const newNamespace = this.getFinalNamespace(originalKeyNamespace);
 
     if (newNamespace !== undefined) {
-      return Core.Instance.ds.key({
+      return Core.Instance.dsModule.key({
         namespace: newNamespace,
         path: fullPath,
       });
     }
 
-    return Core.Instance.ds.key(fullPath);
+    return Core.Instance.dsModule.key(fullPath);
   }
 
   protected getBaseKey() {

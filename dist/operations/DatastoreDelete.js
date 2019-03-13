@@ -141,7 +141,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                 deleteResponse = yield this.transaction.delete(deleteKeys);
             }
             else {
-                deleteResponse = yield Core_1.default.Instance.ds.delete(deleteKeys);
+                deleteResponse = yield Core_1.default.Instance.dsModule.delete(deleteKeys);
             }
             if (Core_1.default.Instance.cacheStore != null) {
                 Core_1.default.Instance.cacheStore.flushEntitiesByKeys(deleteKeys);

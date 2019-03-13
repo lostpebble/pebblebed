@@ -30,7 +30,7 @@ export default class Core {
 
   private constructor() {
     try {
-      this.dsModule = require("@google-cloud/datastore");
+      this.ds = require("@google-cloud/datastore");
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         console.error(e);
@@ -60,7 +60,7 @@ export default class Core {
   }
 
   public setDatastore(datastore) {
-    this.ds = datastore;
+    this.dsModule = datastore;
   }
 
   public setCacheStore(cacheStore: PebblebedCacheStore) {

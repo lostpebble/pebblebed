@@ -20,12 +20,12 @@ export const Pebblebed = {
   },
 
   get ds() {
-    return Core.Instance.ds;
-  },
-
-  get dsLibrary() {
     return Core.Instance.dsModule;
   },
+
+  /*get dsLibrary() {
+    return Core.Instance.dsModule;
+  },*/
 
   async flushCacheKeys(keys: DatastoreEntityKey[]) {
     if (Core.Instance.cacheStore) {
@@ -36,7 +36,7 @@ export const Pebblebed = {
   },
 
   transaction: (): DatastoreTransaction => {
-    return Core.Instance.ds.transaction();
+    return Core.Instance.dsModule.transaction();
   },
 
   combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => {
@@ -138,13 +138,13 @@ export const Pebblebed = {
     }
 
     if (Core.Instance.namespace != null) {
-      return Core.Instance.ds.key({
+      return Core.Instance.dsModule.key({
         path: keyPath,
         namespace: Core.Instance.namespace,
       });
     }
 
-    return Core.Instance.ds.key(keyPath);
+    return Core.Instance.dsModule.key(keyPath);
   },
 
   keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): DatastoreEntityKey[] {

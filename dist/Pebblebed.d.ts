@@ -7,7 +7,6 @@ import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
 export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
     readonly ds: any;
-    readonly dsLibrary: any;
     flushCacheKeys(keys: DatastoreEntityKey[]): Promise<void>;
     transaction: () => DatastoreTransaction;
     combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => PebblebedJoiSchema<T>;

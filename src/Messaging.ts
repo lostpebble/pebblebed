@@ -56,7 +56,7 @@ function OPERATION_MISSING_ID_ERROR(model: PebblebedModel, operation: string) {
   const extra = model.entityIdType === "int" ? " - or generateUnsetId() should be used." : "";
 
   return message(
-    `${operation} entity [${model.entityKind}]: string ID Property [${model.entityIdProperty}] in entity [${model.entityKind}] must have a value in order to save.${extra}`
+    `${operation} entity [${model.entityKind}]: ID Property [${model.entityIdProperty}] in entity [${model.entityKind}] must have a value in order to save.${extra}`
   );
 }
 

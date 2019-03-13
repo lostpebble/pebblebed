@@ -149,7 +149,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     if (this.transaction) {
       deleteResponse = await this.transaction.delete(deleteKeys);
     } else {
-      deleteResponse = await Core.Instance.ds.delete(deleteKeys);
+      deleteResponse = await Core.Instance.dsModule.delete(deleteKeys);
     }
 
     if (Core.Instance.cacheStore != null) {

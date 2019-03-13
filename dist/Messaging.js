@@ -30,7 +30,7 @@ function DATASTORE_INSTANCE_ERROR(operation) {
 }
 function OPERATION_MISSING_ID_ERROR(model, operation) {
     const extra = model.entityIdType === "int" ? " - or generateUnsetId() should be used." : "";
-    return message(`${operation} entity [${model.entityKind}]: string ID Property [${model.entityIdProperty}] in entity [${model.entityKind}] must have a value in order to save.${extra}`);
+    return message(`${operation} entity [${model.entityKind}]: ID Property [${model.entityIdProperty}] in entity [${model.entityKind}] must have a value in order to save.${extra}`);
 }
 function OPERATION_SCHEMA_ID_TYPE_ERROR(model, operation) {
     return message(`${operation} entity [${model.entityKind}]: Schema ID properties can only be of type "string" || "int" - current type is set to : [${model.entityIdType}] on property [${model.entityIdProperty}]`);

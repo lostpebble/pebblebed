@@ -148,7 +148,7 @@ export default class PebblebedModel<T = any> {
     }
 
     if (ns != null) {
-      const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key({
+      const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.dsModule.key({
         namespace: ns,
         path: keyPath
       }), amount);
@@ -156,7 +156,7 @@ export default class PebblebedModel<T = any> {
       return allocateIds[0];
     }
 
-    const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.ds.key(keyPath), amount);
+    const allocateIds = await Core.Instance.dsModule.allocateIds(Core.Instance.dsModule.key(keyPath), amount);
     return allocateIds[0];
   }
 

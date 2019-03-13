@@ -24,8 +24,8 @@ function createDatastoreQuery(model, namespace) {
     const schema = model.entitySchema;
     const ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE ? Core_1.default.Instance.namespace : null);
     const dsQuery = (ns != null && ns !== Core_1.UNSET_NAMESPACE)
-        ? Core_1.default.Instance.ds.createQuery(ns, model.entityKind)
-        : Core_1.default.Instance.ds.createQuery(model.entityKind);
+        ? Core_1.default.Instance.dsModule.createQuery(ns, model.entityKind)
+        : Core_1.default.Instance.dsModule.createQuery(model.entityKind);
     const runQuery = dsQuery.run.bind(dsQuery);
     const filterQuery = dsQuery.filter.bind(dsQuery);
     const useCache = (model.modelOptions.neverCache || !Core_1.default.Instance.caching)
@@ -68,13 +68,13 @@ function createDatastoreQuery(model, namespace) {
         withAncestors(...args) {
             const ancestors = extractAncestorPaths_1.default(model, ...args);
             if (ns != null) {
-                this.hasAncestor(Core_1.default.Instance.ds.key({
+                this.hasAncestor(Core_1.default.Instance.dsModule.key({
                     namespace: ns,
                     path: [].concat.apply([], ancestors),
                 }));
             }
             else {
-                this.hasAncestor(Core_1.default.Instance.ds.key([].concat.apply([], ancestors)));
+                this.hasAncestor(Core_1.default.Instance.dsModule.key([].concat.apply([], ancestors)));
             }
             return this;
         },

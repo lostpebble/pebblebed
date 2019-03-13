@@ -19,11 +19,11 @@ exports.Pebblebed = {
         console.log("Connecting Pebbledbed to Datastore");
     },
     get ds() {
-        return Core_1.default.Instance.ds;
-    },
-    get dsLibrary() {
         return Core_1.default.Instance.dsModule;
     },
+    /*get dsLibrary() {
+      return Core.Instance.dsModule;
+    },*/
     flushCacheKeys(keys) {
         return __awaiter(this, void 0, void 0, function* () {
             if (Core_1.default.Instance.cacheStore) {
@@ -35,7 +35,7 @@ exports.Pebblebed = {
         });
     },
     transaction: () => {
-        return Core_1.default.Instance.ds.transaction();
+        return Core_1.default.Instance.dsModule.transaction();
     },
     combineSchemas: (...schemas) => {
         const combinedSchemas = schemas.reduce((accum, current) => Object.assign(accum, current.__getBasicSchemaObject()), {});
@@ -114,12 +114,12 @@ exports.Pebblebed = {
             }
         }
         if (Core_1.default.Instance.namespace != null) {
-            return Core_1.default.Instance.ds.key({
+            return Core_1.default.Instance.dsModule.key({
                 path: keyPath,
                 namespace: Core_1.default.Instance.namespace,
             });
         }
-        return Core_1.default.Instance.ds.key(keyPath);
+        return Core_1.default.Instance.dsModule.key(keyPath);
     },
     keysFromObjectArray(sourceArray, ...args) {
         if (args.length % 2 !== 0) {

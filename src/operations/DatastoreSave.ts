@@ -2,7 +2,7 @@ import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
-import buildDataFromSchema, { preBuildDataFromSchema } from "../utility/buildDataFromSchema";
+import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
@@ -169,7 +169,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
       const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
 
       if (cachingEnabled) {
-        cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegularData(dataObject), generated })
+        cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegularData(dataObject, this.schema), generated })
       }
 
       return {
@@ -190,7 +190,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
         return {
           generatedIds: ids,
           ...this.returnSaved && {
-            savedEntities: convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType),
+            savedEntities: convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType, this.schema),
           },
         } as R;
       }
@@ -203,12 +203,12 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
           return [null];
         },
         ...this.returnSaved && {
-          savedEntities: convertSaveEntitiesToRegular(entities, this.idProperty, this.idType),
+          savedEntities: convertSaveEntitiesToRegular(entities, this.idProperty, this.idType, this.schema),
         },
       }  as R;
     }
 
-    return Core.Instance.ds.save(entities).then((data): R => {
+    return Core.Instance.dsModule.save(entities).then((data): R => {
       const saveResponse = extractSavedIds(data)[0];
 
       if (cachingEnabled && cachableEntitySourceData.length > 0) {
@@ -252,7 +252,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
               }
             }
             return e;
-          }), this.idProperty, this.idType),
+          }), this.idProperty, this.idType, this.schema),
         } as R
       }
 

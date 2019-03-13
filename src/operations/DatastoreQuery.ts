@@ -22,8 +22,8 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace: string
 
   const dsQuery =
     (ns != null && ns !== UNSET_NAMESPACE)
-      ? Core.Instance.ds.createQuery(ns, model.entityKind)
-      : Core.Instance.ds.createQuery(model.entityKind);
+      ? Core.Instance.dsModule.createQuery(ns, model.entityKind)
+      : Core.Instance.dsModule.createQuery(model.entityKind);
 
   const runQuery = dsQuery.run.bind(dsQuery);
   const filterQuery = dsQuery.filter.bind(dsQuery);
@@ -81,13 +81,13 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace: string
 
         if (ns != null) {
           this.hasAncestor(
-            Core.Instance.ds.key({
+            Core.Instance.dsModule.key({
               namespace: ns,
               path: [].concat.apply([], ancestors),
             })
           );
         } else {
-          this.hasAncestor(Core.Instance.ds.key([].concat.apply([], ancestors)));
+          this.hasAncestor(Core.Instance.dsModule.key([].concat.apply([], ancestors)));
         }
 
         return this;

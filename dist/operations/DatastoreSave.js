@@ -147,7 +147,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 }
                 const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
                 if (cachingEnabled) {
-                    cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegular_1.convertDatastoreDataToRegularData(dataObject), generated });
+                    cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegular_1.convertDatastoreDataToRegularData(dataObject, this.schema), generated });
                 }
                 return {
                     key,
@@ -162,7 +162,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     const { newEntities, ids } = yield replaceIncompleteWithAllocatedIds_1.default(entities, this.transaction);
                     this.transaction.save(newEntities);
                     return Object.assign({ generatedIds: ids }, this.returnSaved && {
-                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType),
+                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType, this.schema),
                     });
                 }
                 this.transaction.save(entities);
@@ -170,10 +170,10 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         Messaging_1.warn(Messaging_1.CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
                         return [null];
                     } }, this.returnSaved && {
-                    savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities, this.idProperty, this.idType),
+                    savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities, this.idProperty, this.idType, this.schema),
                 });
             }
-            return Core_1.default.Instance.ds.save(entities).then((data) => {
+            return Core_1.default.Instance.dsModule.save(entities).then((data) => {
                 const saveResponse = extractSavedIds_1.default(data)[0];
                 if (cachingEnabled && cachableEntitySourceData.length > 0) {
                     const cacheEntities = [];
@@ -209,7 +209,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                                 }
                             }
                             return e;
-                        }), this.idProperty, this.idType),
+                        }), this.idProperty, this.idType, this.schema),
                     };
                 }
                 return saveResponse;

@@ -115,14 +115,14 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
             return entity;
           }));
         } else {
-          resp = await Core.Instance.ds.get(loadKeys);
+          resp = await Core.Instance.dsModule.get(loadKeys);
 
           if (resp[0].length > 0) {
             Core.Instance.cacheStore.setEntitiesAfterLoadOrSave(resp[0], this.cachingTimeSeconds);
           }
         }
       } else {
-        resp = await Core.Instance.ds.get(loadKeys);
+        resp = await Core.Instance.dsModule.get(loadKeys);
       }
     }
 

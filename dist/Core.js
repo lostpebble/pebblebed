@@ -16,7 +16,7 @@ class Core {
             onQuery: false,
         };
         try {
-            this.dsModule = require("@google-cloud/datastore");
+            this.ds = require("@google-cloud/datastore");
         }
         catch (e) {
             if (e.code === "MODULE_NOT_FOUND") {
@@ -43,7 +43,7 @@ class Core {
         }
     }
     setDatastore(datastore) {
-        this.ds = datastore;
+        this.dsModule = datastore;
     }
     setCacheStore(cacheStore) {
         this.cacheStore = cacheStore;
