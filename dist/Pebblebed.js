@@ -113,7 +113,7 @@ exports.Pebblebed = {
                 currentIdType = "unknown";
             }
         }
-        if (Core_1.default.Instance.namespace != null) {
+        if (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE) {
             return Core_1.default.Instance.dsModule.key({
                 path: keyPath,
                 namespace: Core_1.default.Instance.namespace,

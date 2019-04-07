@@ -137,7 +137,7 @@ export const Pebblebed = {
       }
     }
 
-    if (Core.Instance.namespace != null) {
+    if (Core.Instance.namespace !== UNSET_NAMESPACE) {
       return Core.Instance.dsModule.key({
         path: keyPath,
         namespace: Core.Instance.namespace,
