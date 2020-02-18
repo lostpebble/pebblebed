@@ -1,4 +1,5 @@
-import * as Joi from "joi";
+/// <reference types="hapi__joi" />
+import * as Joi from "@hapi/joi";
 export declare type SchemaDefinitionProperties<T> = {
     [P in keyof T]: SchemaPropertyDefinition;
 };
@@ -38,10 +39,9 @@ export interface IOJoiSchemaDefaultMetaInput {
 }
 export interface IJoiDescribeObjectProperty {
     type: string;
-    meta?: any[];
-    invalids?: any[];
+    metas?: any[];
+    allow?: any[];
     flags?: {
-        sparse?: boolean;
         presence?: "required";
         default?: any;
     };

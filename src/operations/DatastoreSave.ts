@@ -149,10 +149,11 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
       }
 
       if (this.runValidation && this.model.entityPebbleSchema != null) {
-        const validation = Core.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
+        // const validation = Core.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
+        const validation = this.model.entityPebbleSchema.__getJoiSchema().validate(data);
 
-        if (validation.error !== null) {
-          throwError(`On save entity of kind -> ${this.model.entityKind} : ${validation.error}`);
+        if (validation.error != null) {
+          throwError(`On save entity of kind -> ${this.model.entityKind} : ${validation.error.message}`);
         }
       }
 

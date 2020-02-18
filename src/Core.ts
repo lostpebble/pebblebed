@@ -45,13 +45,13 @@ export default class Core {
     return this._instance || (this._instance = new this());
   }
 
-  public static get Joi() {
+  public static get Joi(): typeof import("@hapi/joi") {
     try {
-      return require("joi");
+      return require("@hapi/joi");
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         throwError(
-          `Pebblebed: Using new schema syntax, Joi needs to be added as a dependency to your project.`
+          `Pebblebed: Using new schema syntax, Joi (@hapi/joi) needs to be added as a dependency to your project.`
         );
       }
 

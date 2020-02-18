@@ -9,9 +9,9 @@
     "sourceMap": true,
     "inlineSourceMap": false,
     "declaration": true,
-    "sourceRoot": "src",
     "outDir": "dist",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "rootDir": "./src"
   },
   "exclude": [
     "dist",

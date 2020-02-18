@@ -1,4 +1,5 @@
-import * as Joi from "joi";
+/// <reference types="hapi__joi" />
+import * as Joi from "@hapi/joi";
 import { TPebblebedJoiSchemaObject } from "../utility/JoiUtils";
 import { IOJoiSchemaDefaultMetaInput } from "../types/PebblebedTypes";
 import { SchemaDefinition } from "../";

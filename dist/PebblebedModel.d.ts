@@ -1,9 +1,10 @@
+/// <reference types="hapi__joi" />
 import { DatastoreEntityKey, DatastoreQueryRegular, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
 import DatastoreSave from "./operations/DatastoreSave";
 import { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
-import * as Joi from "joi";
+import * as Joi from "@hapi/joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
 export default class PebblebedModel<T = any> {
     private schema;

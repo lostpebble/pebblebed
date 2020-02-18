@@ -153,8 +153,8 @@ export function createDatastoreQuery<T>(model: PebblebedModel, namespace: string
         deserializeJsonProperties(queryResponse.entities, schema);
 
         if (queryResponse.entities.length === 0 && throwIfNotFound) {
-          console.error(`Couldn't find any ${this.model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
-          throwError(`Couldn't find any ${this.model.entityKind} entity(s) with specified query, see server log for more detail`);
+          console.error(`Couldn't find any ${model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
+          throwError(`Couldn't find any ${model.entityKind} entity(s) with specified query, see server log for more detail`);
         }
 
         if (this.returnOnlyEntity != null) {

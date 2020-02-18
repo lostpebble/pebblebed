@@ -19,7 +19,7 @@ export default class Core {
     cacheDefaults: ICacheDefaults;
     private constructor();
     static readonly Instance: Core;
-    static readonly Joi: any;
+    static readonly Joi: typeof import("@hapi/joi");
     setDatastore(datastore: any): void;
     setCacheStore(cacheStore: PebblebedCacheStore): void;
     setCacheDefaults(newDefaults: Partial<ICacheDefaults>): void;

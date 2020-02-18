@@ -125,8 +125,8 @@ function createDatastoreQuery(model, namespace) {
                 }
                 deserializeJsonProperties_1.default(queryResponse.entities, schema);
                 if (queryResponse.entities.length === 0 && throwIfNotFound) {
-                    console.error(`Couldn't find any ${this.model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
-                    Messaging_1.throwError(`Couldn't find any ${this.model.entityKind} entity(s) with specified query, see server log for more detail`);
+                    console.error(`Couldn't find any ${model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
+                    Messaging_1.throwError(`Couldn't find any ${model.entityKind} entity(s) with specified query, see server log for more detail`);
                 }
                 if (this.returnOnlyEntity != null) {
                     return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);

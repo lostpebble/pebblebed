@@ -1,6 +1,6 @@
 {
   "name": "pebblebed",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Simplified interactions with Google Datastore for NodeJS",
   "keywords": [
     "cloud",
@@ -59,23 +59,23 @@
   },
   "devDependencies": {
     "@types/ioredis": "^3.2.7",
-    "@types/joi": "^13.0.7",
+    "@types/hapi__joi": "^16.0.10",
     "@types/lodash": "^4.14.106",
     "@types/node": "^8.0.17",
     "concurrently": "^3.5.0",
     "in-publish": "^2.0.0",
     "ioredis": "^3.2.2",
     "jest": "^23.6.0",
-    "joi": "^13.1.2",
+    "@hapi/joi": "^17.1.0",
     "lodash": "^4.17.5",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
     "typescript": "3.0.3"
   },
   "peerDependencies": {
-    "@google-cloud/datastore": "^3.1.0",
+    "@google-cloud/datastore": "^5.0.3",
     "ioredis": "^3.2.2",
-    "joi": "^13.1.2"
+    "@hapi/joi": "^17.0.0"
   },
   "engines": {
     "node": ">=6.5.0"

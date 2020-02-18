@@ -28,13 +28,14 @@ class PebblebedModel {
             return this.joiSchema.__getJoiSchema();
         };
         this.validate = (data) => {
-            const validation = Core_1.default.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
-                abortEarly: false,
-            });
-            if (validation.error !== null) {
+            /*const validation = Core.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
+              abortEarly: false,
+            });*/
+            const validation = this.joiSchema.__getJoiSchema().validate(data, { abortEarly: false });
+            if (validation.error != null) {
                 return {
                     positive: false,
-                    message: `[Validation] ${this.entityKind} - ${validation.error}`,
+                    message: `[Validation] ${this.entityKind} - ${validation.error.message}`,
                 };
             }
             return {
@@ -77,7 +78,7 @@ class PebblebedModel {
     }
     key(id) {
         checkDatastore_1.default("CREATE KEY");
-        return Core_1.default.Instance.ds.key([this.kind, id]);
+        return Core_1.default.Instance.dsModule.key([this.kind, id]);
     }
     delete(data) {
         checkDatastore_1.default("DELETE");

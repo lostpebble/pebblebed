@@ -4,7 +4,7 @@ import {
   IOJoiSchemaSerializedJsonPropertyMetaInput,
 } from "../";
 import Core from "../Core";
-import * as Joi from "joi";
+import * as Joi from "@hapi/joi";
 
 export type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>, E = any> = (
   meta?: I,

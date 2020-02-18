@@ -1,4 +1,4 @@
-import * as Joi from "joi";
+import * as Joi from "@hapi/joi";
 
 export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };
 export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
@@ -44,10 +44,10 @@ export interface IOJoiSchemaDefaultMetaInput {
 
 export interface IJoiDescribeObjectProperty {
   type: string;
-  meta?: any[];
-  invalids?: any[];
+  metas?: any[];
+  allow?: any[];
   flags?: {
-    sparse?: boolean;
+    // sparse?: boolean;
     presence?: "required";
     default?: any;
   };

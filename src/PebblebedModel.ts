@@ -1,6 +1,5 @@
 import {
   DatastoreEntityKey,
-  DatastoreQuery,
   DatastoreQueryRegular,
   IPebblebedModelOptions,
   SchemaDefinition,
@@ -15,7 +14,7 @@ import extractAncestorPaths from "./utility/extractAncestorPaths";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { createDatastoreQuery } from "./operations/DatastoreQuery";
-import * as Joi from "joi";
+import * as Joi from "@hapi/joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
 
 export default class PebblebedModel<T = any> {
@@ -74,14 +73,15 @@ export default class PebblebedModel<T = any> {
     positive: boolean;
     message: string;
   } => {
-    const validation = Core.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
+    /*const validation = Core.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
       abortEarly: false,
-    });
+    });*/
+    const validation = this.joiSchema.__getJoiSchema().validate(data, { abortEarly: false });
 
-    if (validation.error !== null) {
+    if (validation.error != null) {
       return {
         positive: false,
-        message: `[Validation] ${this.entityKind} - ${validation.error}`,
+        message: `[Validation] ${this.entityKind} - ${validation.error.message}`,
       };
     }
 
@@ -112,7 +112,7 @@ export default class PebblebedModel<T = any> {
 
   public key(id: string | number): DatastoreEntityKey {
     checkDatastore("CREATE KEY");
-    return Core.Instance.ds.key([this.kind, id]);
+    return Core.Instance.dsModule.key([this.kind, id]);
   }
 
   public delete(data?: T | T[]): DatastoreDelete<T> {

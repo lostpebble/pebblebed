@@ -11,7 +11,7 @@ class PebblebedValidations {
                 indexed: Core_1.default.Joi.bool().default(true),
                 reviver: Core_1.default.Joi.func().default(null),
                 joiSchema: Core_1.default.Joi.any().default(null),
-                role: Core_1.default.Joi.string().valid(["id"]),
+                role: Core_1.default.Joi.string().valid("id"),
                 onSave: Core_1.default.Joi.func(),
                 nullValueIfUnset: Core_1.default.Joi.bool().default(true),
             });
@@ -41,11 +41,12 @@ class PebblebedJoiSchema {
         this.schema = JoiUtils_1.JoiUtils.createObjectValidator(schema);
     }
     setDefaultMeta(defaultMeta) {
-        const validate = Core_1.default.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, {
-            allowUnknown: false,
-        });
+        /*const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, {
+          allowUnknown: false,
+        });*/
+        const validate = PebblebedValidations.AVJoiSchemaDefaultMetaInput.validate(defaultMeta, { allowUnknown: false });
         if (validate.error != null) {
-            Messaging_1.throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error}`);
+            Messaging_1.throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error.message}`);
         }
         Object.assign(this.defaultMeta, defaultMeta);
         return this;
@@ -60,7 +61,9 @@ class PebblebedJoiSchema {
         if (this.schema == null) {
             Messaging_1.throwError(`Pebblebed: Can't create a model without a schema defined`);
         }
-        const entityProperties = this.schema.describe().children;
+        const entityProperties = this.schema.describe().keys;
+        // const entityDescription = this.schema.describe();
+        // console.info(entityDescription);
         let roleIdSet = false;
         const basicSchema = {
             __excludeFromIndexes: [],
@@ -78,8 +81,8 @@ class PebblebedJoiSchema {
                         basicPropertyDefinition.required = true;
                     }
                 }
-                if (currentProp.meta != null) {
-                    currentProp.meta.forEach(metaObject => {
+                if (currentProp.metas != null) {
+                    currentProp.metas.forEach(metaObject => {
                         if (metaObject.__typeDefinition) {
                             basicPropertyDefinition.type = metaObject.type;
                             if (metaObject.role && metaObject.role === "id") {
@@ -92,9 +95,14 @@ class PebblebedJoiSchema {
                                 }
                             }
                             else {
-                                const validate = Core_1.default.Joi.validate(metaObject.propertyMeta, PebblebedValidations.AVJoiSchemaPropertyMetaInput, { allowUnknown: false });
+                                /*const validate = Core.Joi.validate(
+                                  metaObject.propertyMeta,
+                                  PebblebedValidations.AVJoiSchemaPropertyMetaInput,
+                                  { allowUnknown: false }
+                                );*/
+                                const validate = PebblebedValidations.AVJoiSchemaPropertyMetaInput.validate(metaObject.propertyMeta, { allowUnknown: false });
                                 if (validate.error != null) {
-                                    Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error}`);
+                                    Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error.message}`);
                                 }
                                 const propertyMeta = Object.assign({}, this.defaultMeta, metaObject.propertyMeta);
                                 if (!propertyMeta.nullValueIfUnset) {
