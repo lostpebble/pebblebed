@@ -1,13 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Pebblebed = void 0;
 const PebblebedModel_1 = require("./PebblebedModel");
 const BasicUtils_1 = require("./utility/BasicUtils");
 const Core_1 = require("./Core");
@@ -30,7 +32,7 @@ exports.Pebblebed = {
                 yield Core_1.default.Instance.cacheStore.flushEntitiesByKeys(keys);
             }
             else {
-                Messaging_1.warn(`Tried to flush keys in cache but there is no cache store connected.`);
+                (0, Messaging_1.warn)(`Tried to flush keys in cache but there is no cache store connected.`);
             }
         });
     },
@@ -91,6 +93,7 @@ exports.Pebblebed = {
         Core_1.default.Instance.setCacheDefaults(newDefaults);
     },
     key(...args) {
+        var _a;
         const keyPath = [];
         let currentIdType = "unknown";
         for (let i = 0; i < args.length; i += 1) {
@@ -105,7 +108,7 @@ exports.Pebblebed = {
             }
             else {
                 if (currentIdType === "int") {
-                    keyPath.push(Core_1.default.Instance.dsModule.int(args[i]));
+                    keyPath.push(Core_1.default.Instance.dsModule.int(args[i]).value);
                 }
                 else {
                     keyPath.push(args[i]);
@@ -116,14 +119,14 @@ exports.Pebblebed = {
         if (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE) {
             return Core_1.default.Instance.dsModule.key({
                 path: keyPath,
-                namespace: Core_1.default.Instance.namespace,
+                namespace: (_a = Core_1.default.Instance.namespace) !== null && _a !== void 0 ? _a : undefined,
             });
         }
         return Core_1.default.Instance.dsModule.key(keyPath);
     },
     keysFromObjectArray(sourceArray, ...args) {
         if (args.length % 2 !== 0) {
-            Messaging_1.throwError(Messaging_1.CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
         }
         return sourceArray.map(source => {
             const keyPath = [];
@@ -135,7 +138,7 @@ exports.Pebblebed = {
     },
     uniqueKeysFromObjectArray(sourceArray, ...args) {
         if (args.length % 2 !== 0) {
-            Messaging_1.throwError(Messaging_1.CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
+            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
         }
         const obj = {};
         const keys = [];
@@ -146,9 +149,9 @@ exports.Pebblebed = {
                 keyPath.push(args[i], source[args[i + 1]]);
                 kindKeyPath.push(args[i].entityKind, source[args[i + 1]]);
             }
-            if (BasicUtils_1.get(obj, kindKeyPath, false) === false) {
+            if ((0, BasicUtils_1.get)(obj, kindKeyPath, false) === false) {
                 keys.push(exports.Pebblebed.key(...keyPath));
-                BasicUtils_1.set(obj, kindKeyPath, true);
+                (0, BasicUtils_1.set)(obj, kindKeyPath, true);
             }
         }
         return keys;

@@ -1,5 +1,8 @@
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
+import * as Joi from "@hapi/joi";
+import * as datastore from "@google-cloud/datastore";
+import { Datastore } from "@google-cloud/datastore";
 
 export interface ICacheDefaults {
   onSave: boolean;
@@ -13,8 +16,8 @@ export default class Core {
   private static _instance: Core;
   private static _redisClient = null;
 
-  public ds: any;
-  public dsModule: any;
+  public ds: typeof datastore;
+  public dsModule: Datastore;
   public namespace: string | null = UNSET_NAMESPACE;
   public isProductionEnv = process.env.NODE_ENV === "production";
   public defaultCachingSeconds = 60 * 5;
@@ -30,7 +33,8 @@ export default class Core {
 
   private constructor() {
     try {
-      this.ds = require("@google-cloud/datastore");
+      // this.ds = require("@google-cloud/datastore");
+      this.ds = datastore;
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         console.error(e);
@@ -47,7 +51,8 @@ export default class Core {
 
   public static get Joi(): typeof import("@hapi/joi") {
     try {
-      return require("@hapi/joi");
+      // return require("@hapi/joi");
+      return Joi;
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         throwError(
@@ -59,7 +64,7 @@ export default class Core {
     }
   }
 
-  public setDatastore(datastore) {
+  public setDatastore(datastore: Datastore) {
     this.dsModule = datastore;
   }
 

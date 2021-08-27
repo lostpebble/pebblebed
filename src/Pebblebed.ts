@@ -1,9 +1,4 @@
-import {
-  DatastoreEntityKey,
-  DatastoreTransaction,
-  IPebblebedModelOptions,
-  SchemaDefinition,
-} from "./types/PebblebedTypes";
+import { IPebblebedModelOptions, } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { get, set } from "./utility/BasicUtils";
 import Core, { ICacheDefaults, UNSET_NAMESPACE } from "./Core";
@@ -11,6 +6,7 @@ import { CreateMessage, throwError, warn } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
+import { Key, PathType, Transaction } from "@google-cloud/datastore";
 
 export const Pebblebed = {
   connectDatastore: (datastore: any) => {
@@ -27,7 +23,7 @@ export const Pebblebed = {
     return Core.Instance.dsModule;
   },*/
 
-  async flushCacheKeys(keys: DatastoreEntityKey[]) {
+  async flushCacheKeys(keys: Key[]) {
     if (Core.Instance.cacheStore) {
       await Core.Instance.cacheStore.flushEntitiesByKeys(keys);
     } else {
@@ -35,7 +31,7 @@ export const Pebblebed = {
     }
   },
 
-  transaction: (): DatastoreTransaction => {
+  transaction: (): Transaction => {
     return Core.Instance.dsModule.transaction();
   },
 
@@ -114,7 +110,7 @@ export const Pebblebed = {
   },
 
   key(...args: any[]) {
-    const keyPath: string[] = [];
+    const keyPath: PathType[] = [];
 
     let currentIdType = "unknown";
 
@@ -128,7 +124,7 @@ export const Pebblebed = {
         }
       } else {
         if (currentIdType === "int") {
-          keyPath.push(Core.Instance.dsModule.int(args[i]));
+          keyPath.push(Core.Instance.dsModule.int(args[i]).value);
         } else {
           keyPath.push(args[i]);
         }
@@ -140,14 +136,14 @@ export const Pebblebed = {
     if (Core.Instance.namespace !== UNSET_NAMESPACE) {
       return Core.Instance.dsModule.key({
         path: keyPath,
-        namespace: Core.Instance.namespace,
+        namespace: Core.Instance.namespace ?? undefined,
       });
     }
 
     return Core.Instance.dsModule.key(keyPath);
   },
 
-  keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): DatastoreEntityKey[] {
+  keysFromObjectArray<T>(sourceArray: T[], ...args: Array<PebblebedModel | keyof T>): Key[] {
     if (args.length % 2 !== 0) {
       throwError(CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
@@ -166,13 +162,13 @@ export const Pebblebed = {
   uniqueKeysFromObjectArray<T>(
     sourceArray: T[],
     ...args: Array<PebblebedModel | keyof T>
-  ): DatastoreEntityKey[] {
+  ): Key[] {
     if (args.length % 2 !== 0) {
       throwError(CreateMessage.INCORRECT_ARGUMENTS_KEYS_FROM_ARRAY);
     }
 
     const obj = {};
-    const keys: DatastoreEntityKey[] = [];
+    const keys: Key[] = [];
 
     for (const source of sourceArray) {
       const keyPath: any[] = [];

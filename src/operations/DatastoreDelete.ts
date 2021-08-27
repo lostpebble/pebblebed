@@ -3,11 +3,11 @@ import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { DatastoreEntityKey } from "../types/PebblebedTypes";
+import { Key } from "@google-cloud/datastore";
 
 export default class DatastoreDelete<T> extends DatastoreOperation<T> {
   private dataObjects: any[];
-  private deleteIds: Array<string | number | DatastoreEntityKey> = [];
+  private deleteIds: Array<string | number | Key> = [];
   private useIds = false;
   private ignoreAnc = false;
   private usingKeys = false;
@@ -36,7 +36,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     return this;
   }*/
 
-  public idsOrKeys(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>) {
+  public idsOrKeys(idsOrKeys: string | number | Key | Array<string | number | Key>) {
     if (Array.isArray(idsOrKeys)) {
       this.deleteIds = idsOrKeys;
     } else {
@@ -44,7 +44,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     }
 
     if (typeof this.deleteIds[0] === "object") {
-      if ((this.deleteIds[0] as DatastoreEntityKey).kind === this.kind) {
+      if ((this.deleteIds[0] as Key).kind === this.kind) {
         this.usingKeys = true;
       } else {
         throwError(CreateMessage.OPERATION_KEYS_WRONG(this.model, "DELETE"));
@@ -52,7 +52,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     } else {
       this.deleteIds = this.deleteIds.map(id => {
         if (this.idType === "int" && isNumber(id)) {
-          return Core.Instance.dsModule.int(id);
+          return Core.Instance.dsModule.int(id as number).value;
         } else if (this.idType === "string" && typeof id === "string") {
           if (id.length === 0) {
             throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
@@ -62,6 +62,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
         }
 
         throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", id));
+        return "";
       });
     }
 
@@ -75,19 +76,19 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
 
   public async run() {
     const baseKey = this.getBaseKey();
-    let deleteKeys: DatastoreEntityKey[] = [];
+    let deleteKeys: Key[] = [];
 
     if (!this.useIds) {
       for (const data of this.dataObjects) {
         let setAncestors = baseKey;
-        let id = null;
+        let id: string | null = null;
         const entityKey = data[Core.Instance.dsModule.KEY];
 
         if (this.hasIdProperty && data[this.idProperty!] != null) {
           switch (this.idType) {
             case "int":
               if (isNumber(data[this.idProperty!])) {
-                id = Core.Instance.dsModule.int(data[this.idProperty!]);
+                id = Core.Instance.dsModule.int(data[this.idProperty!]).value;
               }
               break;
             case "string":
@@ -108,7 +109,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
           }
         } else if (entityKey != null) {
           if (entityKey.hasOwnProperty("id")) {
-            id = Core.Instance.dsModule.int(entityKey.id);
+            id = Core.Instance.dsModule.int(entityKey.id).value;
           } else {
             id = entityKey.name;
           }

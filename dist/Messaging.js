@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateMessage = exports.LOAD_QUERY_DATA_ID_TYPE_ERROR = exports.warn = exports.errorNoThrow = exports.throwError = void 0;
 const Core_1 = require("./Core");
 function throwError(msg) {
     throw new Error(message(msg));

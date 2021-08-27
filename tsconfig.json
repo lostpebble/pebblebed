@@ -11,7 +11,9 @@
     "declaration": true,
     "outDir": "dist",
     "strictNullChecks": true,
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   },
   "exclude": [
     "dist",

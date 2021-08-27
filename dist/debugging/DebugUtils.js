@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.debugPoint = void 0;
 const PebblebedGlobalConfig_1 = require("../PebblebedGlobalConfig");
-exports.debugPoint = (id, debugMessage, debugAction = PebblebedGlobalConfig_1.EDebugActionType.CONSOLE_LOG) => {
+const debugPoint = (id, debugMessage, debugAction = PebblebedGlobalConfig_1.EDebugActionType.CONSOLE_LOG) => {
     const { debug, debugPointIds } = PebblebedGlobalConfig_1.PebblebedGlobalConfig.getConfig();
     if (debug) {
         if (debugPointIds.length === 0 || debugPointIds.indexOf(id) !== -1) {
@@ -15,4 +16,5 @@ exports.debugPoint = (id, debugMessage, debugAction = PebblebedGlobalConfig_1.ED
         }
     }
 };
+exports.debugPoint = debugPoint;
 //# sourceMappingURL=DebugUtils.js.map

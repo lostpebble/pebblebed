@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UNSET_NAMESPACE = void 0;
 const Messaging_1 = require("./Messaging");
+const Joi = require("@hapi/joi");
+const datastore = require("@google-cloud/datastore");
 exports.UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__";
 class Core {
     constructor() {
@@ -16,12 +19,13 @@ class Core {
             onQuery: false,
         };
         try {
-            this.ds = require("@google-cloud/datastore");
+            // this.ds = require("@google-cloud/datastore");
+            this.ds = datastore;
         }
         catch (e) {
             if (e.code === "MODULE_NOT_FOUND") {
                 console.error(e);
-                Messaging_1.throwError(Messaging_1.CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
+                (0, Messaging_1.throwError)(Messaging_1.CreateMessage.NO_GOOGLE_CLOUD_DEPENDENCY);
             }
             else {
                 throw e;
@@ -33,11 +37,12 @@ class Core {
     }
     static get Joi() {
         try {
-            return require("@hapi/joi");
+            // return require("@hapi/joi");
+            return Joi;
         }
         catch (e) {
             if (e.code === "MODULE_NOT_FOUND") {
-                Messaging_1.throwError(`Pebblebed: Using new schema syntax, Joi (@hapi/joi) needs to be added as a dependency to your project.`);
+                (0, Messaging_1.throwError)(`Pebblebed: Using new schema syntax, Joi (@hapi/joi) needs to be added as a dependency to your project.`);
             }
             throw e;
         }
@@ -61,6 +66,6 @@ class Core {
         this.caching = on;
     }
 }
-Core._redisClient = null;
 exports.default = Core;
+Core._redisClient = null;
 //# sourceMappingURL=Core.js.map

@@ -1,5 +1,6 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
+import { IPebblebedModelOptions, SchemaDefinition } from "../";
+import { Key } from "@google-cloud/datastore";
 export declare class DatastoreBaseOperation<T> {
     protected model: PebblebedModel;
     protected modelOptions: IPebblebedModelOptions;
@@ -15,8 +16,8 @@ export declare class DatastoreBaseOperation<T> {
     withAncestors(...args: any[]): this;
     useNamespace(namespace: string | null): this;
     protected getFinalNamespace(keyOriginalNamespace?: string | undefined): string | undefined;
-    protected augmentKey: (key: DatastoreEntityKey) => DatastoreEntityKey;
-    protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey;
+    protected augmentKey: (key: Key) => Key;
+    protected createFullKey(fullPath: any[], entityKey?: Key): Key;
     protected getBaseKey(): any[];
 }
 export default class DatastoreOperation<T> extends DatastoreBaseOperation<T> {

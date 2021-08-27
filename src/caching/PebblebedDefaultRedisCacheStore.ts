@@ -1,9 +1,9 @@
 import { PebblebedCacheStore } from "./PebblebedCacheStore";
 import { Redis } from "ioredis";
-import { DatastoreEntityKey } from "../";
 import Core from "../Core";
 import { DatastoreQueryResponse } from "../index";
 import { reviveDateObjects } from "../utility/serialization";
+import { Key } from "@google-cloud/datastore";
 
 export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
   redis: Redis;
@@ -19,11 +19,11 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     this.redis = ioRedisClient;
   }
 
-  createEntityCacheKey(dsKey: DatastoreEntityKey) {
+  createEntityCacheKey(dsKey: Key) {
     return `${this.namespace}:${dsKey.namespace}:${dsKey.path.join(":")}`;
   }
 
-  async getEntitiesByKeys(keys: DatastoreEntityKey[]) {
+  async getEntitiesByKeys(keys: Key[]) {
     const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {
@@ -78,7 +78,7 @@ export class PebblebedDefaultRedisCacheStore extends PebblebedCacheStore {
     await this.redis.del(`${this.namespace}:${queryHash}`);
   }
 
-  async flushEntitiesByKeys(keys: DatastoreEntityKey[]) {
+  async flushEntitiesByKeys(keys: Key[]) {
     const keyStrings = keys.map((key) => this.createEntityCacheKey(key));
 
     if (keyStrings.length >= 1) {

@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -29,21 +30,22 @@ class DatastoreFlush extends DatastoreOperation_1.DatastoreBaseOperation {
                     this.usingKeys = true;
                 }
                 else {
-                    Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_KEYS_WRONG(this.model, "FLUSH IN CACHE"));
+                    (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_KEYS_WRONG(this.model, "FLUSH IN CACHE"));
                 }
             }
             else {
                 this.flushIds = this.flushIds.map(id => {
-                    if (this.idType === "int" && BasicUtils_1.isNumber(id)) {
-                        return Core_1.default.Instance.dsModule.int(id);
+                    if (this.idType === "int" && (0, BasicUtils_1.isNumber)(id)) {
+                        return Core_1.default.Instance.dsModule.int(id).value;
                     }
                     else if (this.idType === "string" && typeof id === "string") {
                         if (id.length === 0) {
-                            Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "FLUSH IN CACHE"));
+                            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "FLUSH IN CACHE"));
                         }
                         return id;
                     }
-                    Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "FLUSH IN CACHE", id));
+                    (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "FLUSH IN CACHE", id));
+                    return "";
                 });
             }
         }
@@ -64,7 +66,7 @@ class DatastoreFlush extends DatastoreOperation_1.DatastoreBaseOperation {
                 yield Core_1.default.Instance.cacheStore.flushEntitiesByKeys(flushKeys);
             }
             else {
-                Messaging_1.warn(`Trying to flush some ids / keys of [${this.kind}] - but no Cache Store has been set on Pebblebed instance!`);
+                (0, Messaging_1.warn)(`Trying to flush some ids / keys of [${this.kind}] - but no Cache Store has been set on Pebblebed instance!`);
             }
         });
     }

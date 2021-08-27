@@ -1,11 +1,11 @@
-/// <reference types="hapi__joi" />
-import { DatastoreEntityKey, DatastoreQueryRegular, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
+import { DatastoreQueryRegular, IPebblebedModelOptions, SchemaDefinition } from "./types/PebblebedTypes";
 import DatastoreSave from "./operations/DatastoreSave";
 import { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import * as Joi from "@hapi/joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
+import { Key } from "@google-cloud/datastore";
 export default class PebblebedModel<T = any> {
     private schema;
     private joiSchema;
@@ -23,22 +23,22 @@ export default class PebblebedModel<T = any> {
         message: string;
     };
     save(data: T | T[]): DatastoreSave<T>;
-    load(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): IDatastoreLoadRegular<T>;
+    load(idsOrKeys: string | number | Key | Array<string | number | Key>): IDatastoreLoadRegular<T>;
     query(namespace?: string | null): DatastoreQueryRegular<T>;
-    key(id: string | number): DatastoreEntityKey;
+    key(id: string | number): Key;
     delete(data?: T | T[]): DatastoreDelete<T>;
-    flush(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): DatastoreFlush<T>;
+    flush(idsOrKeys: string | number | Key | Array<string | number | Key>): DatastoreFlush<T>;
     allocateIds({ amount, withAncestors, namespace, }: {
         amount: number;
         withAncestors?: any[] | null;
         namespace?: string | null;
-    }): Promise<Array<DatastoreEntityKey>>;
-    readonly entityKind: string;
-    readonly entitySchema: SchemaDefinition<T>;
-    readonly entityIdProperty: string | null;
-    readonly entityIdType: "string" | "int";
-    readonly entityHasIdProperty: boolean;
-    readonly entityPebbleSchema: PebblebedJoiSchema<T>;
-    readonly entityDefaultNamespace: string;
-    readonly modelOptions: IPebblebedModelOptions;
+    }): Promise<Array<Key>>;
+    get entityKind(): string;
+    get entitySchema(): SchemaDefinition<T>;
+    get entityIdProperty(): string | null;
+    get entityIdType(): "string" | "int";
+    get entityHasIdProperty(): boolean;
+    get entityPebbleSchema(): PebblebedJoiSchema<T>;
+    get entityDefaultNamespace(): string;
+    get modelOptions(): IPebblebedModelOptions;
 }

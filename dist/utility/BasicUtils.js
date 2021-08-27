@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isNumber = exports.set = exports.get = void 0;
 function get(obj, path, defaultValue) {
     let cur = obj;
     for (let i = 0; i < path.length; i += 1) {

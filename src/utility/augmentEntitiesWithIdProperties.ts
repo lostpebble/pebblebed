@@ -1,6 +1,6 @@
 import Core from "../Core";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { DatastoreEntityKey } from "..";
+import { Key } from "@google-cloud/datastore";
 
 export default function augmentEntitiesWithIdProperties(
   respArray: any[],
@@ -9,7 +9,7 @@ export default function augmentEntitiesWithIdProperties(
   kind: string
 ) {
   for (const entity of respArray) {
-    const key: DatastoreEntityKey = entity[Core.Instance.dsModule.KEY];
+    const key: Key = entity[Core.Instance.dsModule.KEY];
 
     if (!key) {
       console.error(entity);

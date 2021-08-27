@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -21,13 +22,7 @@ function replaceIncompleteWithAllocatedIds(entities, transaction = null) {
                 }
             }
         }
-        let allocatedKeys;
-        if (transaction) {
-            allocatedKeys = yield transaction.allocateIds(incompleteKey, allocateAmount);
-        }
-        else {
-            allocatedKeys = yield Core_1.default.Instance.dsModule.allocateIds(incompleteKey, allocateAmount);
-        }
+        const allocatedKeys = transaction ? yield transaction.allocateIds(incompleteKey, allocateAmount) : yield Core_1.default.Instance.dsModule.allocateIds(incompleteKey, allocateAmount);
         let ids = [];
         for (let i = 0; i < entities.length; i += 1) {
             if (entities[i].generated) {

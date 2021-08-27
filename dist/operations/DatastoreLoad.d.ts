@@ -1,6 +1,6 @@
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey } from "../";
+import { Key } from "@google-cloud/datastore";
 export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
     run(): Promise<T | null>;
     run(throwIfNotFound: true): Promise<T>;
@@ -16,7 +16,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
     private loadIds;
     private usingKeys;
     private returnOnlyEntity;
-    constructor(model: PebblebedModel<T>, idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>);
+    constructor(model: PebblebedModel<T>, idsOrKeys: string | number | Key | Array<string | number | Key>);
     first(): this;
     last(): this;
     randomOne(): this;

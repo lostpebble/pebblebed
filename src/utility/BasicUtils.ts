@@ -40,6 +40,6 @@ export function set(obj, path, value) {
   return obj;
 }
 
-export function isNumber(value) {
+export function isNumber(value): value is number {
   return Number.isInteger(value) || /^\d+$/.test(value);
 }

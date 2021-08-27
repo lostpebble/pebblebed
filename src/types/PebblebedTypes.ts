@@ -1,4 +1,5 @@
 import * as Joi from "@hapi/joi";
+import { Key } from "@google-cloud/datastore";
 
 export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };
 export type SchemaDefinitionOptions = { __excludeFromIndexes?: string[] };
@@ -14,7 +15,7 @@ export interface IPebblebedModelOptions {
 }
 
 export interface IPebblebedSaveEntity<T> {
-  key: DatastoreEntityKey;
+  key: Key;
   excludeFromIndexes: string[];
   generated: boolean;
   data: T;
@@ -84,14 +85,14 @@ export interface DatastoreTransaction {
   [property: string]: any;
 }
 
-export interface DatastoreEntityKey {
+/*export interface DatastoreEntityKey {
   name?: string;
   id?: string;
   kind: string;
   namespace?: string;
   parent?: DatastoreEntityKey;
   path: string[];
-}
+}*/
 
 export interface DatastoreKeyOnlySelection {
   id: string;
@@ -122,7 +123,7 @@ export interface DatastoreQueryRegular<T> {
   enableCache(on: boolean): DatastoreQueryRegular<T>;
   cachingSeconds(seconds: number): DatastoreQueryRegular<T>;
   withAncestors(...args: any[]): DatastoreQueryRegular<T>;
-  hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQueryRegular<T>;
+  hasAncestor(ancestorKey: Key): DatastoreQueryRegular<T>;
   end(cursorToken: string): DatastoreQueryRegular<T>;
   limit(amount: number): DatastoreQueryRegular<T>;
   offset(number: number): DatastoreQueryRegular<T>;
@@ -144,7 +145,7 @@ export interface DatastoreQuerySingleReturn<T> {
   enableCache(on: boolean): DatastoreQuerySingleReturn<T>;
   cachingSeconds(seconds: number): DatastoreQuerySingleReturn<T>;
   withAncestors(...args: any[]): DatastoreQuerySingleReturn<T>;
-  hasAncestor(ancestorKey: DatastoreEntityKey): DatastoreQuerySingleReturn<T>;
+  hasAncestor(ancestorKey: Key): DatastoreQuerySingleReturn<T>;
   end(cursorToken: string): DatastoreQuerySingleReturn<T>;
   limit(amount: number): DatastoreQuerySingleReturn<T>;
   offset(number: number): DatastoreQuerySingleReturn<T>;
@@ -163,7 +164,7 @@ export interface DatastoreQuerySingleReturn<T> {
 export interface InternalDatastoreQueryFilter {
   name: string;
   op: TFilterComparator;
-  val: string | number | boolean | Date | DatastoreEntityKey;
+  val: string | number | boolean | Date | Key;
 }
 
 export interface InternalDatastoreQueryOrder {

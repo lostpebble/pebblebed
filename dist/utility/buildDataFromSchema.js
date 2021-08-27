@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.preBuildDataFromSchema = void 0;
 const convertToType_1 = require("./convertToType");
 const Messaging_1 = require("../Messaging");
 const schemaOptionProps = {
@@ -44,10 +45,10 @@ function buildDataFromSchema(data, schema, entityKind) {
                     value = schemaProp.onSave(value);
                 }
                 if (!(value === null || value === undefined)) {
-                    dataObject[property] = convertToType_1.default(value, schemaProp.type);
+                    dataObject[property] = (0, convertToType_1.default)(value, schemaProp.type);
                 }
                 else if (schemaProp.required) {
-                    Messaging_1.throwError(Messaging_1.CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
+                    (0, Messaging_1.throwError)(Messaging_1.CreateMessage.SCHEMA_REQUIRED_TYPE_MISSING(property, entityKind));
                 }
                 else if (!(value === undefined)) {
                     dataObject[property] = value;

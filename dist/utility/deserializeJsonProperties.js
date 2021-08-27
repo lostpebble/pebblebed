@@ -24,11 +24,11 @@ function deserializeJsonProperties(respArray, schema) {
                     }
                     catch (e) {
                         if (typeof entity[property] === "string") {
-                            Messaging_1.errorNoThrow(`Trying to deserialize entity property [${property}] with a JSON string type has failed. The string could me malformed JSON and cannot convert.\n${e.message}`);
+                            (0, Messaging_1.errorNoThrow)(`Trying to deserialize entity property [${property}] with a JSON string type has failed. The string could me malformed JSON and cannot convert.\n${e.message}`);
                             console.error(e);
                         }
                         else {
-                            Messaging_1.errorNoThrow(`Trying to deserialize entity property [${property}] with a JSON string type has failed. It appears to not be a string at all: typeof = ${typeof entity[property]}`);
+                            (0, Messaging_1.errorNoThrow)(`Trying to deserialize entity property [${property}] with a JSON string type has failed. It appears to not be a string at all: typeof = ${typeof entity[property]}`);
                             console.error(e);
                         }
                     }

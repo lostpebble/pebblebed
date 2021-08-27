@@ -1,13 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.createHashFromQuery = exports.createDataStringFromQuery = exports.createDatastoreQuery = void 0;
 const extractAncestorPaths_1 = require("../utility/extractAncestorPaths");
 const augmentEntitiesWithIdProperties_1 = require("../utility/augmentEntitiesWithIdProperties");
 const convertToType_1 = require("../utility/convertToType");
@@ -61,12 +63,12 @@ function createDatastoreQuery(model, namespace) {
         },
         filter(property, comparator, value) {
             if (!schema[property]) {
-                Messaging_1.throwError(`Property "${property}" doesn't exist on entity schema for [ ${kind} ]`);
+                (0, Messaging_1.throwError)(`Property "${property}" doesn't exist on entity schema for [ ${kind} ]`);
             }
-            return filterQuery(property, comparator, convertToType_1.default(value, schema[property].type));
+            return filterQuery(property, comparator, (0, convertToType_1.default)(value, schema[property].type));
         },
         withAncestors(...args) {
-            const ancestors = extractAncestorPaths_1.default(model, ...args);
+            const ancestors = (0, extractAncestorPaths_1.default)(model, ...args);
             if (ns != null) {
                 this.hasAncestor(Core_1.default.Instance.dsModule.key({
                     namespace: ns,
@@ -85,7 +87,7 @@ function createDatastoreQuery(model, namespace) {
                     yield Core_1.default.Instance.cacheStore.flushQueryResponse(hash, this);
                 }
                 else {
-                    Messaging_1.warn(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
+                    (0, Messaging_1.warn)(`Trying to flush a query - but no Cache Store has been set on Pebblebed instance!`);
                 }
             });
         },
@@ -97,16 +99,16 @@ function createDatastoreQuery(model, namespace) {
                     const queryResponse = yield Core_1.default.Instance.cacheStore.getQueryResponse(hash, this);
                     if (queryResponse != null) {
                         cachingAugmentQueryEntitiesWithRealKeys(queryResponse);
-                        deserializeJsonProperties_1.default(queryResponse.entities, schema);
+                        (0, deserializeJsonProperties_1.default)(queryResponse.entities, schema);
                         if (this.returnOnlyEntity != null) {
-                            return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
+                            return (0, pickOutEntityFromResults_1.default)(queryResponse.entities, this.returnOnlyEntity);
                         }
                         return queryResponse;
                     }
                 }
                 const data = yield runQuery();
                 if (hasIdProp && data[0].length > 0) {
-                    augmentEntitiesWithIdProperties_1.default(data[0], idProp, type, kind);
+                    (0, augmentEntitiesWithIdProperties_1.default)(data[0], idProp, type, kind);
                 }
                 const queryResponse = {
                     entities: data[0],
@@ -123,13 +125,13 @@ function createDatastoreQuery(model, namespace) {
                     yield Core_1.default.Instance.cacheStore.setQueryResponse(queryResponse, hash, this.cachingTimeSeconds, this);
                     removeSerializableKeysFromEntities(queryResponse);
                 }
-                deserializeJsonProperties_1.default(queryResponse.entities, schema);
+                (0, deserializeJsonProperties_1.default)(queryResponse.entities, schema);
                 if (queryResponse.entities.length === 0 && throwIfNotFound) {
                     console.error(`Couldn't find any ${model.entityKind} entity(s) with specified query:\n\n${createDataStringFromQuery(this)}`);
-                    Messaging_1.throwError(`Couldn't find any ${model.entityKind} entity(s) with specified query, see server log for more detail`);
+                    (0, Messaging_1.throwError)(`Couldn't find any ${model.entityKind} entity(s) with specified query, see server log for more detail`);
                 }
                 if (this.returnOnlyEntity != null) {
-                    return pickOutEntityFromResults_1.default(queryResponse.entities, this.returnOnlyEntity);
+                    return (0, pickOutEntityFromResults_1.default)(queryResponse.entities, this.returnOnlyEntity);
                 }
                 return queryResponse;
             });

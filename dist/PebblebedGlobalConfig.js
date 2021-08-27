@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PebblebedGlobalConfig = exports.EDebugActionType = exports.EDebugPointId = void 0;
 const dynamic_config_store_1 = require("dynamic-config-store");
 var EDebugPointId;
 (function (EDebugPointId) {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertDatastoreDataToRegularData = void 0;
 const Core_1 = require("../Core");
 function convertDatastoreDataToRegularData(data, schema) {
     const newData = {};

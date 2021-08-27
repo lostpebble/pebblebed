@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DatastoreBaseOperation = void 0;
 const extractAncestorPaths_1 = require("../utility/extractAncestorPaths");
 const Core_1 = require("../Core");
 class DatastoreBaseOperation {
@@ -22,7 +23,7 @@ class DatastoreBaseOperation {
         this.defaultNamespace = model.entityDefaultNamespace;
     }
     withAncestors(...args) {
-        this.ancestors = extractAncestorPaths_1.default(this.model, ...args);
+        this.ancestors = (0, extractAncestorPaths_1.default)(this.model, ...args);
         return this;
     }
     useNamespace(namespace) {

@@ -1,5 +1,5 @@
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey, DatastoreQuery, DatastoreQueryRegular, TReturnOnly } from "../";
+import { DatastoreQueryRegular, TReturnOnly } from "../";
 import { DatastoreQueryResponse, InternalDatastoreQuery, TFilterComparator } from "../types/PebblebedTypes";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";

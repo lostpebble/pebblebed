@@ -4,9 +4,10 @@ import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import augmentEntitiesWithIdProperties from "../utility/augmentEntitiesWithIdProperties";
 import { CreateMessage, errorNoThrow, throwError, warn } from "../Messaging";
-import { TReturnOnly, DatastoreEntityKey } from "../";
+import { TReturnOnly } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import deserializeJsonProperties from "../utility/deserializeJsonProperties";
+import { Key } from "@google-cloud/datastore";
 
 export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
   // first(): IDatastoreLoadSingleReturn<T>;
@@ -25,13 +26,13 @@ export interface IDatastoreLoadRegular<T> extends DatastoreOperation<T> {
 }
 
 export default class DatastoreLoad<T> extends DatastoreOperation<T> implements IDatastoreLoadRegular<T> {
-  private loadIds: Array<string | number | DatastoreEntityKey> = [];
+  private loadIds: Array<string | number | Key> = [];
   private usingKeys = false;
   private returnOnlyEntity: TReturnOnly|null = null;
 
   constructor(
     model: PebblebedModel<T>,
-    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+    idsOrKeys: string | number | Key | Array<string | number | Key>
   ) {
     super(model);
 
@@ -45,7 +46,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       }
 
       if (typeof this.loadIds[0] === "object") {
-        if ((this.loadIds[0] as DatastoreEntityKey).kind === this.kind) {
+        if ((this.loadIds[0] as Key).kind === this.kind) {
           this.usingKeys = true;
         } else {
           throwError(CreateMessage.OPERATION_KEYS_WRONG(this.model, "LOAD"));
@@ -53,7 +54,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       } else {
         this.loadIds = this.loadIds.map(id => {
           if (this.idType === "int" && isNumber(id)) {
-            return Core.Instance.dsModule.int(id);
+            return Core.Instance.dsModule.int(id).value;
           } else if (this.idType === "string" && typeof id === "string") {
             if (id.length === 0) {
               throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "LOAD"));
@@ -63,6 +64,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
           }
 
           throwError(CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "LOAD", id));
+          return "";
         });
       }
     }
@@ -84,7 +86,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
   }
 
   public async run(throwIfNotFound: boolean = false) {
-    let loadKeys: DatastoreEntityKey[];
+    let loadKeys: Key[];
 
     if (this.usingKeys) {
       loadKeys = this.loadIds.map(this.augmentKey);

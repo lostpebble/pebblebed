@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -79,7 +80,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
             const baseKey = this.getBaseKey();
             const cachingEnabled = this.useCache && Core_1.default.Instance.cacheStore != null && Core_1.default.Instance.cacheStore.cacheOnSave;
             const cachableEntitySourceData = [];
-            const entities = this.dataObjects.map(data => {
+            const entities = this.dataObjects.map((data) => {
                 let setAncestors = baseKey;
                 let id = null;
                 const entityKey = data[Core_1.default.Instance.dsModule.KEY];
@@ -88,27 +89,27 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         case "string": {
                             if (typeof data[this.idProperty] === "string") {
                                 if (data[this.idProperty].length === 0) {
-                                    Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
+                                    (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "SAVE"));
                                 }
                                 id = data[this.idProperty];
                             }
                             break;
                         }
                         case "int": {
-                            if (BasicUtils_1.isNumber(data[this.idProperty])) {
-                                id = Core_1.default.Instance.dsModule.int(data[this.idProperty]);
+                            if ((0, BasicUtils_1.isNumber)(data[this.idProperty])) {
+                                id = Core_1.default.Instance.dsModule.int(data[this.idProperty]).value;
                             }
                             break;
                         }
                     }
                     if (id == null) {
-                        Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty]));
+                        (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "SAVE", data[this.idProperty]));
                     }
                 }
                 else {
                     if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
                         if (entityKey.hasOwnProperty("id")) {
-                            id = Core_1.default.Instance.dsModule.int(entityKey.id);
+                            id = Core_1.default.Instance.dsModule.int(entityKey.id).value;
                         }
                         else {
                             id = entityKey.name;
@@ -116,7 +117,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     }
                     else {
                         if (this.hasIdProperty && (this.idType === "string" || !this.generate)) {
-                            Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_MISSING_ID_ERROR(this.model, "SAVE"));
+                            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_MISSING_ID_ERROR(this.model, "SAVE"));
                         }
                     }
                 }
@@ -128,7 +129,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         const prevAncestors = entityKey.parent.path.toString();
                         const nextAncestors = setAncestors.toString();
                         if (prevAncestors !== nextAncestors) {
-                            Messaging_1.warn(Messaging_1.CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(this.model, "SAVE", prevAncestors, nextAncestors));
+                            (0, Messaging_1.warn)(Messaging_1.CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(this.model, "SAVE", prevAncestors, nextAncestors));
                         }
                     }
                 }
@@ -136,7 +137,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     // const validation = Core.Joi.validate(data, this.model.entityPebbleSchema.__getJoiSchema());
                     const validation = this.model.entityPebbleSchema.__getJoiSchema().validate(data);
                     if (validation.error != null) {
-                        Messaging_1.throwError(`On save entity of kind -> ${this.model.entityKind} : ${validation.error.message}`);
+                        (0, Messaging_1.throwError)(`On save entity of kind -> ${this.model.entityKind} : ${validation.error.message}`);
                     }
                 }
                 const key = id
@@ -146,9 +147,13 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 if (entityKey) {
                     delete data[Core_1.default.Instance.dsModule.KEY];
                 }
-                const { dataObject, excludeFromIndexes } = buildDataFromSchema_1.default(data, this.schema, this.kind);
+                const { dataObject, excludeFromIndexes } = (0, buildDataFromSchema_1.default)(data, this.schema, this.kind);
                 if (cachingEnabled) {
-                    cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegular_1.convertDatastoreDataToRegularData(dataObject, this.schema), generated });
+                    cachableEntitySourceData.push({
+                        key,
+                        data: (0, convertDatastoreDataToRegular_1.convertDatastoreDataToRegularData)(dataObject, this.schema),
+                        generated
+                    });
                 }
                 return {
                     key,
@@ -157,25 +162,25 @@ class DatastoreSave extends DatastoreOperation_1.default {
                     data: dataObject,
                 };
             });
-            DebugUtils_1.debugPoint(__1.EDebugPointId.ON_SAVE_BUILT_ENTITIES, entities);
+            (0, DebugUtils_1.debugPoint)(__1.EDebugPointId.ON_SAVE_BUILT_ENTITIES, entities);
             if (this.transaction) {
                 if (this.transAllocateIds) {
-                    const { newEntities, ids } = yield replaceIncompleteWithAllocatedIds_1.default(entities, this.transaction);
+                    const { newEntities, ids } = yield (0, replaceIncompleteWithAllocatedIds_1.default)(entities, this.transaction);
                     this.transaction.save(newEntities);
                     return Object.assign({ generatedIds: ids }, this.returnSaved && {
-                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(newEntities, this.idProperty, this.idType, this.schema),
+                        savedEntities: (0, convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular)(newEntities, this.idProperty, this.idType, this.schema),
                     });
                 }
                 this.transaction.save(entities);
                 return Object.assign({ get generatedIds() {
-                        Messaging_1.warn(Messaging_1.CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
+                        (0, Messaging_1.warn)(Messaging_1.CreateMessage.ACCESS_TRANSACTION_GENERATED_IDS_ERROR);
                         return [null];
                     } }, this.returnSaved && {
-                    savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities, this.idProperty, this.idType, this.schema),
+                    savedEntities: (0, convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular)(entities, this.idProperty, this.idType, this.schema),
                 });
             }
             return Core_1.default.Instance.dsModule.save(entities).then((data) => {
-                const saveResponse = extractSavedIds_1.default(data)[0];
+                const saveResponse = (0, extractSavedIds_1.default)(data)[0];
                 if (cachingEnabled && cachableEntitySourceData.length > 0) {
                     const cacheEntities = [];
                     for (let i = 0; i < cachableEntitySourceData.length; i += 1) {
@@ -192,14 +197,14 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         }
                     }
                     if (cacheEntities.length > 0) {
-                        serializeJsonProperties_1.default(cacheEntities, this.schema);
+                        (0, serializeJsonProperties_1.default)(cacheEntities, this.schema);
                         Core_1.default.Instance.cacheStore.setEntitiesAfterLoadOrSave(cacheEntities, this.cachingTimeSeconds);
                     }
                 }
                 if (this.returnSaved) {
                     return {
                         generatedIds: saveResponse.generatedIds,
-                        savedEntities: convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular(entities.map((e, i) => {
+                        savedEntities: (0, convertSaveEntitesToRegular_1.convertSaveEntitiesToRegular)(entities.map((e, i) => {
                             if (e.generated) {
                                 e.key.path.push(saveResponse.generatedIds[i]);
                                 if (this.idType === "int") {

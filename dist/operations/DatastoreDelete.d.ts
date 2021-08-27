@@ -1,6 +1,6 @@
 import DatastoreOperation from "./DatastoreOperation";
 import PebblebedModel from "../PebblebedModel";
-import { DatastoreEntityKey } from "../types/PebblebedTypes";
+import { Key } from "@google-cloud/datastore";
 export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     private dataObjects;
     private deleteIds;
@@ -8,7 +8,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     private ignoreAnc;
     private usingKeys;
     constructor(model: PebblebedModel<T>, data?: T | T[]);
-    idsOrKeys(idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>): this;
+    idsOrKeys(idsOrKeys: string | number | Key | Array<string | number | Key>): this;
     ignoreDetectedAncestors(): this;
     run(): Promise<any>;
 }

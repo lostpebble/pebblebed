@@ -1,5 +1,4 @@
 import {
-  DatastoreEntityKey,
   DatastoreQueryRegular,
   IPebblebedModelOptions,
   SchemaDefinition,
@@ -16,6 +15,7 @@ import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { createDatastoreQuery } from "./operations/DatastoreQuery";
 import * as Joi from "@hapi/joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
+import { Key } from "@google-cloud/datastore";
 
 export default class PebblebedModel<T = any> {
   private schema: SchemaDefinition<T>;
@@ -76,7 +76,7 @@ export default class PebblebedModel<T = any> {
     /*const validation = Core.Joi.validate(data, this.joiSchema.__getJoiSchema(), {
       abortEarly: false,
     });*/
-    const validation = this.joiSchema.__getJoiSchema().validate(data, { abortEarly: false });
+    const validation = this.joiSchema.__getJoiSchema().validate(data, {abortEarly: false});
 
     if (validation.error != null) {
       return {
@@ -97,7 +97,7 @@ export default class PebblebedModel<T = any> {
   }
 
   public load(
-    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+    idsOrKeys: string | number | Key | Array<string | number | Key>
   ): IDatastoreLoadRegular<T> {
     checkDatastore("LOAD");
     return new DatastoreLoad<T>(this, idsOrKeys);
@@ -110,7 +110,7 @@ export default class PebblebedModel<T = any> {
     return createDatastoreQuery(this, ns);
   }
 
-  public key(id: string | number): DatastoreEntityKey {
+  public key(id: string | number): Key {
     checkDatastore("CREATE KEY");
     return Core.Instance.dsModule.key([this.kind, id]);
   }
@@ -121,24 +121,24 @@ export default class PebblebedModel<T = any> {
   }
 
   public flush(
-    idsOrKeys: string | number | DatastoreEntityKey | Array<string | number | DatastoreEntityKey>
+    idsOrKeys: string | number | Key | Array<string | number | Key>
   ): DatastoreFlush<T> {
     checkDatastore("FLUSH IN CACHE");
     return new DatastoreFlush(this, idsOrKeys);
   }
 
   public async allocateIds({
-    amount,
-    withAncestors = null,
-    namespace = UNSET_NAMESPACE,
-  }: {
+                             amount,
+                             withAncestors = null,
+                             namespace = UNSET_NAMESPACE,
+                           }: {
     amount: number;
     withAncestors?: any[] | null;
-    namespace?: string|null;
-  }): Promise<Array<DatastoreEntityKey>> {
+    namespace?: string | null;
+  }): Promise<Array<Key>> {
     checkDatastore("ALLOCATE IDS");
 
-    let ns: string|null = namespace !== UNSET_NAMESPACE ? namespace : this.defaultNamespace;
+    let ns: string | null = namespace !== UNSET_NAMESPACE ? namespace : this.defaultNamespace;
     ns = ns !== UNSET_NAMESPACE ? ns : (Core.Instance.namespace !== UNSET_NAMESPACE ? Core.Instance.namespace : null);
 
     let keyPath: any[] = [this.kind];
@@ -148,7 +148,7 @@ export default class PebblebedModel<T = any> {
     }
 
     if (ns != null) {
-      const allocateIds = await Core.Instance.ds.allocateIds(Core.Instance.dsModule.key({
+      const allocateIds = await Core.Instance.dsModule.allocateIds(Core.Instance.dsModule.key({
         namespace: ns,
         path: keyPath
       }), amount);

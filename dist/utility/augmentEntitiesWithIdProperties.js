@@ -7,14 +7,14 @@ function augmentEntitiesWithIdProperties(respArray, idProperty, type, kind) {
         const key = entity[Core_1.default.Instance.dsModule.KEY];
         if (!key) {
             console.error(entity);
-            Messaging_1.throwError(`Something went wrong trying to augment an entity with its ID property from the Datastore key - please make sure you are not running two libraries of @google-cloud/datastore somehow`);
+            (0, Messaging_1.throwError)(`Something went wrong trying to augment an entity with its ID property from the Datastore key - please make sure you are not running two libraries of @google-cloud/datastore somehow`);
         }
         if (key.hasOwnProperty("id")) {
             if (type === "int") {
                 entity[idProperty] = key.id;
             }
             else {
-                Messaging_1.warn(Messaging_1.CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(kind, "int", "string", idProperty, entity[Core_1.default.Instance.dsModule.KEY].id));
+                (0, Messaging_1.warn)(Messaging_1.CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(kind, "int", "string", idProperty, entity[Core_1.default.Instance.dsModule.KEY].id));
             }
         }
         if (key.hasOwnProperty("name")) {
@@ -22,7 +22,7 @@ function augmentEntitiesWithIdProperties(respArray, idProperty, type, kind) {
                 entity[idProperty] = key.name;
             }
             else {
-                Messaging_1.warn(Messaging_1.CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(kind, "string", "int", idProperty, entity[Core_1.default.Instance.dsModule.KEY].name));
+                (0, Messaging_1.warn)(Messaging_1.CreateMessage.LOAD_QUERY_DATA_ID_TYPE_ERROR(kind, "string", "int", idProperty, entity[Core_1.default.Instance.dsModule.KEY].name));
             }
         }
     }

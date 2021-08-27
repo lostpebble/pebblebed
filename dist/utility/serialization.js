@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.reviveDateObjects = void 0;
 function reviveDateObjects(key, value) {
     if (isSerializedDate(value)) {
         return new Date(value);

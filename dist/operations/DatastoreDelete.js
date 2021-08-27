@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -52,21 +53,22 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                 this.usingKeys = true;
             }
             else {
-                Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_KEYS_WRONG(this.model, "DELETE"));
+                (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_KEYS_WRONG(this.model, "DELETE"));
             }
         }
         else {
             this.deleteIds = this.deleteIds.map(id => {
-                if (this.idType === "int" && BasicUtils_1.isNumber(id)) {
-                    return Core_1.default.Instance.dsModule.int(id);
+                if (this.idType === "int" && (0, BasicUtils_1.isNumber)(id)) {
+                    return Core_1.default.Instance.dsModule.int(id).value;
                 }
                 else if (this.idType === "string" && typeof id === "string") {
                     if (id.length === 0) {
-                        Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
+                        (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
                     }
                     return id;
                 }
-                Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", id));
+                (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", id));
+                return "";
             });
         }
         return this;
@@ -87,33 +89,33 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                     if (this.hasIdProperty && data[this.idProperty] != null) {
                         switch (this.idType) {
                             case "int":
-                                if (BasicUtils_1.isNumber(data[this.idProperty])) {
-                                    id = Core_1.default.Instance.dsModule.int(data[this.idProperty]);
+                                if ((0, BasicUtils_1.isNumber)(data[this.idProperty])) {
+                                    id = Core_1.default.Instance.dsModule.int(data[this.idProperty]).value;
                                 }
                                 break;
                             case "string":
                                 if (typeof data[this.idProperty] === "string") {
                                     if (data[this.idProperty].length === 0) {
-                                        Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
+                                        (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
                                     }
                                     id = data[this.idProperty];
                                 }
                                 break;
                         }
                         if (id == null) {
-                            Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", data[this.idProperty]));
+                            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_DATA_ID_TYPE_ERROR(this.model, "DELETE", data[this.idProperty]));
                         }
                     }
                     else if (entityKey != null) {
                         if (entityKey.hasOwnProperty("id")) {
-                            id = Core_1.default.Instance.dsModule.int(entityKey.id);
+                            id = Core_1.default.Instance.dsModule.int(entityKey.id).value;
                         }
                         else {
                             id = entityKey.name;
                         }
                     }
                     else {
-                        Messaging_1.throwError(Messaging_1.CreateMessage.DELETE_NO_DATA_IDS_ERROR);
+                        (0, Messaging_1.throwError)(Messaging_1.CreateMessage.DELETE_NO_DATA_IDS_ERROR);
                     }
                     if (entityKey && entityKey.parent && !this.ignoreAnc) {
                         if (setAncestors.length === 0) {
@@ -123,7 +125,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                             const prevAncestors = entityKey.parent.path.toString();
                             const nextAncestors = setAncestors.toString();
                             if (prevAncestors !== nextAncestors) {
-                                Messaging_1.warn(Messaging_1.CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(this.model, "DELETE", prevAncestors, nextAncestors));
+                                (0, Messaging_1.warn)(Messaging_1.CreateMessage.OPERATION_CHANGED_ANCESTORS_WARNING(this.model, "DELETE", prevAncestors, nextAncestors));
                             }
                         }
                     }

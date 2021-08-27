@@ -1,4 +1,6 @@
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
+import * as datastore from "@google-cloud/datastore";
+import { Datastore } from "@google-cloud/datastore";
 export interface ICacheDefaults {
     onSave: boolean;
     onLoad: boolean;
@@ -8,8 +10,8 @@ export declare const UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__
 export default class Core {
     private static _instance;
     private static _redisClient;
-    ds: any;
-    dsModule: any;
+    ds: typeof datastore;
+    dsModule: Datastore;
     namespace: string | null;
     isProductionEnv: boolean;
     defaultCachingSeconds: number;
@@ -18,9 +20,9 @@ export default class Core {
     cacheStore: PebblebedCacheStore | null;
     cacheDefaults: ICacheDefaults;
     private constructor();
-    static readonly Instance: Core;
-    static readonly Joi: typeof import("@hapi/joi");
-    setDatastore(datastore: any): void;
+    static get Instance(): Core;
+    static get Joi(): typeof import("@hapi/joi");
+    setDatastore(datastore: Datastore): void;
     setCacheStore(cacheStore: PebblebedCacheStore): void;
     setCacheDefaults(newDefaults: Partial<ICacheDefaults>): void;
     setNamespace(namespace: string | null): void;

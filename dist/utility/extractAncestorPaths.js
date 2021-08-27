@@ -11,7 +11,7 @@ function extractAncestorPaths(model, ...args) {
             ancestors.push([args[i].entityKind, args[i + 1]]);
         }
         else {
-            Messaging_1.throwError(Messaging_1.CreateMessage.INCORRECT_ANCESTOR_KIND(model));
+            (0, Messaging_1.throwError)(Messaging_1.CreateMessage.INCORRECT_ANCESTOR_KIND(model));
         }
     }
     return ancestors;

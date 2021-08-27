@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PebblebedJoiSchema = void 0;
 const JoiUtils_1 = require("../utility/JoiUtils");
 const Messaging_1 = require("../Messaging");
 const Core_1 = require("../Core");
@@ -46,7 +47,7 @@ class PebblebedJoiSchema {
         });*/
         const validate = PebblebedValidations.AVJoiSchemaDefaultMetaInput.validate(defaultMeta, { allowUnknown: false });
         if (validate.error != null) {
-            Messaging_1.throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error.message}`);
+            (0, Messaging_1.throwError)(`Pebblebed: Setting default meta properties for schema failed: ${validate.error.message}`);
         }
         Object.assign(this.defaultMeta, defaultMeta);
         return this;
@@ -59,7 +60,7 @@ class PebblebedJoiSchema {
     }
     __generateBasicSchema() {
         if (this.schema == null) {
-            Messaging_1.throwError(`Pebblebed: Can't create a model without a schema defined`);
+            (0, Messaging_1.throwError)(`Pebblebed: Can't create a model without a schema defined`);
         }
         const entityProperties = this.schema.describe().keys;
         // const entityDescription = this.schema.describe();
@@ -91,7 +92,7 @@ class PebblebedJoiSchema {
                                     roleIdSet = true;
                                 }
                                 else {
-                                    Messaging_1.throwError(`Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`);
+                                    (0, Messaging_1.throwError)(`Pebblebed: Can't set two properties with the role of ID in schema. Found second ID defined in property: ${property}`);
                                 }
                             }
                             else {
@@ -102,7 +103,7 @@ class PebblebedJoiSchema {
                                 );*/
                                 const validate = PebblebedValidations.AVJoiSchemaPropertyMetaInput.validate(metaObject.propertyMeta, { allowUnknown: false });
                                 if (validate.error != null) {
-                                    Messaging_1.throwError(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error.message}`);
+                                    (0, Messaging_1.throwError)(`Pebblebed: Setting schema meta for property (${property}) failed: ${validate.error.message}`);
                                 }
                                 const propertyMeta = Object.assign({}, this.defaultMeta, metaObject.propertyMeta);
                                 if (!propertyMeta.nullValueIfUnset) {

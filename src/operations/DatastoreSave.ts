@@ -6,13 +6,17 @@ import buildDataFromSchema from "../utility/buildDataFromSchema";
 import extractSavedIds from "../utility/extractSavedIds";
 import replaceIncompleteWithAllocatedIds from "../utility/replaceIncompleteWithAllocatedIds";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { DatastoreEntityKey, EDebugPointId, IPebblebedSaveEntity } from "..";
+import { EDebugPointId, IPebblebedSaveEntity } from "..";
 import serializeJsonProperties from "../utility/serializeJsonProperties";
 import { debugPoint } from "../debugging/DebugUtils";
 import { convertSaveEntitiesToRegular } from "../utility/convertSaveEntitesToRegular";
 import { convertDatastoreDataToRegularData } from "../utility/convertDatastoreDataToRegular";
+import { Key } from "@google-cloud/datastore";
 
-interface IOSaveRunResponse<T> { generatedIds: (string|null)[], savedEntities?: T[] }
+interface IOSaveRunResponse<T> {
+  generatedIds: (string | null)[],
+  savedEntities?: T[]
+}
 
 /*export interface IDatastoreSaveReturnEntities<T> extends DatastoreOperation<T> {
   useTransaction(
@@ -35,7 +39,7 @@ export interface IDatastoreSaveRegular<T> extends DatastoreOperation<T> {
   run(): Promise<{ generatedIds: (string|null)[] }>;
 }*/
 
-export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generatedIds: (string|null)[] }> extends DatastoreOperation<T> {
+export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generatedIds: (string | null)[] }> extends DatastoreOperation<T> {
   private dataObjects: any[];
   private ignoreAnc = false;
   private generate = false;
@@ -75,9 +79,9 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
     return this;
   }
 
-  public returnSavedEntities(): DatastoreSave<T, { generatedIds: (string|null)[], savedEntities: T[] }> {
+  public returnSavedEntities(): DatastoreSave<T, { generatedIds: (string | null)[], savedEntities: T[] }> {
     this.returnSaved = true;
-    return this as DatastoreSave<T, { generatedIds: (string|null)[], savedEntities: T[] }>;
+    return this as DatastoreSave<T, { generatedIds: (string | null)[], savedEntities: T[] }>;
   }
 
   public async run(): Promise<R> {
@@ -86,10 +90,10 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
     const cachingEnabled = this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnSave;
     const cachableEntitySourceData: any[] = [];
 
-    const entities: IPebblebedSaveEntity<T>[] = this.dataObjects.map(data => {
+    const entities: IPebblebedSaveEntity<T>[] = this.dataObjects.map((data): IPebblebedSaveEntity<T> => {
       let setAncestors = baseKey;
-      let id: string|null = null;
-      const entityKey: DatastoreEntityKey = data[Core.Instance.dsModule.KEY];
+      let id: string | null = null;
+      const entityKey: Key = data[Core.Instance.dsModule.KEY];
 
       if (this.hasIdProperty && data[this.idProperty!] != null) {
         switch (this.idType) {
@@ -105,7 +109,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
           }
           case "int": {
             if (isNumber(data[this.idProperty!])) {
-              id = Core.Instance.dsModule.int(data[this.idProperty!]);
+              id = Core.Instance.dsModule.int(data[this.idProperty!]).value;
             }
             break;
           }
@@ -117,7 +121,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
       } else {
         if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
           if (entityKey.hasOwnProperty("id")) {
-            id = Core.Instance.dsModule.int(entityKey.id);
+            id = Core.Instance.dsModule.int(entityKey.id!).value;
           } else {
             id = entityKey.name!;
           }
@@ -167,17 +171,21 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
         delete data[Core.Instance.dsModule.KEY];
       }
 
-      const { dataObject, excludeFromIndexes } = buildDataFromSchema(data, this.schema, this.kind);
+      const {dataObject, excludeFromIndexes} = buildDataFromSchema(data, this.schema, this.kind);
 
       if (cachingEnabled) {
-        cachableEntitySourceData.push({ key, data: convertDatastoreDataToRegularData(dataObject, this.schema), generated })
+        cachableEntitySourceData.push({
+          key,
+          data: convertDatastoreDataToRegularData(dataObject, this.schema),
+          generated
+        })
       }
 
       return {
         key,
         excludeFromIndexes,
         generated,
-        data: dataObject,
+        data: dataObject as T,
       };
     });
 
@@ -185,7 +193,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
 
     if (this.transaction) {
       if (this.transAllocateIds) {
-        const { newEntities, ids } = await replaceIncompleteWithAllocatedIds<T>(entities, this.transaction);
+        const {newEntities, ids} = await replaceIncompleteWithAllocatedIds<T>(entities, this.transaction);
         this.transaction.save(newEntities);
 
         return {
@@ -206,7 +214,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
         ...this.returnSaved && {
           savedEntities: convertSaveEntitiesToRegular(entities, this.idProperty, this.idType, this.schema),
         },
-      }  as R;
+      } as R;
     }
 
     return Core.Instance.dsModule.save(entities).then((data): R => {

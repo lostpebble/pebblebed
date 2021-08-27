@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -51,7 +52,7 @@ class PebblebedModel {
             this.schema = entitySchema;
         }
         this.kind = entityKind;
-        this.idProperty = getIdPropertyFromSchema_1.default(this.schema);
+        this.idProperty = (0, getIdPropertyFromSchema_1.default)(this.schema);
         this.defaultCachingSeconds = defaultCachingSeconds;
         this.defaultNamespace = defaultNamespace;
         this.neverCache = neverCache;
@@ -59,46 +60,46 @@ class PebblebedModel {
             this.hasIdProperty = true;
             this.idType = this.schema[this.idProperty].type;
             if (this.idType !== "string" && this.idType !== "int") {
-                Messaging_1.throwError(Messaging_1.CreateMessage.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL"));
+                (0, Messaging_1.throwError)(Messaging_1.CreateMessage.OPERATION_SCHEMA_ID_TYPE_ERROR(this, "CREATE MODEL"));
             }
         }
     }
     save(data) {
-        checkDatastore_1.default("SAVE");
+        (0, checkDatastore_1.default)("SAVE");
         return new DatastoreSave_1.default(this, data);
     }
     load(idsOrKeys) {
-        checkDatastore_1.default("LOAD");
+        (0, checkDatastore_1.default)("LOAD");
         return new DatastoreLoad_1.default(this, idsOrKeys);
     }
     query(namespace = Core_1.UNSET_NAMESPACE) {
-        checkDatastore_1.default("QUERY");
+        (0, checkDatastore_1.default)("QUERY");
         let ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : this.defaultNamespace;
-        return DatastoreQuery_1.createDatastoreQuery(this, ns);
+        return (0, DatastoreQuery_1.createDatastoreQuery)(this, ns);
     }
     key(id) {
-        checkDatastore_1.default("CREATE KEY");
+        (0, checkDatastore_1.default)("CREATE KEY");
         return Core_1.default.Instance.dsModule.key([this.kind, id]);
     }
     delete(data) {
-        checkDatastore_1.default("DELETE");
+        (0, checkDatastore_1.default)("DELETE");
         return new DatastoreDelete_1.default(this, data);
     }
     flush(idsOrKeys) {
-        checkDatastore_1.default("FLUSH IN CACHE");
+        (0, checkDatastore_1.default)("FLUSH IN CACHE");
         return new DatastoreFlush_1.default(this, idsOrKeys);
     }
     allocateIds({ amount, withAncestors = null, namespace = Core_1.UNSET_NAMESPACE, }) {
         return __awaiter(this, void 0, void 0, function* () {
-            checkDatastore_1.default("ALLOCATE IDS");
+            (0, checkDatastore_1.default)("ALLOCATE IDS");
             let ns = namespace !== Core_1.UNSET_NAMESPACE ? namespace : this.defaultNamespace;
             ns = ns !== Core_1.UNSET_NAMESPACE ? ns : (Core_1.default.Instance.namespace !== Core_1.UNSET_NAMESPACE ? Core_1.default.Instance.namespace : null);
             let keyPath = [this.kind];
             if (withAncestors != null) {
-                keyPath = [].concat(...extractAncestorPaths_1.default(this, ...withAncestors), keyPath);
+                keyPath = [].concat(...(0, extractAncestorPaths_1.default)(this, ...withAncestors), keyPath);
             }
             if (ns != null) {
-                const allocateIds = yield Core_1.default.Instance.ds.allocateIds(Core_1.default.Instance.dsModule.key({
+                const allocateIds = yield Core_1.default.Instance.dsModule.allocateIds(Core_1.default.Instance.dsModule.key({
                     namespace: ns,
                     path: keyPath
                 }), amount);

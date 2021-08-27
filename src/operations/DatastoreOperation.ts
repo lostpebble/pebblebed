@@ -1,18 +1,19 @@
 import PebblebedModel from "../PebblebedModel";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import Core, { UNSET_NAMESPACE } from "../Core";
-import { DatastoreEntityKey, IPebblebedModelOptions, SchemaDefinition } from "../";
+import { IPebblebedModelOptions, SchemaDefinition } from "../";
+import { Key } from "@google-cloud/datastore";
 
 export class DatastoreBaseOperation<T> {
   protected model: PebblebedModel;
   protected modelOptions: IPebblebedModelOptions;
   protected kind: string;
   protected schema: SchemaDefinition<any>;
-  protected idProperty: string|null;
+  protected idProperty: string | null;
   protected idType: "string" | "int";
   protected hasIdProperty = false;
-  protected defaultNamespace: string|null = UNSET_NAMESPACE;
-  protected deliberateNamespace: string|null = UNSET_NAMESPACE;
+  protected defaultNamespace: string | null = UNSET_NAMESPACE;
+  protected deliberateNamespace: string | null = UNSET_NAMESPACE;
   protected ancestors: Array<[string, string | number]> = [];
 
   constructor(model: PebblebedModel<T>) {
@@ -31,12 +32,12 @@ export class DatastoreBaseOperation<T> {
     return this;
   }
 
-  public useNamespace(namespace: string|null) {
+  public useNamespace(namespace: string | null) {
     this.deliberateNamespace = namespace;
     return this;
   }
 
-  protected getFinalNamespace(keyOriginalNamespace: string|undefined = undefined): string|undefined {
+  protected getFinalNamespace(keyOriginalNamespace: string | undefined = undefined): string | undefined {
     if (this.deliberateNamespace !== UNSET_NAMESPACE) {
       return this.deliberateNamespace || undefined;
     }
@@ -52,13 +53,13 @@ export class DatastoreBaseOperation<T> {
     return keyOriginalNamespace;
   }
 
-  protected augmentKey = (key: DatastoreEntityKey): DatastoreEntityKey => {
+  protected augmentKey = (key: Key): Key => {
     key.namespace = this.getFinalNamespace(key.namespace);
     return key;
   };
 
-  protected createFullKey(fullPath: any[], entityKey?: DatastoreEntityKey): DatastoreEntityKey {
-    let originalKeyNamespace: string|undefined = entityKey ? entityKey.namespace : undefined;
+  protected createFullKey(fullPath: any[], entityKey?: Key): Key {
+    let originalKeyNamespace: string | undefined = entityKey ? entityKey.namespace : undefined;
 
     const newNamespace = this.getFinalNamespace(originalKeyNamespace);
 

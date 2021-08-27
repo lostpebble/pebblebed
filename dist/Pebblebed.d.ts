@@ -1,17 +1,18 @@
-import { DatastoreEntityKey, DatastoreTransaction, IPebblebedModelOptions } from "./types/PebblebedTypes";
+import { IPebblebedModelOptions } from "./types/PebblebedTypes";
 import PebblebedModel from "./PebblebedModel";
 import { ICacheDefaults } from "./Core";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
 import { TPebblebedJoiSchemaObject } from "./utility/JoiUtils";
+import { Key, Transaction } from "@google-cloud/datastore";
 export declare const Pebblebed: {
     connectDatastore: (datastore: any) => void;
-    readonly ds: any;
-    flushCacheKeys(keys: DatastoreEntityKey[]): Promise<void>;
-    transaction: () => DatastoreTransaction;
+    readonly ds: import("@google-cloud/datastore").Datastore;
+    flushCacheKeys(keys: Key[]): Promise<void>;
+    transaction: () => Transaction;
     combineSchemas: <T = any>(...schemas: PebblebedJoiSchema<Partial<T>>[]) => PebblebedJoiSchema<T>;
-    createSchema: <T = any>(schema: TPebblebedJoiSchemaObject<T>) => PebblebedJoiSchema<T>;
-    createModel: <T = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T>, options?: IPebblebedModelOptions) => PebblebedModel<T>;
+    createSchema: <T_1 = any>(schema: TPebblebedJoiSchemaObject<T_1>) => PebblebedJoiSchema<T_1>;
+    createModel: <T_2 = any>(entityKind: string, entitySchema: PebblebedJoiSchema<T_2>, options?: IPebblebedModelOptions) => PebblebedModel<T_2>;
     setCacheStore: (cacheStore: PebblebedCacheStore) => void;
     clearDefaultNamespace: () => void;
     setDefaultNamespace: (namespace: string | null) => void;
@@ -22,7 +23,7 @@ export declare const Pebblebed: {
     setCacheEnabledOnLoadDefault(on: boolean): void;
     setCacheEnabledOnQueryDefault(on: boolean): void;
     setCacheEnabledDefaults(newDefaults: Partial<ICacheDefaults>): void;
-    key(...args: any[]): any;
-    keysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];
-    uniqueKeysFromObjectArray<T>(sourceArray: T[], ...args: (PebblebedModel<any> | keyof T)[]): DatastoreEntityKey[];
+    key(...args: any[]): Key;
+    keysFromObjectArray<T_3>(sourceArray: T_3[], ...args: (PebblebedModel<any> | keyof T_3)[]): Key[];
+    uniqueKeysFromObjectArray<T_4>(sourceArray: T_4[], ...args: (PebblebedModel<any> | keyof T_4)[]): Key[];
 };
