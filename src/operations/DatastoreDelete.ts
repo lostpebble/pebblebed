@@ -3,11 +3,11 @@ import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { Key } from "@google-cloud/datastore";
+import { Key, PathType } from "@google-cloud/datastore";
 
 export default class DatastoreDelete<T> extends DatastoreOperation<T> {
   private dataObjects: any[];
-  private deleteIds: Array<string | number | Key> = [];
+  private deleteIds: Array<PathType | Key> = [];
   private useIds = false;
   private ignoreAnc = false;
   private usingKeys = false;
@@ -52,7 +52,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
     } else {
       this.deleteIds = this.deleteIds.map(id => {
         if (this.idType === "int" && isNumber(id)) {
-          return Core.Instance.dsModule.int(id as number).value;
+          return Core.Instance.dsModule.int(id as number);
         } else if (this.idType === "string" && typeof id === "string") {
           if (id.length === 0) {
             throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "DELETE"));
@@ -75,20 +75,20 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
   }
 
   public async run() {
-    const baseKey = this.getBaseKey();
+    const baseKey: PathType[] = this.getBaseKey();
     let deleteKeys: Key[] = [];
 
     if (!this.useIds) {
       for (const data of this.dataObjects) {
-        let setAncestors = baseKey;
-        let id: string | null = null;
+        let setAncestors: PathType[] = baseKey;
+        let id: PathType | null = null;
         const entityKey = data[Core.Instance.dsModule.KEY];
 
         if (this.hasIdProperty && data[this.idProperty!] != null) {
           switch (this.idType) {
             case "int":
               if (isNumber(data[this.idProperty!])) {
-                id = Core.Instance.dsModule.int(data[this.idProperty!]).value;
+                id = Core.Instance.dsModule.int(data[this.idProperty!]);
               }
               break;
             case "string":
@@ -109,7 +109,7 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
           }
         } else if (entityKey != null) {
           if (entityKey.hasOwnProperty("id")) {
-            id = Core.Instance.dsModule.int(entityKey.id).value;
+            id = Core.Instance.dsModule.int(entityKey.id);
           } else {
             id = entityKey.name;
           }
@@ -137,12 +137,12 @@ export default class DatastoreDelete<T> extends DatastoreOperation<T> {
           }
         }
 
-        deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id]), entityKey));
+        deleteKeys.push(this.createFullKey(setAncestors.concat([this.kind, id!]), entityKey));
       }
     } else if (this.usingKeys) {
       deleteKeys = this.deleteIds.map(this.augmentKey);
     } else {
-      deleteKeys = this.deleteIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
+      deleteKeys = (this.deleteIds as PathType[]).map(id => this.createFullKey(baseKey.concat(this.kind, id)));
     }
 
     let deleteResponse;

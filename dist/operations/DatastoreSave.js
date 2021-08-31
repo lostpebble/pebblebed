@@ -97,7 +97,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                         }
                         case "int": {
                             if ((0, BasicUtils_1.isNumber)(data[this.idProperty])) {
-                                id = Core_1.default.Instance.dsModule.int(data[this.idProperty]).value;
+                                id = Core_1.default.Instance.dsModule.int(data[this.idProperty]);
                             }
                             break;
                         }
@@ -109,7 +109,7 @@ class DatastoreSave extends DatastoreOperation_1.default {
                 else {
                     if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
                         if (entityKey.hasOwnProperty("id")) {
-                            id = Core_1.default.Instance.dsModule.int(entityKey.id).value;
+                            id = Core_1.default.Instance.dsModule.int(entityKey.id);
                         }
                         else {
                             id = entityKey.name;

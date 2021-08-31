@@ -2,7 +2,7 @@ import PebblebedModel from "../PebblebedModel";
 import extractAncestorPaths from "../utility/extractAncestorPaths";
 import Core, { UNSET_NAMESPACE } from "../Core";
 import { IPebblebedModelOptions, SchemaDefinition } from "../";
-import { Key } from "@google-cloud/datastore";
+import { Key, PathType } from "@google-cloud/datastore";
 
 export class DatastoreBaseOperation<T> {
   protected model: PebblebedModel;
@@ -14,7 +14,7 @@ export class DatastoreBaseOperation<T> {
   protected hasIdProperty = false;
   protected defaultNamespace: string | null = UNSET_NAMESPACE;
   protected deliberateNamespace: string | null = UNSET_NAMESPACE;
-  protected ancestors: Array<[string, string | number]> = [];
+  protected ancestors: Array<[string, PathType]> = [];
 
   constructor(model: PebblebedModel<T>) {
     this.model = model;
@@ -58,7 +58,7 @@ export class DatastoreBaseOperation<T> {
     return key;
   };
 
-  protected createFullKey(fullPath: any[], entityKey?: Key): Key {
+  protected createFullKey(fullPath: PathType[], entityKey?: Key): Key {
     let originalKeyNamespace: string | undefined = entityKey ? entityKey.namespace : undefined;
 
     const newNamespace = this.getFinalNamespace(originalKeyNamespace);
@@ -73,8 +73,8 @@ export class DatastoreBaseOperation<T> {
     return Core.Instance.dsModule.key(fullPath);
   }
 
-  protected getBaseKey() {
-    const baseKey: any[] = [];
+  protected getBaseKey(): PathType[] {
+    const baseKey: PathType[] = [];
 
     for (const ancestor of this.ancestors) {
       baseKey.push(ancestor[0], ancestor[1]);

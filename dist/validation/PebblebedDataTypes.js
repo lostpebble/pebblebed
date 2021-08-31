@@ -2,13 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.types = exports.PebbleSerializedJson = exports.PebbleObject = exports.PebbleArray = exports.PebbleDateTime = exports.PebbleBoolean = exports.PebbleString = exports.PebbleGeoPoint = exports.PebbleDouble = exports.PebbleInteger = exports.PebbleIntegerId = exports.PebbleStringIdStrictWithFirebase = exports.PebbleStringIdStrict = exports.PebbleStringId = void 0;
 const Core_1 = require("../Core");
+const Joi = require("joi");
 function alterSchemaForPropertyMeta(schema, meta) {
     if (meta.required) {
         return schema.required();
     }
     return schema.allow(null);
 }
-const PebbleStringId = () => Core_1.default.Joi.string()
+// console.log(Joi);
+// console.log(require.resolve("joi"))
+const PebbleStringId = () => Joi.string()
     .required()
     .meta({
     __typeDefinition: true,

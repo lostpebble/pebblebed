@@ -1,6 +1,6 @@
 {
   "name": "pebblebed",
-  "version": "2.0.0",
+  "version": "2.0.2-beta",
   "description": "Simplified interactions with Google Datastore for NodeJS",
   "keywords": [
     "cloud",
@@ -12,6 +12,7 @@
     "query",
     "save"
   ],
+  "type": "commonjs",
   "homepage": "https://github.com/lostpebble/pebblebed#readme",
   "bugs": {
     "url": "https://github.com/lostpebble/pebblebed/issues"
@@ -55,11 +56,11 @@
     "verbose": true
   },
   "dependencies": {
-    "dynamic-config-store": "^1.0.3"
+    "dynamic-config-store": "^1.0.3",
+    "joi": "^17.4.2"
   },
   "devDependencies": {
     "@types/ioredis": "^3.2.7",
-    "@types/hapi__joi": "^17.1.7",
     "@types/lodash": "^4.14.106",
     "@types/node": "^8.0.17",
     "@google-cloud/datastore": "^6.5.0",
@@ -67,7 +68,6 @@
     "in-publish": "^2.0.0",
     "ioredis": "^3.2.2",
     "jest": "^23.6.0",
-    "@hapi/joi": "^17.1.0",
     "lodash": "^4.17.5",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
@@ -75,8 +75,7 @@
   },
   "peerDependencies": {
     "@google-cloud/datastore": "^6.5.0",
-    "ioredis": "^3.2.2",
-    "@hapi/joi": "^17.1.1"
+    "ioredis": "^3.2.2"
   },
   "engines": {
     "node": ">=6.5.0"

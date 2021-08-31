@@ -11,7 +11,7 @@ import serializeJsonProperties from "../utility/serializeJsonProperties";
 import { debugPoint } from "../debugging/DebugUtils";
 import { convertSaveEntitiesToRegular } from "../utility/convertSaveEntitesToRegular";
 import { convertDatastoreDataToRegularData } from "../utility/convertDatastoreDataToRegular";
-import { Key } from "@google-cloud/datastore";
+import { Key, PathType } from "@google-cloud/datastore";
 
 interface IOSaveRunResponse<T> {
   generatedIds: (string | null)[],
@@ -92,7 +92,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
 
     const entities: IPebblebedSaveEntity<T>[] = this.dataObjects.map((data): IPebblebedSaveEntity<T> => {
       let setAncestors = baseKey;
-      let id: string | null = null;
+      let id: PathType | null = null;
       const entityKey: Key = data[Core.Instance.dsModule.KEY];
 
       if (this.hasIdProperty && data[this.idProperty!] != null) {
@@ -109,7 +109,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
           }
           case "int": {
             if (isNumber(data[this.idProperty!])) {
-              id = Core.Instance.dsModule.int(data[this.idProperty!]).value;
+              id = Core.Instance.dsModule.int(data[this.idProperty!]);
             }
             break;
           }
@@ -121,7 +121,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
       } else {
         if (entityKey && entityKey.path && entityKey.path.length > 0 && entityKey.path.length % 2 === 0) {
           if (entityKey.hasOwnProperty("id")) {
-            id = Core.Instance.dsModule.int(entityKey.id!).value;
+            id = Core.Instance.dsModule.int(entityKey.id!);
           } else {
             id = entityKey.name!;
           }
@@ -161,7 +161,7 @@ export default class DatastoreSave<T, R extends IOSaveRunResponse<T> = { generat
         }
       }
 
-      const key = id
+      const key: Key = id
         ? this.createFullKey(setAncestors.concat([this.kind, id]), entityKey)
         : this.createFullKey(setAncestors.concat([this.kind]), entityKey);
 

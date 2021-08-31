@@ -1,5 +1,4 @@
-/// <reference types="hapi__joi" />
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 export declare type TPebblebedJoiSchemaObject<T> = {
     [key in keyof T]: Joi.Schema;
 };

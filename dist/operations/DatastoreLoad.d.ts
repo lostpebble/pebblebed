@@ -16,7 +16,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
     private loadIds;
     private usingKeys;
     private returnOnlyEntity;
-    constructor(model: PebblebedModel<T>, idsOrKeys: string | number | Key | Array<string | number | Key>);
+    constructor(model: PebblebedModel<T>, idsOrKeys: string | number | Key | (Key | string | number)[]);
     first(): this;
     last(): this;
     randomOne(): this;

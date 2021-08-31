@@ -13,7 +13,8 @@ import extractAncestorPaths from "./utility/extractAncestorPaths";
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
 import { createDatastoreQuery } from "./operations/DatastoreQuery";
-import * as Joi from "@hapi/joi";
+// import * as Joi from "joi";
+import * as Joi from "joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
 import { Key } from "@google-cloud/datastore";
 

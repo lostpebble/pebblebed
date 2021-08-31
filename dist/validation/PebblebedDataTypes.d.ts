@@ -1,6 +1,5 @@
-/// <reference types="hapi__joi" />
 import { IOJoiSchemaObjectPropertyMetaInput, IOJoiSchemaPropertyMetaInput, IOJoiSchemaSerializedJsonPropertyMetaInput } from "../";
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 export declare type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>, E = any> = (meta?: I, extraOptions?: E) => T;
 export declare const PebbleStringId: () => Joi.StringSchema;
 export declare const PebbleStringIdStrict: () => Joi.StringSchema;

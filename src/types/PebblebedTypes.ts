@@ -1,4 +1,4 @@
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 import { Key } from "@google-cloud/datastore";
 
 export type SchemaDefinitionProperties<T> = { [P in keyof T]: SchemaPropertyDefinition };

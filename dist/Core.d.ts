@@ -21,7 +21,7 @@ export default class Core {
     cacheDefaults: ICacheDefaults;
     private constructor();
     static get Instance(): Core;
-    static get Joi(): typeof import("@hapi/joi");
+    static get Joi(): typeof import("joi");
     setDatastore(datastore: Datastore): void;
     setCacheStore(cacheStore: PebblebedCacheStore): void;
     setCacheDefaults(newDefaults: Partial<ICacheDefaults>): void;

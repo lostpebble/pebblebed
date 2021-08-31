@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UNSET_NAMESPACE = void 0;
 const Messaging_1 = require("./Messaging");
-const Joi = require("@hapi/joi");
+const Joi = require("joi");
 const datastore = require("@google-cloud/datastore");
 exports.UNSET_NAMESPACE = "__PEBBLEBED_DELIBERATE_UNSET_NAMESPACE__";
 class Core {
@@ -37,12 +37,11 @@ class Core {
     }
     static get Joi() {
         try {
-            // return require("@hapi/joi");
             return Joi;
         }
         catch (e) {
             if (e.code === "MODULE_NOT_FOUND") {
-                (0, Messaging_1.throwError)(`Pebblebed: Using new schema syntax, Joi (@hapi/joi) needs to be added as a dependency to your project.`);
+                (0, Messaging_1.throwError)(`Pebblebed: Using new schema syntax, Joi (npm "joi") needs to be added as a dependency to your project.`);
             }
             throw e;
         }

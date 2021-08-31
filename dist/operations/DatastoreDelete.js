@@ -59,7 +59,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
         else {
             this.deleteIds = this.deleteIds.map(id => {
                 if (this.idType === "int" && (0, BasicUtils_1.isNumber)(id)) {
-                    return Core_1.default.Instance.dsModule.int(id).value;
+                    return Core_1.default.Instance.dsModule.int(id);
                 }
                 else if (this.idType === "string" && typeof id === "string") {
                     if (id.length === 0) {
@@ -90,7 +90,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                         switch (this.idType) {
                             case "int":
                                 if ((0, BasicUtils_1.isNumber)(data[this.idProperty])) {
-                                    id = Core_1.default.Instance.dsModule.int(data[this.idProperty]).value;
+                                    id = Core_1.default.Instance.dsModule.int(data[this.idProperty]);
                                 }
                                 break;
                             case "string":
@@ -108,7 +108,7 @@ class DatastoreDelete extends DatastoreOperation_1.default {
                     }
                     else if (entityKey != null) {
                         if (entityKey.hasOwnProperty("id")) {
-                            id = Core_1.default.Instance.dsModule.int(entityKey.id).value;
+                            id = Core_1.default.Instance.dsModule.int(entityKey.id);
                         }
                         else {
                             id = entityKey.name;

@@ -36,7 +36,7 @@ class DatastoreFlush extends DatastoreOperation_1.DatastoreBaseOperation {
             else {
                 this.flushIds = this.flushIds.map(id => {
                     if (this.idType === "int" && (0, BasicUtils_1.isNumber)(id)) {
-                        return Core_1.default.Instance.dsModule.int(id).value;
+                        return Core_1.default.Instance.dsModule.int(id);
                     }
                     else if (this.idType === "string" && typeof id === "string") {
                         if (id.length === 0) {

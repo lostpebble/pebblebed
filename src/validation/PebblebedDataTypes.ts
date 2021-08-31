@@ -4,7 +4,7 @@ import {
   IOJoiSchemaSerializedJsonPropertyMetaInput,
 } from "../";
 import Core from "../Core";
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 
 export type TPebblebedJoiTypeFunction<T, K, I = IOJoiSchemaPropertyMetaInput<K>, E = any> = (
   meta?: I,
@@ -22,8 +22,11 @@ function alterSchemaForPropertyMeta<T extends Joi.AnySchema, K>(
   return schema.allow(null);
 }
 
+// console.log(Joi);
+// console.log(require.resolve("joi"))
+
 export const PebbleStringId: () => Joi.StringSchema = () =>
-  Core.Joi.string()
+  Joi.string()
     .required()
     .meta({
       __typeDefinition: true,
@@ -82,26 +85,24 @@ interface IPebbleStringExtraOptions {
   allowEmpty?: boolean;
 }
 
-export const PebbleString: TPebblebedJoiTypeFunction<
-  Joi.StringSchema,
+export const PebbleString: TPebblebedJoiTypeFunction<Joi.StringSchema,
   string,
   IOJoiSchemaPropertyMetaInput<string>,
-  IPebbleStringExtraOptions
-> = (meta = {}, { allowEmpty = true }: IPebbleStringExtraOptions = {}) =>
+  IPebbleStringExtraOptions> = (meta = {}, {allowEmpty = true}: IPebbleStringExtraOptions = {}) =>
   alterSchemaForPropertyMeta<Joi.StringSchema, string>(
     allowEmpty
       ? Core.Joi.string()
-          .allow("")
-          .meta({
-            __typeDefinition: true,
-            type: "string",
-            propertyMeta: meta,
-          })
-      : Core.Joi.string().min(1).meta({
+        .allow("")
+        .meta({
           __typeDefinition: true,
           type: "string",
           propertyMeta: meta,
-        }),
+        })
+      : Core.Joi.string().min(1).meta({
+        __typeDefinition: true,
+        type: "string",
+        propertyMeta: meta,
+      }),
     meta
   );
 
@@ -135,11 +136,9 @@ export const PebbleArray: TPebblebedJoiTypeFunction<Joi.ArraySchema, any[]> = (m
     meta
   );
 
-export const PebbleObject: TPebblebedJoiTypeFunction<
-  Joi.ObjectSchema,
+export const PebbleObject: TPebblebedJoiTypeFunction<Joi.ObjectSchema,
   object,
-  IOJoiSchemaPropertyMetaInput<object> & IOJoiSchemaObjectPropertyMetaInput
-> = (meta = {}) =>
+  IOJoiSchemaPropertyMetaInput<object> & IOJoiSchemaObjectPropertyMetaInput> = (meta = {}) =>
   alterSchemaForPropertyMeta<Joi.ObjectSchema, object>(
     Core.Joi.object().meta({
       __typeDefinition: true,
@@ -149,35 +148,33 @@ export const PebbleObject: TPebblebedJoiTypeFunction<
     meta
   );
 
-export const PebbleSerializedJson: TPebblebedJoiTypeFunction<
-  Joi.AnySchema,
+export const PebbleSerializedJson: TPebblebedJoiTypeFunction<Joi.AnySchema,
   any,
-  IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput
-> = (meta = {}) =>
+  IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput> = (meta = {}) =>
   meta.joiSchema != null
     ? alterSchemaForPropertyMeta<Joi.AnySchema, any>(
-        meta.joiSchema.meta({
-          __typeDefinition: true,
-          type: "serializedJson",
-          propertyMeta: meta,
-        }),
-        meta
-      )
+      meta.joiSchema.meta({
+        __typeDefinition: true,
+        type: "serializedJson",
+        propertyMeta: meta,
+      }),
+      meta
+    )
     : alterSchemaForPropertyMeta<Joi.AnySchema, any>(
-        Core.Joi.any().meta({
-          __typeDefinition: true,
-          type: "serializedJson",
-          propertyMeta: meta,
-        }),
-        meta
-      );
+      Core.Joi.any().meta({
+        __typeDefinition: true,
+        type: "serializedJson",
+        propertyMeta: meta,
+      }),
+      meta
+    );
 
 const dateTimeUpdated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
-  return PebbleDateTime({ onSave: () => new Date(), ...meta });
+  return PebbleDateTime({onSave: () => new Date(), ...meta});
 };
 
 const dateTimeCreated: TPebblebedJoiTypeFunction<Joi.DateSchema, Date> = (meta: {}) => {
-  return PebbleDateTime({ onSave: date => (date ? date : new Date()) });
+  return PebbleDateTime({onSave: date => (date ? date : new Date())});
 };
 
 export const types = {

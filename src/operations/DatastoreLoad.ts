@@ -7,32 +7,37 @@ import { CreateMessage, errorNoThrow, throwError, warn } from "../Messaging";
 import { TReturnOnly } from "../";
 import pickOutEntityFromResults from "../utility/pickOutEntityFromResults";
 import deserializeJsonProperties from "../utility/deserializeJsonProperties";
-import { Key } from "@google-cloud/datastore";
+import { Key, PathType } from "@google-cloud/datastore";
 
 export interface IDatastoreLoadSingleReturn<T> extends DatastoreOperation<T> {
   // first(): IDatastoreLoadSingleReturn<T>;
   // last(): IDatastoreLoadSingleReturn<T>;
   // randomOne(): IDatastoreLoadSingleReturn<T>;
-  run(): Promise<T|null>;
+  run(): Promise<T | null>;
+
   run(throwIfNotFound: true): Promise<T>;
 }
 
 export interface IDatastoreLoadRegular<T> extends DatastoreOperation<T> {
   first(): IDatastoreLoadSingleReturn<T>;
+
   last(): IDatastoreLoadSingleReturn<T>;
+
   randomOne(): IDatastoreLoadSingleReturn<T>;
+
   run(): Promise<Array<T>>;
+
   run(throwIfNotFound: true): Promise<Array<T>>;
 }
 
 export default class DatastoreLoad<T> extends DatastoreOperation<T> implements IDatastoreLoadRegular<T> {
-  private loadIds: Array<string | number | Key> = [];
+  private loadIds: (PathType | Key)[] = [];
   private usingKeys = false;
-  private returnOnlyEntity: TReturnOnly|null = null;
+  private returnOnlyEntity: TReturnOnly | null = null;
 
   constructor(
     model: PebblebedModel<T>,
-    idsOrKeys: string | number | Key | Array<string | number | Key>
+    idsOrKeys: string | number | Key | (Key | string | number)[]
   ) {
     super(model);
 
@@ -54,7 +59,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       } else {
         this.loadIds = this.loadIds.map(id => {
           if (this.idType === "int" && isNumber(id)) {
-            return Core.Instance.dsModule.int(id).value;
+            return Core.Instance.dsModule.int(id);
           } else if (this.idType === "string" && typeof id === "string") {
             if (id.length === 0) {
               throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "LOAD"));
@@ -92,7 +97,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       loadKeys = this.loadIds.map(this.augmentKey);
     } else {
       const baseKey = this.getBaseKey();
-      loadKeys = this.loadIds.map(id => this.createFullKey(baseKey.concat(this.kind, id)));
+      loadKeys = (this.loadIds as PathType[]).map(id => this.createFullKey(baseKey.concat(this.kind, id)));
     }
 
     let resp;
@@ -101,7 +106,7 @@ export default class DatastoreLoad<T> extends DatastoreOperation<T> implements I
       resp = await this.transaction.get(loadKeys);
     } else {
       if (this.useCache && Core.Instance.cacheStore != null && Core.Instance.cacheStore.cacheOnLoad) {
-        let cachedEntities: any[]|null = null;
+        let cachedEntities: any[] | null = null;
 
         try {
           cachedEntities = await Core.Instance.cacheStore.getEntitiesByKeys(loadKeys);

@@ -41,7 +41,7 @@ class DatastoreLoad extends DatastoreOperation_1.default {
             else {
                 this.loadIds = this.loadIds.map(id => {
                     if (this.idType === "int" && (0, BasicUtils_1.isNumber)(id)) {
-                        return Core_1.default.Instance.dsModule.int(id).value;
+                        return Core_1.default.Instance.dsModule.int(id);
                     }
                     else if (this.idType === "string" && typeof id === "string") {
                         if (id.length === 0) {

@@ -1,6 +1,6 @@
 import { CreateMessage, throwError } from "./Messaging";
 import { PebblebedCacheStore } from "./caching/PebblebedCacheStore";
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 import * as datastore from "@google-cloud/datastore";
 import { Datastore } from "@google-cloud/datastore";
 
@@ -49,14 +49,13 @@ export default class Core {
     return this._instance || (this._instance = new this());
   }
 
-  public static get Joi(): typeof import("@hapi/joi") {
+  public static get Joi(): typeof import("joi") {
     try {
-      // return require("@hapi/joi");
       return Joi;
     } catch (e) {
       if (e.code === "MODULE_NOT_FOUND") {
         throwError(
-          `Pebblebed: Using new schema syntax, Joi (@hapi/joi) needs to be added as a dependency to your project.`
+          `Pebblebed: Using new schema syntax, Joi (npm "joi") needs to be added as a dependency to your project.`
         );
       }
 

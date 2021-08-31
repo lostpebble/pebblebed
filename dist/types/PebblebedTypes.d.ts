@@ -1,5 +1,4 @@
-/// <reference types="hapi__joi" />
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 import { Key } from "@google-cloud/datastore";
 export declare type SchemaDefinitionProperties<T> = {
     [P in keyof T]: SchemaPropertyDefinition;

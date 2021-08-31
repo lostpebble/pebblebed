@@ -1,4 +1,4 @@
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 import Core from "../Core";
 
 export type TPebblebedJoiSchemaObject<T> = { [key in keyof T]: Joi.Schema };

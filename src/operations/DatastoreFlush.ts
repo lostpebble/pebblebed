@@ -3,10 +3,10 @@ import PebblebedModel from "../PebblebedModel";
 import Core from "../Core";
 import { isNumber } from "../utility/BasicUtils";
 import { CreateMessage, throwError, warn } from "../Messaging";
-import { Key } from "@google-cloud/datastore";
+import { Key, PathType } from "@google-cloud/datastore";
 
 export default class DatastoreFlush<T> extends DatastoreBaseOperation<T> {
-  private flushIds: Array<string | number | Key> = [];
+  private flushIds: Array<PathType | Key> = [];
   private usingKeys = false;
 
   constructor(
@@ -31,7 +31,7 @@ export default class DatastoreFlush<T> extends DatastoreBaseOperation<T> {
       } else {
         this.flushIds = this.flushIds.map(id => {
           if (this.idType === "int" && isNumber(id)) {
-            return Core.Instance.dsModule.int(id).value;
+            return Core.Instance.dsModule.int(id);
           } else if (this.idType === "string" && typeof id === "string") {
             if (id.length === 0) {
               throwError(CreateMessage.OPERATION_STRING_ID_EMPTY(this.model, "FLUSH IN CACHE"));
@@ -48,14 +48,14 @@ export default class DatastoreFlush<T> extends DatastoreBaseOperation<T> {
   }
 
   public async run() {
-    let flushKeys;
+    let flushKeys: Key[];
 
     if (this.usingKeys) {
       flushKeys = this.flushIds.map(this.augmentKey);
     } else {
       const baseKey = this.getBaseKey();
 
-      flushKeys = this.flushIds.map(id => {
+      flushKeys = (this.flushIds as PathType[]).map(id => {
         return this.createFullKey(baseKey.concat(this.kind, id));
       });
     }

@@ -1,4 +1,5 @@
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
+import type { Schema } from "joi";
 import { JoiUtils, TPebblebedJoiSchemaObject } from "../utility/JoiUtils";
 import {
   IOJoiSchemaDefaultMetaInput,
@@ -8,7 +9,6 @@ import {
 import { throwError } from "../Messaging";
 import { IJoiDescribeObject, IJoiDescribeObjectProperty, SchemaDefinition, SchemaPropertyDefinition, } from "../";
 import Core from "../Core";
-import { Schema } from "@hapi/joi";
 
 class PebblebedValidations {
   private static _AVJoiSchemaPropertyMetaInput: Schema | null = null;
@@ -16,9 +16,7 @@ class PebblebedValidations {
 
   static get AVJoiSchemaPropertyMetaInput() {
     if (this._AVJoiSchemaPropertyMetaInput == null) {
-      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<
-        IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput
-      >({
+      this._AVJoiSchemaPropertyMetaInput = JoiUtils.createObjectValidator<IOJoiSchemaPropertyMetaInput<any> & IOJoiSchemaSerializedJsonPropertyMetaInput>({
         required: Core.Joi.bool().default(false),
         indexed: Core.Joi.bool().default(true),
         reviver: Core.Joi.func().default(null),
@@ -62,7 +60,7 @@ export class PebblebedJoiSchema<T> {
     /*const validate = Core.Joi.validate(defaultMeta, PebblebedValidations.AVJoiSchemaDefaultMetaInput, {
       allowUnknown: false,
     });*/
-    const validate = PebblebedValidations.AVJoiSchemaDefaultMetaInput.validate(defaultMeta, { allowUnknown: false });
+    const validate = PebblebedValidations.AVJoiSchemaDefaultMetaInput.validate(defaultMeta, {allowUnknown: false});
 
     if (validate.error != null) {
       throwError(`Pebblebed: Setting default meta properties for schema failed: ${validate.error.message}`);
@@ -133,7 +131,7 @@ export class PebblebedJoiSchema<T> {
                   PebblebedValidations.AVJoiSchemaPropertyMetaInput,
                   { allowUnknown: false }
                 );*/
-                const validate = PebblebedValidations.AVJoiSchemaPropertyMetaInput.validate(metaObject.propertyMeta, { allowUnknown: false });
+                const validate = PebblebedValidations.AVJoiSchemaPropertyMetaInput.validate(metaObject.propertyMeta, {allowUnknown: false});
 
                 if (validate.error != null) {
                   throwError(

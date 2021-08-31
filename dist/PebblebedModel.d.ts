@@ -3,7 +3,7 @@ import DatastoreSave from "./operations/DatastoreSave";
 import { IDatastoreLoadRegular } from "./operations/DatastoreLoad";
 import DatastoreDelete from "./operations/DatastoreDelete";
 import { PebblebedJoiSchema } from "./validation/PebblebedValidation";
-import * as Joi from "@hapi/joi";
+import * as Joi from "joi";
 import DatastoreFlush from "./operations/DatastoreFlush";
 import { Key } from "@google-cloud/datastore";
 export default class PebblebedModel<T = any> {
