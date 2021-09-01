@@ -1,6 +1,6 @@
 {
   "name": "pebblebed",
-  "version": "2.0.2-beta",
+  "version": "2.0.3",
   "description": "Simplified interactions with Google Datastore for NodeJS",
   "keywords": [
     "cloud",
