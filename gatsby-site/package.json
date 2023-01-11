@@ -19,7 +19,7 @@
     "gatsby-remark-prismjs": "^1.2.15",
     "gatsby-remark-images": "^1.5.49",
     "gatsby-source-filesystem": "^1.5.22",
-    "gatsby-transformer-remark": "^1.7.33",
+    "gatsby-transformer-remark": "^5.25.1",
     "prismjs": "^1.11.0",
     "typography-theme-github": "^0.15.10",
     "typography-theme-lincoln": "^0.15.11"
